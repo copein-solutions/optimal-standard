@@ -1,12 +1,15 @@
 package com.optimal.standard.persistence.model;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.ManyToMany;
+import java.util.Set;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-
-import java.util.Set;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -15,28 +18,29 @@ import java.util.Set;
 @Entity
 public class Material {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    protected Long id;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  protected Long id;
 
-    private String name;
+  private String name;
 
-    private String type;
+  private String type;
 
-    private String classification;
+  private String classification;
 
-    private String composition;
+  private String composition;
 
-    private Double price;
+  private Double price;
 
-    private Integer totalConsumption;
+  private Integer totalConsumption;
 
-    private Integer handsNumber;
+  private Integer handsNumber;
 
-    private String applicationMode;
+  private String applicationMode;
 
-    private String cured;
+  private String cured;
 
-    @ManyToMany(mappedBy = "materials")
-    private Set<ApplicationArea> applicationAreas;
+  @ManyToMany(mappedBy = "materials")
+  private Set<ApplicationArea> applicationAreas;
+
 }
