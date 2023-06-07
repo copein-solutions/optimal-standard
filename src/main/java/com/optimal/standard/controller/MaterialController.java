@@ -1,6 +1,7 @@
 package com.optimal.standard.controller;
 
-import com.optimal.standard.dto.MaterialDTO;
+import com.optimal.standard.dto.CreateMaterialDTO;
+import com.optimal.standard.dto.ResponseMaterialDTO;
 import com.optimal.standard.service.MaterialService;
 import java.util.List;
 import javax.validation.Valid;
@@ -17,12 +18,12 @@ public class MaterialController {
   private final MaterialService materialService;
 
   @PostMapping("/material")
-  public void create(@RequestBody @Valid MaterialDTO request) {
+  public void create(@RequestBody @Valid CreateMaterialDTO request) {
     this.materialService.saveMaterial(request);
   }
 
   @GetMapping("/materials")
-  public List<MaterialDTO> findAll() {
+  public List<ResponseMaterialDTO> findAll() {
     return this.materialService.findAll();
   }
 

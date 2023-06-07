@@ -16,12 +16,12 @@ public class ApplicationAreaController {
 
   private final ApplicationAreaService applicationAreaService;
 
-  @PostMapping("/application/area")
+  @PostMapping("/application_area")
   public ApplicationAreaDTO create(@RequestBody @Valid ApplicationAreaDTO request) {
     return this.applicationAreaService.saveApplicationArea(request);
   }
 
-  @GetMapping("/application/areas")
+  @GetMapping("/application_areas")
   public List<ApplicationAreaDTO> findAll() {
     return this.applicationAreaService.findAll();
   }

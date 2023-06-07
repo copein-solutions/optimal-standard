@@ -3,10 +3,8 @@ package com.optimal.standard.service;
 import com.optimal.standard.dto.ApplicationAreaDTO;
 import com.optimal.standard.persistence.model.ApplicationArea;
 import com.optimal.standard.persistence.repository.ApplicationAreaRepository;
-import com.optimal.standard.util.MapperUtils;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
 import org.springframework.data.crossstore.ChangeSetPersister.NotFoundException;
@@ -33,11 +31,6 @@ public class ApplicationAreaService {
         .name(applicationArea.getName())
         .specification(applicationArea.getSpecification())
         .considerations(applicationArea.getConsiderations())
-        .materials(applicationArea
-            .getMaterials()
-            .stream()
-            .map(MapperUtils::toDTO)
-            .collect(Collectors.toSet()))
         .build();
   }
 
@@ -47,7 +40,7 @@ public class ApplicationAreaService {
   }
 
   @SneakyThrows
-  public List<ApplicationArea> findApplicationAreaById(List<Long> ids) {
+  public List<ApplicationArea> findApplicationAreaByIds(List<Long> ids) {
     return Optional
         .of(this.applicationAreaRepository.findAllById(ids))
         .orElseThrow(NotFoundException::new);

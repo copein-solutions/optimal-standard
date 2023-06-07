@@ -53,16 +53,10 @@ public class Material {
 
   public void addApplicationArea(ApplicationArea applicationArea) {
     this.applicationAreas.add(applicationArea);
-    applicationArea
-        .getMaterials()
-        .add(this);
   }
 
   public void removeApplicationArea(ApplicationArea applicationArea) {
     this.applicationAreas.remove(applicationArea);
-    applicationArea
-        .getMaterials()
-        .remove(this);
   }
 
 }

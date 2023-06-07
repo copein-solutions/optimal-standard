@@ -1,13 +1,12 @@
 package com.optimal.standard.dto;
 
-import java.util.List;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
+@NoArgsConstructor
 @AllArgsConstructor
 @Data
-@Builder
 public class MaterialDTO {
 
   private String name;
@@ -27,7 +26,5 @@ public class MaterialDTO {
   private String applicationMode;
 
   private boolean cured;
-
-  private List<ApplicationAreaDTO> applicationAreas;
 
 }
