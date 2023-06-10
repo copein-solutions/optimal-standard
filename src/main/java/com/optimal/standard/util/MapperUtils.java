@@ -2,6 +2,7 @@ package com.optimal.standard.util;
 
 import com.optimal.standard.dto.ApplicationAreaDTO;
 import com.optimal.standard.dto.MaterialDTO;
+import com.optimal.standard.dto.ModifyMaterialDTO;
 import com.optimal.standard.dto.ResponseMaterialDTO;
 import com.optimal.standard.persistence.model.ApplicationArea;
 import com.optimal.standard.persistence.model.Material;
@@ -22,36 +23,53 @@ public interface MapperUtils {
     responseMaterialDTO.setApplicationMode(material.getApplicationMode());
     responseMaterialDTO.setCured(material.isCured());
     responseMaterialDTO.setApplicationAreas(material
-        .getApplicationAreas()
-        .stream()
-        .map(MapperUtils::toResponseDTO)
-        .collect(Collectors.toList()));
+      .getApplicationAreas()
+      .stream()
+      .map(MapperUtils::toResponseDTO)
+      .collect(Collectors.toList()));
     return responseMaterialDTO;
   }
 
   static Material toMaterialMapper(MaterialDTO material, Set<ApplicationArea> applicationAreas) {
     return Material
-        .builder()
-        .name(material.getName())
-        .type(material.getType())
-        .classification(material.getClassification())
-        .composition(material.getComposition())
-        .price(material.getPrice())
-        .totalConsumption(material.getTotalConsumption())
-        .handsNumber(material.getHandsNumber())
-        .applicationMode(material.getApplicationMode())
-        .cured(material.isCured())
-        .applicationAreas(applicationAreas)
-        .build();
+      .builder()
+      .name(material.getName())
+      .type(material.getType())
+      .classification(material.getClassification())
+      .composition(material.getComposition())
+      .price(material.getPrice())
+      .totalConsumption(material.getTotalConsumption())
+      .handsNumber(material.getHandsNumber())
+      .applicationMode(material.getApplicationMode())
+      .cured(material.isCured())
+      .applicationAreas(applicationAreas)
+      .build();
+  }
+
+  static Material toUpdateMaterialMapper(ModifyMaterialDTO material, Set<ApplicationArea> applicationAreas) {
+    return Material
+      .builder()
+      .id(material.getId())
+      .name(material.getName())
+      .type(material.getType())
+      .classification(material.getClassification())
+      .composition(material.getComposition())
+      .price(material.getPrice())
+      .totalConsumption(material.getTotalConsumption())
+      .handsNumber(material.getHandsNumber())
+      .applicationMode(material.getApplicationMode())
+      .cured(material.isCured())
+      .applicationAreas(applicationAreas)
+      .build();
   }
 
   static ApplicationAreaDTO toResponseDTO(ApplicationArea applicationArea) {
     return ApplicationAreaDTO
-        .builder()
-        .name(applicationArea.getName())
-        .specification(applicationArea.getSpecification())
-        .considerations(applicationArea.getConsiderations())
-        .build();
+      .builder()
+      .name(applicationArea.getName())
+      .specification(applicationArea.getSpecification())
+      .considerations(applicationArea.getConsiderations())
+      .build();
   }
 
 }

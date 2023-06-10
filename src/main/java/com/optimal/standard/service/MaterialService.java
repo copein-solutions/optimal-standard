@@ -2,8 +2,10 @@ package com.optimal.standard.service;
 
 
 import static com.optimal.standard.util.MapperUtils.toMaterialMapper;
+import static com.optimal.standard.util.MapperUtils.toUpdateMaterialMapper;
 
 import com.optimal.standard.dto.CreateMaterialDTO;
+import com.optimal.standard.dto.ModifyMaterialDTO;
 import com.optimal.standard.dto.ResponseMaterialDTO;
 import com.optimal.standard.persistence.model.ApplicationArea;
 import com.optimal.standard.persistence.model.Material;
@@ -30,10 +32,16 @@ public class MaterialService {
 
   public List<ResponseMaterialDTO> findAll() {
     return this.materialRepository
-        .findAll()
-        .stream()
-        .map(MapperUtils::toResponseDTO)
-        .toList();
+      .findAll()
+      .stream()
+      .map(MapperUtils::toResponseDTO)
+      .toList();
+  }
+
+  public void updateMaterial(ModifyMaterialDTO request) {
+    List<ApplicationArea> applicationAreas = this.applicationAreaService.findApplicationAreaByIds(request.getApplicationAreaIds());
+    Material material = toUpdateMaterialMapper(request, new HashSet<>(applicationAreas));
+    this.materialRepository.save(material);
   }
 
 }
