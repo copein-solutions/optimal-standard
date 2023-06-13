@@ -9,22 +9,16 @@ import lombok.NoArgsConstructor;
 @Data
 public class MaterialDTO {
 
-  private String name;
+    private String name;
 
-  private String type;
+    private String brand;
 
-  private String classification;
+    private Double price;
 
-  private String composition;
+    private String type;
 
-  private Double price;
+    private String packaging;
 
-  private Integer totalConsumption;
-
-  private Integer handsNumber;
-
-  private String applicationMode;
-
-  private boolean cured;
+    private Integer quantity;
 
 }
