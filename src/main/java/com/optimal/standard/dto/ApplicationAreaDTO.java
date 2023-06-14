@@ -1,6 +1,6 @@
 package com.optimal.standard.dto;
 
-import java.util.Set;
+import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -10,12 +10,11 @@ import lombok.Data;
 @Builder
 public class ApplicationAreaDTO {
 
-  private String name;
+    @NotBlank
+    private String name;
 
-  private String specification;
+    private String specification;
 
-  private String considerations;
-
-  private Set<MaterialDTO> materials;
+    private String considerations;
 
 }
