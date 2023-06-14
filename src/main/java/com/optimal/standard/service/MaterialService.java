@@ -18,9 +18,8 @@ public class MaterialService {
 
     private final MaterialRepository materialRepository;
 
-    private final ApplicationAreaService applicationAreaService;
-
     public void saveMaterial(MaterialDTO request) {
+        //TODO: falta validar de alguna forma que no pueda ingresar materiales repetidos
         this.materialRepository.save(toMaterialMapper(request));
     }
 

@@ -13,7 +13,14 @@ public interface MapperUtils {
     static ResponseMaterialDTO toResponseDTO(Material material) {
         ResponseMaterialDTO responseMaterialDTO = new ResponseMaterialDTO();
         responseMaterialDTO.setName(material.getName());
+        responseMaterialDTO.setBrand(material.getBrand());
+        responseMaterialDTO.setPresentationQuantity(material.getPresentationQuantity());
+        responseMaterialDTO.setPresentationUnit(material.getPresentationUnit());
+        responseMaterialDTO.setPresentationPrice(material.getPresentationPrice());
+        responseMaterialDTO.setPriceDate(material.getPriceDate());
+        responseMaterialDTO.setCurrency(material.getCurrency());
         responseMaterialDTO.setType(material.getType());
+        responseMaterialDTO.setComponent(material.getComponent());
         responseMaterialDTO.setCompositions(material
                 .getCompositions()
                 .stream()
@@ -27,10 +34,13 @@ public interface MapperUtils {
                 .builder()
                 .name(material.getName())
                 .brand(material.getBrand())
-                .price(material.getPrice())
+                .presentationQuantity(material.getPresentationQuantity())
+                .presentationUnit(material.getPresentationUnit())
+                .presentationPrice(material.getPresentationPrice())
+                .priceDate(material.getPriceDate())
+                .currency(material.getCurrency())
                 .type(material.getType())
-                .packaging(material.getPackaging())
-                .quantity(material.getQuantity())
+                .component(material.getComponent())
                 .build();
     }
 

@@ -3,14 +3,17 @@ package com.optimal.standard.controller;
 import com.optimal.standard.dto.MaterialDTO;
 import com.optimal.standard.dto.ResponseMaterialDTO;
 import com.optimal.standard.service.MaterialService;
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import javax.validation.Valid;
 import java.util.List;
+
 
 @AllArgsConstructor
 @RestController
+@Validated
 @CrossOrigin("http://localhost:3000")
 public class MaterialController {
 
