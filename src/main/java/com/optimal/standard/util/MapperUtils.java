@@ -8,6 +8,8 @@ import com.optimal.standard.persistence.model.Material;
 
 import java.util.stream.Collectors;
 
+import static org.apache.commons.collections4.CollectionUtils.emptyIfNull;
+
 public interface MapperUtils {
 
     static ResponseMaterialDTO toResponseDTO(Material material) {
@@ -21,8 +23,8 @@ public interface MapperUtils {
         responseMaterialDTO.setCurrency(material.getCurrency());
         responseMaterialDTO.setType(material.getType());
         responseMaterialDTO.setComponent(material.getComponent());
-        responseMaterialDTO.setCompositions(material
-                .getCompositions()
+        responseMaterialDTO.setCompositions(emptyIfNull(material
+                .getCompositions())
                 .stream()
                 .map(MapperUtils::toResponseDTO)
                 .collect(Collectors.toList()));
