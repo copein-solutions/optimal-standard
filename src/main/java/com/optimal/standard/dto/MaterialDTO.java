@@ -1,30 +1,45 @@
 package com.optimal.standard.dto;
 
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.time.LocalDate;
 
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
+@Builder
 public class MaterialDTO {
 
-  private String name;
+    @NotBlank
+    private String name;
 
-  private String type;
+    @NotBlank
+    private String brand;
 
-  private String classification;
+    @NotNull
+    private Integer presentationQuantity;
 
-  private String composition;
+    @NotBlank
+    private String presentationUnit;
 
-  private Double price;
+    @NotNull
+    private Double presentationPrice;
 
-  private Integer totalConsumption;
+    @NotNull
+    private LocalDate priceDate;
 
-  private Integer handsNumber;
+    @NotBlank
+    private String currency;
 
-  private String applicationMode;
+    @NotBlank
+    private String type;
 
-  private boolean cured;
+    @NotBlank
+    private String component;
 
 }

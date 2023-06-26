@@ -1,14 +1,10 @@
 package com.optimal.standard.persistence.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import jakarta.persistence.*;
+import lombok.*;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -18,14 +14,17 @@ import lombok.Setter;
 @Entity
 public class ApplicationArea {
 
-  @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
-  protected Long id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    protected Long id;
 
-  private String name;
+    private String name;
 
-  private String specification;
+    private String specification;
 
-  private String considerations;
+    private String considerations;
+
+    @OneToMany(mappedBy = "applicationArea")
+    private List<Composition> compositions = new ArrayList<>();
 
 }

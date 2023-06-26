@@ -1,19 +1,10 @@
 package com.optimal.standard.persistence.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.JoinTable;
-import jakarta.persistence.ManyToMany;
+import jakarta.persistence.*;
+import lombok.*;
+
+import java.time.LocalDate;
 import java.util.Set;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -23,40 +14,41 @@ import lombok.Setter;
 @Entity
 public class Material {
 
-  @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
-  protected Long id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    protected Long id;
 
-  private String name;
+    @Column(nullable = false)
+    private String name;
 
-  private String type;
+    @Column(nullable = false)
+    private String brand;
 
-  private String classification;
+    @Column(nullable = false)
+    private Integer presentationQuantity;
 
-  private String composition;
+    @Column(nullable = false)
+    private String presentationUnit;
 
-  private Double price;
+    @Column(nullable = false)
+    private Double presentationPrice;
 
-  private Integer totalConsumption;
+    @Column(nullable = false)
+    private LocalDate priceDate;
 
-  private Integer handsNumber;
+    @Column(nullable = false)
+    private String currency;
 
-  private String applicationMode;
+    @Column(nullable = false)
+    private String type;
 
-  private boolean cured;
+    @Column(nullable = false)
+    private String component;
 
-  @JoinTable(name = "application_area_material", joinColumns = @JoinColumn(name = "material_id"), inverseJoinColumns = @JoinColumn(name =
-      "application_area_id"))
-  @ManyToMany(fetch = FetchType.EAGER)
-  private Set<ApplicationArea> applicationAreas;
+    @JoinTable(name = "composition_material", joinColumns = @JoinColumn(name = "material_id"), inverseJoinColumns = @JoinColumn(name =
+            "composition_id"))
+    @ManyToMany(fetch = FetchType.EAGER)
+    private Set<Composition> compositions;
 
-
-  public void addApplicationArea(ApplicationArea applicationArea) {
-    this.applicationAreas.add(applicationArea);
-  }
-
-  public void removeApplicationArea(ApplicationArea applicationArea) {
-    this.applicationAreas.remove(applicationArea);
-  }
 
 }
