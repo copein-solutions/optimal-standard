@@ -9,7 +9,9 @@ import lombok.AllArgsConstructor;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -22,14 +24,25 @@ public class MaterialController {
 
   private final MaterialService materialService;
 
+  @GetMapping("/materials")
+  public List<ResponseMaterialDTO> findAll() {
+    return this.materialService.findAll();
+  }
+
+  @GetMapping("/material/{id}")
+  public MaterialDTO findById(@PathVariable Long id) {
+    return this.materialService.findById(id);
+  }
+
   @PostMapping("/material")
   public void create(@RequestBody @Valid MaterialDTO request) {
     this.materialService.saveMaterial(request);
   }
 
-  @GetMapping("/materials")
-  public List<ResponseMaterialDTO> findAll() {
-    return this.materialService.findAll();
+  @PutMapping("/material/{id}")
+  public void update(@PathVariable Long id, @RequestBody @Valid MaterialDTO request) {
+    this.materialService.updateMaterial(id, request);
   }
+
 
 }
