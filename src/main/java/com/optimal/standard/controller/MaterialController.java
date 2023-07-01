@@ -6,6 +6,7 @@ import com.optimal.standard.service.MaterialService;
 import jakarta.validation.Valid;
 import java.util.List;
 import lombok.AllArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -25,13 +26,17 @@ public class MaterialController {
   private final MaterialService materialService;
 
   @GetMapping("/materials")
-  public List<ResponseMaterialDTO> findAll() {
-    return this.materialService.findAll();
+  public ResponseEntity<List<ResponseMaterialDTO>> findAll() {
+    return ResponseEntity
+        .ok()
+        .body(this.materialService.findAll());
   }
 
   @GetMapping("/material/{id}")
-  public MaterialDTO findById(@PathVariable Long id) {
-    return this.materialService.findById(id);
+  public ResponseEntity<MaterialDTO> findById(@PathVariable Long id) {
+    return ResponseEntity
+        .ok()
+        .body(this.materialService.findById(id));
   }
 
   @PostMapping("/material")

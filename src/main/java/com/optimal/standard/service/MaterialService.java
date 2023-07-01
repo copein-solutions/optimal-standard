@@ -17,6 +17,8 @@ import org.springframework.stereotype.Service;
 @AllArgsConstructor
 public class MaterialService {
 
+  private static final String MATERIAL_NOT_FOUND_MESSAGE = "Material not found with ID: ";
+
   private final MaterialRepository materialRepository;
 
   public List<ResponseMaterialDTO> findAll() {
@@ -40,7 +42,7 @@ public class MaterialService {
           material.setId(id);
           this.materialRepository.save(material);
         }, () -> {
-          throw new EntityNotFoundException("Material not found with ID: " + id);
+          throw new EntityNotFoundException(MATERIAL_NOT_FOUND_MESSAGE + id);
         });
   }
 
@@ -48,7 +50,7 @@ public class MaterialService {
     return this.materialRepository
         .findById(id)
         .map(MapperUtils::toResponseDTO)
-        .orElse(null);
+        .orElseThrow(() -> new EntityNotFoundException(MATERIAL_NOT_FOUND_MESSAGE + id));
   }
 
 }
