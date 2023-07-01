@@ -13,6 +13,7 @@ public interface MapperUtils {
 
   static ResponseMaterialDTO toResponseDTO(Material material) {
     ResponseMaterialDTO responseMaterialDTO = new ResponseMaterialDTO();
+    responseMaterialDTO.setId(material.getId());
     responseMaterialDTO.setName(material.getName());
     responseMaterialDTO.setBrand(material.getBrand());
     responseMaterialDTO.setPresentationQuantity(material.getPresentationQuantity());

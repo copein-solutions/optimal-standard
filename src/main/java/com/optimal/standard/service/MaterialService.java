@@ -39,7 +39,7 @@ public class MaterialService {
         .findById(id)
         .ifPresentOrElse(materialDatabase -> {
           Material material = toMaterialMapper(request);
-          material.setId(id);
+          material.setId(materialDatabase.getId());
           this.materialRepository.save(material);
         }, () -> {
           throw new EntityNotFoundException(MATERIAL_NOT_FOUND_MESSAGE + id);

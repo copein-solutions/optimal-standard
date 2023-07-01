@@ -2,12 +2,11 @@ package com.optimal.standard.dto;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import java.time.LocalDate;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-import java.time.LocalDate;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -15,31 +14,33 @@ import java.time.LocalDate;
 @Builder
 public class MaterialDTO {
 
-    @NotBlank
-    private String name;
+  private Long id;
 
-    @NotBlank
-    private String brand;
+  @NotBlank
+  private String name;
 
-    @NotNull
-    private Integer presentationQuantity;
+  @NotBlank
+  private String brand;
 
-    @NotBlank
-    private String presentationUnit;
+  @NotNull
+  private Integer presentationQuantity;
 
-    @NotNull
-    private Double presentationPrice;
+  @NotBlank
+  private String presentationUnit;
 
-    @NotNull
-    private LocalDate priceDate;
+  @NotNull
+  private Double presentationPrice;
 
-    @NotBlank
-    private String currency;
+  @NotNull
+  private LocalDate priceDate;
 
-    @NotBlank
-    private String type;
+  @NotBlank
+  private String currency;
 
-    @NotBlank
-    private String component;
+  @NotBlank
+  private String type;
+
+  @NotBlank
+  private String component;
 
 }
