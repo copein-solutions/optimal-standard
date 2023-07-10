@@ -1,45 +1,44 @@
 package com.optimal.standard.config;
 
-import com.optimal.standard.persistence.repository.UserRepository;
-import com.optimal.standard.service.UserDetailsServiceImpl;
+import static org.springframework.security.config.Customizer.withDefaults;
+
+import com.optimal.standard.filters.JwtRequestFilter;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
 
-  private final UserRepository userRepository;
-
-  public SecurityConfig(UserRepository userRepository) {
-    this.userRepository = userRepository;
-  }
+  @Autowired
+  private JwtRequestFilter jwtRequestFilter;
 
   @Bean
   SecurityFilterChain web(HttpSecurity http) throws Exception {
     http
         .csrf()
-        .disable() // (2)
+        .disable()
         .authorizeHttpRequests((authorize) -> authorize
             .requestMatchers("/public/**")
             .permitAll()
-            .requestMatchers("/api/**")
+            .requestMatchers("/**")
             .hasRole("ADMIN")
             .anyRequest()
-            .authenticated());
+            .authenticated())
+        .cors(withDefaults())
+        .addFilterBefore(this.jwtRequestFilter, UsernamePasswordAuthenticationFilter.class)
+        .sessionManagement((session) -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
     return http.build();
-  }
-
-  @Bean
-  UserDetailsServiceImpl userDetailsService() {
-    return new UserDetailsServiceImpl(this.userRepository);
   }
 
   @Bean

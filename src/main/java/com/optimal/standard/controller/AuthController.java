@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class AuthController {
 
   @Autowired
-  UserDetailsService userDetailsService;
+  private UserDetailsService userDetailsService;
 
   @Autowired
   private AuthenticationManager authenticationManager;
