@@ -49,12 +49,12 @@ public class MaterialController {
         .body(this.materialService.findAllByType(type));
   }
 
-  @PostMapping("/material")
+  @PostMapping()
   public void create(@RequestBody @Valid MaterialDTO request) {
     this.materialService.saveMaterial(request);
   }
 
-  @PutMapping("/material/{id}")
+  @PutMapping("/{id}")
   public void update(@PathVariable Long id, @RequestBody @Valid MaterialDTO request) {
     this.materialService.updateMaterial(id, request);
   }
