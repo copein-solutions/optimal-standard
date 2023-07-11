@@ -14,6 +14,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 
@@ -21,22 +23,30 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @Validated
 @CrossOrigin("http://localhost:3000")
+@RequestMapping("/material")
 public class MaterialController {
 
   private final MaterialService materialService;
 
-  @GetMapping("/materials")
+  @GetMapping()
   public ResponseEntity<List<ResponseMaterialDTO>> findAll() {
     return ResponseEntity
         .ok()
         .body(this.materialService.findAll());
   }
 
-  @GetMapping("/material/{id}")
+  @GetMapping("/{id}")
   public ResponseEntity<MaterialDTO> findById(@PathVariable Long id) {
     return ResponseEntity
         .ok()
         .body(this.materialService.findById(id));
+  }
+
+  @GetMapping("/search")
+  public ResponseEntity<List<MaterialDTO>> findAllByType(@RequestParam(value = "type") String type) {
+    return ResponseEntity
+        .ok()
+        .body(this.materialService.findAllByType(type));
   }
 
   @PostMapping("/material")
