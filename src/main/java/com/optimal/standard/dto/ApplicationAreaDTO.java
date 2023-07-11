@@ -9,12 +9,12 @@ import lombok.Data;
 @Data
 @Builder
 public class ApplicationAreaDTO {
-    
-    private Long Id;
 
-    @NotBlank
-    private String name;
+  private Long id;
 
-    private String considerations;
+  @NotBlank
+  private String name;
+
+  private String considerations;
 
 }

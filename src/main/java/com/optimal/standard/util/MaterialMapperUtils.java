@@ -9,7 +9,7 @@ import com.optimal.standard.persistence.model.Composition;
 import com.optimal.standard.persistence.model.Material;
 import java.util.stream.Collectors;
 
-public interface MapperUtils {
+public interface MaterialMapperUtils {
 
   static ResponseMaterialDTO toResponseDTO(Material material) {
     ResponseMaterialDTO responseMaterialDTO = new ResponseMaterialDTO();
@@ -25,12 +25,12 @@ public interface MapperUtils {
     responseMaterialDTO.setComponent(material.getComponent());
     responseMaterialDTO.setCompositions(emptyIfNull(material.getCompositions())
         .stream()
-        .map(MapperUtils::toResponseDTO)
+        .map(MaterialMapperUtils::toResponseDTO)
         .collect(Collectors.toList()));
     return responseMaterialDTO;
   }
 
-  static Material toMaterialMapper(MaterialDTO material) {
+  static Material toMaterial(MaterialDTO material) {
     return Material
         .builder()
         .name(material.getName())
