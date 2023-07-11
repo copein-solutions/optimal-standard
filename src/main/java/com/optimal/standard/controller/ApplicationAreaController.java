@@ -1,16 +1,13 @@
 package com.optimal.standard.controller;
 
 import com.optimal.standard.dto.ApplicationAreaDTO;
+import com.optimal.standard.dto.MaterialDTO;
 import com.optimal.standard.service.ApplicationAreaService;
 import jakarta.validation.Valid;
 import java.util.List;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @AllArgsConstructor
 @RestController
@@ -31,6 +28,11 @@ public class ApplicationAreaController {
     return ResponseEntity
         .ok()
         .body(this.applicationAreaService.findAll());
+  }
+
+  @PutMapping("/application_area/{id}")
+  public void update(@PathVariable Long id, @RequestBody @Valid ApplicationAreaDTO request) {
+    this.applicationAreaService.updateApplicationArea(id, request);
   }
 
 }
