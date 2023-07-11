@@ -2,6 +2,7 @@ package com.optimal.standard.service;
 
 
 import static com.optimal.standard.util.MaterialMapperUtils.toMaterial;
+import static java.util.stream.Collectors.toList;
 
 import com.optimal.standard.dto.MaterialDTO;
 import com.optimal.standard.dto.ResponseMaterialDTO;
@@ -17,7 +18,7 @@ import org.springframework.stereotype.Service;
 @AllArgsConstructor
 public class MaterialService {
 
-  private static final String MATERIAL_NOT_FOUND_MESSAGE = "Material not found with ID: ";
+  private static final String NOT_FOUND_MESSAGE = "Material not found with";
 
   private final MaterialRepository materialRepository;
 
@@ -42,7 +43,7 @@ public class MaterialService {
           material.setId(materialDatabase.getId());
           this.materialRepository.save(material);
         }, () -> {
-          throw new EntityNotFoundException(MATERIAL_NOT_FOUND_MESSAGE + id);
+          throw new EntityNotFoundException(NOT_FOUND_MESSAGE + " ID: " + id);
         });
   }
 
@@ -50,7 +51,15 @@ public class MaterialService {
     return this.materialRepository
         .findById(id)
         .map(MaterialMapperUtils::toResponseDTO)
-        .orElseThrow(() -> new EntityNotFoundException(MATERIAL_NOT_FOUND_MESSAGE + id));
+        .orElseThrow(() -> new EntityNotFoundException(NOT_FOUND_MESSAGE + " ID: " + id));
+  }
+
+  public List<MaterialDTO> findAllByType(String type) {
+    return this.materialRepository
+        .findAllByType(type)
+        .stream()
+        .map(MaterialMapperUtils::toResponseDTO)
+        .collect(toList());
   }
 
 }
