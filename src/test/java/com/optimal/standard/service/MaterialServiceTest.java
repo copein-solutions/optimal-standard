@@ -107,8 +107,8 @@ class MaterialServiceTest {
   }
 
   @Test
-  void pass() {
-    String rawPassword = "querty";
+  void shouldGeneratePassword() {
+    String rawPassword = "qwerty";
 
     BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
     String encodedPassword = passwordEncoder.encode(rawPassword);
