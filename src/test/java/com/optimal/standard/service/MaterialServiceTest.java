@@ -38,7 +38,7 @@ class MaterialServiceTest {
     ArgumentCaptor<Material> argumentCaptor = ArgumentCaptor.forClass(Material.class);
     this.materialService.saveMaterial(MaterialDTO
         .builder()
-        .name("Producto 1000")
+        .product("Producto 1000")
         .brand("marca 1")
         .type("Cementicio")
         .component("bicomponente")
@@ -51,7 +51,7 @@ class MaterialServiceTest {
 
     verify(this.materialRepository, times(1)).save(argumentCaptor.capture());
     Material material = argumentCaptor.getValue();
-    assertEquals("Producto 1000", material.getName());
+    assertEquals("Producto 1000", material.getProduct());
     assertEquals("marca 1", material.getBrand());
     assertEquals("Cementicio", material.getType());
     assertEquals("bicomponente", material.getComponent());
@@ -72,17 +72,17 @@ class MaterialServiceTest {
     assertEquals(2, responseMaterials.size());
     assertEquals("Producto 1000", responseMaterials
         .get(0)
-        .getName());
+        .getProduct());
     assertEquals("Producto 2000", responseMaterials
         .get(1)
-        .getName());
+        .getProduct());
   }
 
   private List<Material> mockMaterials() {
     return List.of(Material
         .builder()
         .id(1L)
-        .name("Producto 1000")
+        .product("Producto 1000")
         .brand("marca 1")
         .type("Cementicio")
         .component("bicomponente")
@@ -94,7 +94,7 @@ class MaterialServiceTest {
         .build(), Material
         .builder()
         .id(1L)
-        .name("Producto 2000")
+        .product("Producto 2000")
         .brand("marca 2")
         .type("Cementicio")
         .component("monocomponente")

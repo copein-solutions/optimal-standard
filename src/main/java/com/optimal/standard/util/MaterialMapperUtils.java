@@ -5,7 +5,7 @@ import static org.apache.commons.collections4.CollectionUtils.emptyIfNull;
 import com.optimal.standard.dto.CompositionDTO;
 import com.optimal.standard.dto.MaterialDTO;
 import com.optimal.standard.dto.ResponseMaterialDTO;
-import com.optimal.standard.persistence.model.Composition;
+import com.optimal.standard.persistence.model.ConstructionSystem;
 import com.optimal.standard.persistence.model.Material;
 import java.util.stream.Collectors;
 
@@ -14,7 +14,7 @@ public interface MaterialMapperUtils {
   static ResponseMaterialDTO toResponseDTO(Material material) {
     ResponseMaterialDTO responseMaterialDTO = new ResponseMaterialDTO();
     responseMaterialDTO.setId(material.getId());
-    responseMaterialDTO.setName(material.getName());
+    responseMaterialDTO.setProduct(material.getProduct());
     responseMaterialDTO.setBrand(material.getBrand());
     responseMaterialDTO.setPresentationQuantity(material.getPresentationQuantity());
     responseMaterialDTO.setPresentationUnit(material.getPresentationUnit());
@@ -23,7 +23,7 @@ public interface MaterialMapperUtils {
     responseMaterialDTO.setCurrency(material.getCurrency());
     responseMaterialDTO.setType(material.getType());
     responseMaterialDTO.setComponent(material.getComponent());
-    responseMaterialDTO.setCompositions(emptyIfNull(material.getCompositions())
+    responseMaterialDTO.setCompositions(emptyIfNull(material.getConstructionSystems())
         .stream()
         .map(MaterialMapperUtils::toResponseDTO)
         .collect(Collectors.toList()));
@@ -33,7 +33,7 @@ public interface MaterialMapperUtils {
   static Material toMaterial(MaterialDTO material) {
     return Material
         .builder()
-        .name(material.getName())
+        .product(material.getProduct())
         .brand(material.getBrand())
         .presentationQuantity(material.getPresentationQuantity())
         .presentationUnit(material.getPresentationUnit())
@@ -45,14 +45,14 @@ public interface MaterialMapperUtils {
         .build();
   }
 
-  static CompositionDTO toResponseDTO(Composition composition) {
+  static CompositionDTO toResponseDTO(ConstructionSystem constructionSystem) {
     return CompositionDTO
         .builder()
-        .classification(composition.getClassification())
-        .totalConsumption(composition.getTotalConsumption())
-        .layers(composition.getLayers())
-        .applicationMode(composition.getApplicationMode())
-        .cured(composition.isCured())
+        .classification(constructionSystem.getClassification())
+        .totalConsumption(constructionSystem.getTotalConsumption())
+        .layers(constructionSystem.getLayers())
+        .applicationMode(constructionSystem.getApplicationMode())
+        .cured(constructionSystem.isCured())
         .build();
   }
 

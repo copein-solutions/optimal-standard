@@ -4,9 +4,8 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
-import java.util.ArrayList;
-import java.util.List;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -19,19 +18,24 @@ import lombok.Setter;
 @Getter
 @Setter
 @Entity
-public class ApplicationArea {
+public class ConstructionSystem {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   protected Long id;
 
-  private String name;
+  private String classification;
 
-  private String specification;
+  private String totalConsumption;
 
-  private String considerations;
+  private Integer layers;
 
-  @OneToMany(mappedBy = "applicationArea")
-  private List<ConstructionSystem> constructionSystems = new ArrayList<>();
+  private Integer applicationMode;
+
+  private boolean cured;
+
+  @ManyToOne
+  @JoinColumn(name = "application_area_id")
+  private ApplicationArea applicationArea;
 
 }
