@@ -18,6 +18,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 @ExtendWith(MockitoExtension.class)
 class MaterialServiceTest {
@@ -103,6 +104,17 @@ class MaterialServiceTest {
         .presentationUnit("kg")
         .priceDate(LocalDate.of(2023, 06, 18))
         .build());
+  }
+
+  @Test
+  void shouldGeneratePassword() {
+    String rawPassword = "qwerty";
+
+    BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+    String encodedPassword = passwordEncoder.encode(rawPassword);
+
+    System.out.println("Contraseña original: " + rawPassword);
+    System.out.println("Contraseña encriptada: " + encodedPassword);
   }
 
 }
