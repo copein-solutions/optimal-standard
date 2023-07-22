@@ -23,6 +23,8 @@ public interface MaterialMapperUtils {
     responseMaterialDTO.setCurrency(material.getCurrency());
     responseMaterialDTO.setType(material.getType());
     responseMaterialDTO.setComponent(material.getComponent());
+    responseMaterialDTO.setMinApplicableTemp(material.getMinApplicableTemp());
+    responseMaterialDTO.setPotLife(material.getPotLife());
     responseMaterialDTO.setCompositions(emptyIfNull(material.getConstructionSystems())
         .stream()
         .map(MaterialMapperUtils::toResponseDTO)
@@ -42,6 +44,8 @@ public interface MaterialMapperUtils {
         .currency(material.getCurrency())
         .type(material.getType())
         .component(material.getComponent())
+        .minApplicableTemp(material.getMinApplicableTemp())
+        .potLife(material.getPotLife())
         .build();
   }
 
