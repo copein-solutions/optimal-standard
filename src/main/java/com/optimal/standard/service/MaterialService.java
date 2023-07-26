@@ -3,6 +3,7 @@ package com.optimal.standard.service;
 
 import static com.optimal.standard.util.MaterialMapperUtils.toMaterial;
 import static java.util.stream.Collectors.toList;
+import static org.apache.commons.collections4.ListUtils.emptyIfNull;
 
 import com.optimal.standard.dto.MaterialDTO;
 import com.optimal.standard.dto.ResponseMaterialDTO;
@@ -27,6 +28,13 @@ public class MaterialService {
         .findAll()
         .stream()
         .map(MaterialMapperUtils::toResponseDTO)
+        .toList();
+  }
+
+  public List<MaterialDTO> findAllByIds(List<Long> ids) {
+    return emptyIfNull(this.materialRepository.findAllById(ids))
+        .stream()
+        .map(MaterialMapperUtils::toMaterialDTO)
         .toList();
   }
 

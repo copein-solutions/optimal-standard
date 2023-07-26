@@ -1,5 +1,6 @@
 package com.optimal.standard.config;
 
+import com.optimal.standard.exception.BadRequestException;
 import jakarta.persistence.EntityNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
@@ -38,6 +39,12 @@ public class ControllerExceptionHandler {
   public ResponseEntity<ErrorResponse> handleEntityNotFoundException(EntityNotFoundException e) {
     return new ResponseEntity<>(new ErrorResponse(HttpStatus.NOT_FOUND.name(), e.getMessage(), HttpStatus.NOT_FOUND.value()),
         HttpStatus.NOT_FOUND);
+  }
+
+  @ExceptionHandler(BadRequestException.class)
+  public ResponseEntity<ErrorResponse> handleBadRequestException(BadRequestException e) {
+    return new ResponseEntity<>(new ErrorResponse(HttpStatus.BAD_REQUEST.name(), e.getMessage(), HttpStatus.BAD_REQUEST.value()),
+        HttpStatus.BAD_REQUEST);
   }
 
 }

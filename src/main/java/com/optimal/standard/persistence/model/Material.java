@@ -61,7 +61,7 @@ public class Material {
   private String minApplicableTemp;
 
   @JoinTable(name = "construction_system_material", joinColumns = @JoinColumn(name = "material_id"), inverseJoinColumns =
-  @JoinColumn(name = "composition_id"))
+  @JoinColumn(name = "construction_system_id"))
   @ManyToMany(fetch = FetchType.EAGER)
   private Set<ConstructionSystem> constructionSystems;
 

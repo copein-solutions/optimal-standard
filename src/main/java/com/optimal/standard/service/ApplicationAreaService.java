@@ -16,7 +16,7 @@ import org.springframework.stereotype.Service;
 @AllArgsConstructor
 public class ApplicationAreaService {
 
-  private static final String APPLICATION_AREA_NOT_FOUND_MESSAGE = "Application area not found with ID: ";
+  public static final String APPLICATION_AREA_NOT_FOUND_MESSAGE = "Application area not found with ID: ";
 
   private final ApplicationAreaRepository applicationAreaRepository;
 
@@ -51,6 +51,10 @@ public class ApplicationAreaService {
         .findById(id)
         .map(ApplicationAreaMapperUtils::toDTO)
         .orElseThrow(() -> new EntityNotFoundException(APPLICATION_AREA_NOT_FOUND_MESSAGE + id));
+  }
+
+  public boolean existById(Long id) {
+    return this.applicationAreaRepository.existsById(id);
   }
 
 }

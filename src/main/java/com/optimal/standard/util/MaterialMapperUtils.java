@@ -1,13 +1,8 @@
 package com.optimal.standard.util;
 
-import static org.apache.commons.collections4.CollectionUtils.emptyIfNull;
-
-import com.optimal.standard.dto.CompositionDTO;
 import com.optimal.standard.dto.MaterialDTO;
 import com.optimal.standard.dto.ResponseMaterialDTO;
-import com.optimal.standard.persistence.model.ConstructionSystem;
 import com.optimal.standard.persistence.model.Material;
-import java.util.stream.Collectors;
 
 public interface MaterialMapperUtils {
 
@@ -25,11 +20,28 @@ public interface MaterialMapperUtils {
     responseMaterialDTO.setComponent(material.getComponent());
     responseMaterialDTO.setMinApplicableTemp(material.getMinApplicableTemp());
     responseMaterialDTO.setPotLife(material.getPotLife());
-    responseMaterialDTO.setCompositions(emptyIfNull(material.getConstructionSystems())
-        .stream()
-        .map(MaterialMapperUtils::toResponseDTO)
-        .collect(Collectors.toList()));
+//    responseMaterialDTO.setCompositions(emptyIfNull(material.getConstructionSystems())
+//        .stream()
+//        .map(MaterialMapperUtils::toResponseDTO)
+//        .collect(Collectors.toList()));
     return responseMaterialDTO;
+  }
+
+  static MaterialDTO toMaterialDTO(Material material) {
+    MaterialDTO materialDTO = new MaterialDTO();
+    materialDTO.setId(material.getId());
+    materialDTO.setProduct(material.getProduct());
+    materialDTO.setBrand(material.getBrand());
+    materialDTO.setPresentationQuantity(material.getPresentationQuantity());
+    materialDTO.setPresentationUnit(material.getPresentationUnit());
+    materialDTO.setPresentationPrice(material.getPresentationPrice());
+    materialDTO.setPriceDate(material.getPriceDate());
+    materialDTO.setCurrency(material.getCurrency());
+    materialDTO.setType(material.getType());
+    materialDTO.setComponent(material.getComponent());
+    materialDTO.setMinApplicableTemp(material.getMinApplicableTemp());
+    materialDTO.setPotLife(material.getPotLife());
+    return materialDTO;
   }
 
   static Material toMaterial(MaterialDTO material) {
@@ -46,17 +58,6 @@ public interface MaterialMapperUtils {
         .component(material.getComponent())
         .minApplicableTemp(material.getMinApplicableTemp())
         .potLife(material.getPotLife())
-        .build();
-  }
-
-  static CompositionDTO toResponseDTO(ConstructionSystem constructionSystem) {
-    return CompositionDTO
-        .builder()
-        .classification(constructionSystem.getClassification())
-        .totalConsumption(constructionSystem.getTotalConsumption())
-        .layers(constructionSystem.getLayers())
-        .applicationMode(constructionSystem.getApplicationMode())
-        .cured(constructionSystem.isCured())
         .build();
   }
 

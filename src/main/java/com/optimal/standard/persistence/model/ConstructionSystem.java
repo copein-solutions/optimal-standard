@@ -24,8 +24,6 @@ public class ConstructionSystem {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   protected Long id;
 
-  private String classification;
-
   private String totalConsumption;
 
   private Integer layers;
