@@ -1,7 +1,5 @@
 package com.optimal.standard.service;
 
-import static com.optimal.standard.service.ApplicationAreaService.APPLICATION_AREA_NOT_FOUND_MESSAGE;
-
 import com.optimal.standard.dto.ConstructionSystemDTO;
 import com.optimal.standard.dto.MaterialDTO;
 import com.optimal.standard.dto.TypeOfUseOfMaterial;
@@ -12,12 +10,16 @@ import com.optimal.standard.persistence.model.ConstructionSystemMaterial;
 import com.optimal.standard.persistence.model.Material;
 import com.optimal.standard.persistence.repository.ConstructionSystemMaterialRepository;
 import com.optimal.standard.persistence.repository.ConstructionSystemRepository;
+import com.optimal.standard.util.ConstructionSystemMapperUtils;
 import jakarta.persistence.EntityNotFoundException;
+import lombok.AllArgsConstructor;
+import org.springframework.stereotype.Service;
+
 import java.util.HashSet;
 import java.util.List;
 import java.util.stream.Collectors;
-import lombok.AllArgsConstructor;
-import org.springframework.stereotype.Service;
+
+import static com.optimal.standard.service.ApplicationAreaService.APPLICATION_AREA_NOT_FOUND_MESSAGE;
 
 @Service
 @AllArgsConstructor
@@ -39,10 +41,10 @@ public class ConstructionSystemService {
     ConstructionSystem constructionSystem = this.createConstructionSystem(applicationAreaId, request);
 
     List<ConstructionSystemMaterial> constructionSystemMaterials = request
-        .getMaterials()
-        .stream()
-        .map(typeOfUseOfMaterial -> this.buildConstructionSystemMaterial(typeOfUseOfMaterial, constructionSystem))
-        .collect(Collectors.toList());
+            .getMaterials()
+            .stream()
+            .map(typeOfUseOfMaterial -> this.buildConstructionSystemMaterial(typeOfUseOfMaterial, constructionSystem))
+            .collect(Collectors.toList());
 
     this.constructionSystemMaterialRepository.saveAll(constructionSystemMaterials);
   }
@@ -50,18 +52,18 @@ public class ConstructionSystemService {
   private ConstructionSystem createConstructionSystem(Long applicationAreaId, ConstructionSystemDTO request) {
     ApplicationArea applicationArea = this.applicationAreaService.findApplicationAreaById(applicationAreaId);
     return this.constructionSystemRepository.save(ConstructionSystem
-        .builder()
-        .id(request.getId())
-        .totalConsumption(request.getTotalConsumption())
-        .layers(request.getLayers())
-        .applicationMode(request.getApplicationMode())
-        .cured(request.isCured())
-        .applicationArea(applicationArea)
-        .build());
+            .builder()
+            .id(request.getId())
+            .totalConsumption(request.getTotalConsumption())
+            .layers(request.getLayers())
+            .applicationMode(request.getApplicationMode())
+            .cured(request.isCured())
+            .applicationArea(applicationArea)
+            .build());
   }
 
   private ConstructionSystemMaterial buildConstructionSystemMaterial(TypeOfUseOfMaterial typeOfUseOfMaterial,
-      ConstructionSystem constructionSystem) {
+                                                                     ConstructionSystem constructionSystem) {
     Material material = this.materialService.findMaterialById(typeOfUseOfMaterial.getId());
     return new ConstructionSystemMaterial(material, constructionSystem, typeOfUseOfMaterial.getTypeOfUse());
   }
@@ -74,17 +76,24 @@ public class ConstructionSystemService {
 
   private void validateTypeOfUseOfMaterials(List<TypeOfUseOfMaterial> typeOfUseOfMaterials) {
     List<Long> materialIds = typeOfUseOfMaterials
-        .stream()
-        .map(TypeOfUseOfMaterial::getId)
-        .toList();
+            .stream()
+            .map(TypeOfUseOfMaterial::getId)
+            .toList();
 
     if (!new HashSet<>(this.materialService
-        .findAllByIds(materialIds)
-        .stream()
-        .map(MaterialDTO::getId)
-        .toList()).containsAll(materialIds)) {
+            .findAllByIds(materialIds)
+            .stream()
+            .map(MaterialDTO::getId)
+            .toList()).containsAll(materialIds)) {
       throw new BadRequestException("Some of the materials provided do not exist");
     }
   }
 
+  public List<ConstructionSystemDTO> findAll() {
+    return this.constructionSystemRepository
+            .findAll()
+            .stream()
+            .map(ConstructionSystemMapperUtils::toDTO)
+            .toList();
+  }
 }

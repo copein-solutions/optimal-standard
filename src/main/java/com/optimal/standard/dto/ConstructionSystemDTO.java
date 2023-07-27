@@ -1,14 +1,17 @@
 package com.optimal.standard.dto;
 
-import java.util.List;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+
+import java.util.List;
 
 @Data
 @AllArgsConstructor
+@Builder
 public class ConstructionSystemDTO {
 
-  private Long Id;
+  private Long id;
 
   private String totalConsumption;
 
@@ -20,6 +23,8 @@ public class ConstructionSystemDTO {
 
   //  @NotNull
   private Long applicationAreaId;
+
+  private String applicationAreaName;
 
   private List<TypeOfUseOfMaterial> materials;
 

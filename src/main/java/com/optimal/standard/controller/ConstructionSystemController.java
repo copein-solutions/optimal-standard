@@ -4,10 +4,10 @@ import com.optimal.standard.dto.ConstructionSystemDTO;
 import com.optimal.standard.service.ConstructionSystemService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @AllArgsConstructor
@@ -16,6 +16,12 @@ public class ConstructionSystemController {
 
   private final ConstructionSystemService constructionSystemService;
 
+  @GetMapping()
+  public ResponseEntity<List<ConstructionSystemDTO>> findAll() {
+    return ResponseEntity
+            .ok()
+            .body(this.constructionSystemService.findAll());
+  }
 
   @PostMapping()
   public void create(@RequestBody @Valid ConstructionSystemDTO request) {
