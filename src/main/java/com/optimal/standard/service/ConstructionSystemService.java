@@ -6,9 +6,16 @@ import com.optimal.standard.dto.ConstructionSystemDTO;
 import com.optimal.standard.dto.MaterialDTO;
 import com.optimal.standard.dto.TypeOfUseOfMaterial;
 import com.optimal.standard.exception.BadRequestException;
+import com.optimal.standard.persistence.model.ApplicationArea;
+import com.optimal.standard.persistence.model.ConstructionSystem;
+import com.optimal.standard.persistence.model.ConstructionSystemMaterial;
+import com.optimal.standard.persistence.model.Material;
+import com.optimal.standard.persistence.repository.ConstructionSystemMaterialRepository;
+import com.optimal.standard.persistence.repository.ConstructionSystemRepository;
 import jakarta.persistence.EntityNotFoundException;
 import java.util.HashSet;
 import java.util.List;
+import java.util.stream.Collectors;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -20,10 +27,43 @@ public class ConstructionSystemService {
 
   private final MaterialService materialService;
 
+  private final ConstructionSystemRepository constructionSystemRepository;
+
+  private final ConstructionSystemMaterialRepository constructionSystemMaterialRepository;
+
   public void saveConstructionSystem(ConstructionSystemDTO request) {
-    this.validateApplicationArea(request.getApplicationAreaId());
+    Long applicationAreaId = request.getApplicationAreaId();
+    this.validateApplicationArea(applicationAreaId);
     this.validateTypeOfUseOfMaterials(request.getMaterials());
 
+    ConstructionSystem constructionSystem = this.createConstructionSystem(applicationAreaId, request);
+
+    List<ConstructionSystemMaterial> constructionSystemMaterials = request
+        .getMaterials()
+        .stream()
+        .map(typeOfUseOfMaterial -> this.buildConstructionSystemMaterial(typeOfUseOfMaterial, constructionSystem))
+        .collect(Collectors.toList());
+
+    this.constructionSystemMaterialRepository.saveAll(constructionSystemMaterials);
+  }
+
+  private ConstructionSystem createConstructionSystem(Long applicationAreaId, ConstructionSystemDTO request) {
+    ApplicationArea applicationArea = this.applicationAreaService.findApplicationAreaById(applicationAreaId);
+    return this.constructionSystemRepository.save(ConstructionSystem
+        .builder()
+        .id(request.getId())
+        .totalConsumption(request.getTotalConsumption())
+        .layers(request.getLayers())
+        .applicationMode(request.getApplicationMode())
+        .cured(request.isCured())
+        .applicationArea(applicationArea)
+        .build());
+  }
+
+  private ConstructionSystemMaterial buildConstructionSystemMaterial(TypeOfUseOfMaterial typeOfUseOfMaterial,
+      ConstructionSystem constructionSystem) {
+    Material material = this.materialService.findMaterialById(typeOfUseOfMaterial.getId());
+    return new ConstructionSystemMaterial(material, constructionSystem, typeOfUseOfMaterial.getTypeOfUse());
   }
 
   private void validateApplicationArea(Long applicationAreaId) {

@@ -28,7 +28,7 @@ public class ConstructionSystem {
 
   private Integer layers;
 
-  private Integer applicationMode;
+  private String applicationMode;
 
   private boolean cured;
 

@@ -53,6 +53,12 @@ public class ApplicationAreaService {
         .orElseThrow(() -> new EntityNotFoundException(APPLICATION_AREA_NOT_FOUND_MESSAGE + id));
   }
 
+  public ApplicationArea findApplicationAreaById(Long id) {
+    return this.applicationAreaRepository
+        .findById(id)
+        .orElseThrow(() -> new EntityNotFoundException(APPLICATION_AREA_NOT_FOUND_MESSAGE + id));
+  }
+
   public boolean existById(Long id) {
     return this.applicationAreaRepository.existsById(id);
   }

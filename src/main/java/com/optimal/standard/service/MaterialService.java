@@ -62,6 +62,12 @@ public class MaterialService {
         .orElseThrow(() -> new EntityNotFoundException(NOT_FOUND_MESSAGE + " ID: " + id));
   }
 
+  public Material findMaterialById(Long id) {
+    return this.materialRepository
+        .findById(id)
+        .orElseThrow(() -> new EntityNotFoundException(NOT_FOUND_MESSAGE + " ID: " + id));
+  }
+
   public List<MaterialDTO> findAllByType(String type) {
     return this.materialRepository
         .findAllByType(type)

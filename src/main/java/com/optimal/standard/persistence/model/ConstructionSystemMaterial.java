@@ -35,4 +35,10 @@ public class ConstructionSystemMaterial {
   @Enumerated(EnumType.STRING)
   private TypeOfUse typeOfUse;
 
+  public ConstructionSystemMaterial(Material material, ConstructionSystem constructionSystem, TypeOfUse typeOfUse) {
+    this.material = material;
+    this.constructionSystem = constructionSystem;
+    this.typeOfUse = typeOfUse;
+  }
+
 }
