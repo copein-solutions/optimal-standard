@@ -17,7 +17,7 @@ public class MaterialDTO {
   private Long id;
 
   @NotBlank
-  private String name;
+  private String product;
 
   @NotBlank
   private String brand;
@@ -42,5 +42,9 @@ public class MaterialDTO {
 
   @NotBlank
   private String component;
+
+  private String potLife;
+
+  private String minApplicableTemp;
 
 }

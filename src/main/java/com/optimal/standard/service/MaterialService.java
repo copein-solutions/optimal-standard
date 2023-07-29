@@ -3,6 +3,7 @@ package com.optimal.standard.service;
 
 import static com.optimal.standard.util.MaterialMapperUtils.toMaterial;
 import static java.util.stream.Collectors.toList;
+import static org.apache.commons.collections4.ListUtils.emptyIfNull;
 
 import com.optimal.standard.dto.MaterialDTO;
 import com.optimal.standard.dto.ResponseMaterialDTO;
@@ -30,6 +31,13 @@ public class MaterialService {
         .toList();
   }
 
+  public List<MaterialDTO> findAllByIds(List<Long> ids) {
+    return emptyIfNull(this.materialRepository.findAllById(ids))
+        .stream()
+        .map(MaterialMapperUtils::toMaterialDTO)
+        .toList();
+  }
+
   public void saveMaterial(MaterialDTO request) {
     //TODO: falta validar de alguna forma que no pueda ingresar materiales repetidos
     this.materialRepository.save(toMaterial(request));
@@ -51,6 +59,12 @@ public class MaterialService {
     return this.materialRepository
         .findById(id)
         .map(MaterialMapperUtils::toResponseDTO)
+        .orElseThrow(() -> new EntityNotFoundException(NOT_FOUND_MESSAGE + " ID: " + id));
+  }
+
+  public Material findMaterialById(Long id) {
+    return this.materialRepository
+        .findById(id)
         .orElseThrow(() -> new EntityNotFoundException(NOT_FOUND_MESSAGE + " ID: " + id));
   }
 

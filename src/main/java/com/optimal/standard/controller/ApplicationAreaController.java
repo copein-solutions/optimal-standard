@@ -11,36 +11,38 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @AllArgsConstructor
 @RestController
+@RequestMapping("/application_area")
 public class ApplicationAreaController {
 
   private final ApplicationAreaService applicationAreaService;
 
-  @GetMapping("/application_areas")
+  @GetMapping()
   public ResponseEntity<List<ApplicationAreaDTO>> findAll() {
     return ResponseEntity
         .ok()
         .body(this.applicationAreaService.findAll());
   }
 
-  @GetMapping("/application_area/{id}")
+  @GetMapping("/{id}")
   public ResponseEntity<ApplicationAreaDTO> findById(@PathVariable Long id) {
     return ResponseEntity
         .ok()
         .body(this.applicationAreaService.findById(id));
   }
 
-  @PostMapping("/application_area")
+  @PostMapping()
   public ResponseEntity<ApplicationAreaDTO> create(@RequestBody @Valid ApplicationAreaDTO request) {
     return ResponseEntity
         .ok()
         .body(this.applicationAreaService.saveApplicationArea(request));
   }
 
-  @PutMapping("/application_area/{id}")
+  @PutMapping("/{id}")
   public void update(@PathVariable Long id, @RequestBody @Valid ApplicationAreaDTO request) {
     this.applicationAreaService.updateApplicationArea(id, request);
   }
