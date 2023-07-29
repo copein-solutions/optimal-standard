@@ -23,9 +23,15 @@ public class ConstructionSystemController {
             .body(this.constructionSystemService.findAll());
   }
 
+  @GetMapping("/{id}")
+  public ResponseEntity<ConstructionSystemDTO> findById(@PathVariable Long id) {
+    return ResponseEntity
+            .ok()
+            .body(this.constructionSystemService.findById(id));
+  }
+
   @PostMapping()
   public void create(@RequestBody @Valid ConstructionSystemDTO request) {
     this.constructionSystemService.saveConstructionSystem(request);
   }
-
 }

@@ -25,6 +25,8 @@ import static com.optimal.standard.service.ApplicationAreaService.APPLICATION_AR
 @AllArgsConstructor
 public class ConstructionSystemService {
 
+  public static final String CONSTRUCTION_SYSTEM_NOT_FOUND_MESSAGE = "Consturction system not found with ID: ";
+
   private final ApplicationAreaService applicationAreaService;
 
   private final MaterialService materialService;
@@ -95,5 +97,12 @@ public class ConstructionSystemService {
             .stream()
             .map(ConstructionSystemMapperUtils::toDTO)
             .toList();
+  }
+
+  public ConstructionSystemDTO findById(Long id) {
+    return this.constructionSystemRepository
+            .findById(id)
+            .map(ConstructionSystemMapperUtils::toDTO)
+            .orElseThrow(() -> new EntityNotFoundException(CONSTRUCTION_SYSTEM_NOT_FOUND_MESSAGE + id));
   }
 }
