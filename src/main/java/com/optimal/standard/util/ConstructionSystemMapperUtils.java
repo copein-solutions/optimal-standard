@@ -24,6 +24,9 @@ public interface ConstructionSystemMapperUtils {
             .layers(constructionSystem.getLayers())
             .applicationMode(constructionSystem.getApplicationMode())
             .cured(constructionSystem.isCured())
+            .baseConditions(constructionSystem.getBaseConditions())
+            .supportConditions(constructionSystem.getSupportConditions())
+            .materialAreaRestrictions(constructionSystem.getMaterialAreaRestrictions())
             .applicationAreaId(constructionSystem.getApplicationArea().getId())
             .applicationAreaName(constructionSystem.getApplicationArea().getName())
             .build();

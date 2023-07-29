@@ -26,6 +26,12 @@ public class ConstructionSystemDTO {
 
   private String applicationAreaName;
 
+  private String baseConditions;
+
+  private String supportConditions;
+
+  private String materialAreaRestrictions;
+
   private List<TypeOfUseOfMaterial> materials;
 
 }

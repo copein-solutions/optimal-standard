@@ -1,16 +1,7 @@
 package com.optimal.standard.persistence.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import jakarta.persistence.*;
+import lombok.*;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -31,6 +22,12 @@ public class ConstructionSystem {
   private String applicationMode;
 
   private boolean cured;
+
+  private String baseConditions;
+
+  private String supportConditions;
+
+  private String materialAreaRestrictions;
 
   @ManyToOne
   @JoinColumn(name = "application_area_id")
