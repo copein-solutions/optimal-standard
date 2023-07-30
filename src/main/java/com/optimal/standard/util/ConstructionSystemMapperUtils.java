@@ -1,7 +1,9 @@
 package com.optimal.standard.util;
 
 import com.optimal.standard.dto.ConstructionSystemDTO;
+import com.optimal.standard.dto.TypeOfUseOfMaterial;
 import com.optimal.standard.persistence.model.ConstructionSystem;
+import com.optimal.standard.persistence.model.ConstructionSystemMaterial;
 
 public interface ConstructionSystemMapperUtils {
 
@@ -13,6 +15,9 @@ public interface ConstructionSystemMapperUtils {
             .layers(constructionSystem.getLayers())
             .applicationMode(constructionSystem.getApplicationMode())
             .cured(constructionSystem.isCured())
+            .baseConditions(constructionSystem.getBaseConditions())
+            .supportConditions(constructionSystem.getSupportConditions())
+            .materialAreaRestrictions(constructionSystem.getMaterialAreaRestrictions())
             .build();
   }
 
@@ -32,4 +37,14 @@ public interface ConstructionSystemMapperUtils {
             .build();
   }
 
+  static TypeOfUseOfMaterial toTypeOfUseMaterial(ConstructionSystemMaterial constructionSystemMaterial) {
+    return TypeOfUseOfMaterial
+            .builder()
+            .id(constructionSystemMaterial.getId())
+            .typeOfUse(constructionSystemMaterial.getTypeOfUse())
+            .coefficient(constructionSystemMaterial.getCoefficient())
+            .coefficientDescription(constructionSystemMaterial.getCoefficientDescription())
+            .materialDescription(constructionSystemMaterial.getMaterialDescription())
+            .build();
+  }
 }
