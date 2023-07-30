@@ -6,11 +6,11 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@Data
-@AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
 @Builder
-public class ConstructionSystemDTO {
+@Data
+public class ResponseConstructionSystemDTO {
 
   private Long id;
 
@@ -22,17 +22,14 @@ public class ConstructionSystemDTO {
 
   private boolean cured;
 
-  //  @NotNull
-  private Long applicationAreaId;
-
-  private String applicationAreaName;
-
   private String baseConditions;
 
   private String supportConditions;
 
   private String materialAreaRestrictions;
 
-  private List<TypeOfUseOfMaterial> materials;
+  private ApplicationAreaDTO applicationArea;
+
+  private List<ConstructionSystemMaterialDTO> materials;
 
 }
