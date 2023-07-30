@@ -20,12 +20,13 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static com.optimal.standard.service.ApplicationAreaService.APPLICATION_AREA_NOT_FOUND_MESSAGE;
+import static com.optimal.standard.util.ConstructionSystemMapperUtils.toConstructionSystem;
 
 @Service
 @AllArgsConstructor
 public class ConstructionSystemService {
 
-  public static final String CONSTRUCTION_SYSTEM_NOT_FOUND_MESSAGE = "Consturction system not found with ID: ";
+  public static final String CONSTRUCTION_SYSTEM_NOT_FOUND_MESSAGE = "Construction system not found with ID: ";
 
   private final ApplicationAreaService applicationAreaService;
 
@@ -61,6 +62,9 @@ public class ConstructionSystemService {
             .applicationMode(request.getApplicationMode())
             .cured(request.isCured())
             .applicationArea(applicationArea)
+            .baseConditions(request.getBaseConditions())
+            .supportConditions(request.getSupportConditions())
+            .materialAreaRestrictions(request.getMaterialAreaRestrictions())
             .build());
   }
 
@@ -100,9 +104,56 @@ public class ConstructionSystemService {
   }
 
   public ConstructionSystemDTO findById(Long id) {
-    return this.constructionSystemRepository
+
+    ConstructionSystemDTO constructionSystemDTO = this.constructionSystemRepository
             .findById(id)
             .map(ConstructionSystemMapperUtils::toDTO)
             .orElseThrow(() -> new EntityNotFoundException(CONSTRUCTION_SYSTEM_NOT_FOUND_MESSAGE + id));
+
+//    TODO definir finByCosntructionSystem
+//    constructionSystemDTO.setMaterials(this.constructionSystemMaterialRepository
+//            .findByConstructionSystem(id)
+//            .stream()
+//            .map(ConstructionSystemMapperUtils::toTypeOfUseMaterial)
+//            .toList());
+
+    return constructionSystemDTO;
   }
+
+  public void updateConstructionSystem(Long id, ConstructionSystemDTO request) {
+
+    Long applicationAreaId = request.getApplicationAreaId();
+    this.validateApplicationArea(applicationAreaId);
+
+    this.constructionSystemMaterialRepository
+            .findById(id)
+            .ifPresentOrElse(constructionSystemDatabase -> {
+              // TODO: No se porque me da error.
+//              ConstructionSystem constructionSystem = toConstructionSystem(request);
+//              constructionSystem.setId(id);
+//              this.constructionSystemMaterialRepository.save(constructionSystem);
+            }, () -> {
+              throw new EntityNotFoundException(CONSTRUCTION_SYSTEM_NOT_FOUND_MESSAGE + id);
+            });
+
+    ConstructionSystem constructionSystem = toConstructionSystem(request);
+    constructionSystem.setId(id);
+    this.validateTypeOfUseOfMaterials(request.getMaterials());
+
+    // TODO: Esta duplicando los materiales.
+    List<ConstructionSystemMaterial> constructionSystemMaterials = request
+            .getMaterials()
+            .stream()
+            .map(typeOfUseOfMaterial -> this.updateConstructionSystemMaterial(typeOfUseOfMaterial, constructionSystem))
+            .collect(Collectors.toList());
+
+    this.constructionSystemMaterialRepository.saveAll(constructionSystemMaterials);
+  }
+
+  private ConstructionSystemMaterial updateConstructionSystemMaterial(TypeOfUseOfMaterial typeOfUseOfMaterial, ConstructionSystem constructionSystem) {
+    Material material = this.materialService.findMaterialById(typeOfUseOfMaterial.getId());
+    return new ConstructionSystemMaterial(material, constructionSystem, typeOfUseOfMaterial.getTypeOfUse());
+  }
+
+
 }

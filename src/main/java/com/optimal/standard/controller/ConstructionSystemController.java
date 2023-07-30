@@ -34,4 +34,9 @@ public class ConstructionSystemController {
   public void create(@RequestBody @Valid ConstructionSystemDTO request) {
     this.constructionSystemService.saveConstructionSystem(request);
   }
+
+  @PutMapping("/{id}")
+  public void update(@PathVariable Long id, @RequestBody @Valid ConstructionSystemDTO request) {
+    this.constructionSystemService.updateConstructionSystem(id, request);
+  }
 }
