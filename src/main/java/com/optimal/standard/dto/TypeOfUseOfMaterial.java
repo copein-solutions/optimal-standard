@@ -12,6 +12,8 @@ public class TypeOfUseOfMaterial {
 
   private Long id;
 
+  private Long materialId;
+
   private TypeOfUse typeOfUse;
 
   private Integer coefficient;

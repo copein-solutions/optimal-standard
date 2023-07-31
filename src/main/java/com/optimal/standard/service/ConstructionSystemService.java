@@ -1,8 +1,5 @@
 package com.optimal.standard.service;
 
-import static com.optimal.standard.service.ApplicationAreaService.APPLICATION_AREA_NOT_FOUND_MESSAGE;
-import static com.optimal.standard.util.ConstructionSystemMapperUtils.toConstructionSystem;
-
 import com.optimal.standard.dto.ConstructionSystemDTO;
 import com.optimal.standard.dto.MaterialDTO;
 import com.optimal.standard.dto.ResponseConstructionSystemDTO;
@@ -16,11 +13,15 @@ import com.optimal.standard.persistence.repository.ConstructionSystemMaterialRep
 import com.optimal.standard.persistence.repository.ConstructionSystemRepository;
 import com.optimal.standard.util.ConstructionSystemMapperUtils;
 import jakarta.persistence.EntityNotFoundException;
+import lombok.AllArgsConstructor;
+import org.springframework.stereotype.Service;
+
 import java.util.HashSet;
 import java.util.List;
 import java.util.stream.Collectors;
-import lombok.AllArgsConstructor;
-import org.springframework.stereotype.Service;
+
+import static com.optimal.standard.service.ApplicationAreaService.APPLICATION_AREA_NOT_FOUND_MESSAGE;
+import static com.optimal.standard.util.ConstructionSystemMapperUtils.toConstructionSystem;
 
 @Service
 @AllArgsConstructor
@@ -71,7 +72,7 @@ public class ConstructionSystemService {
   private ConstructionSystemMaterial buildConstructionSystemMaterial(TypeOfUseOfMaterial typeOfUseOfMaterial,
       ConstructionSystem constructionSystem) {
     Material material = this.materialService.findMaterialById(typeOfUseOfMaterial.getId());
-    return new ConstructionSystemMaterial(material, constructionSystem, typeOfUseOfMaterial.getTypeOfUse());
+    return new ConstructionSystemMaterial(material, constructionSystem, typeOfUseOfMaterial.getTypeOfUse(), typeOfUseOfMaterial.getCoefficient(), typeOfUseOfMaterial.getCoefficientDescription(), typeOfUseOfMaterial.getMaterialDescription());
   }
 
   private void validateApplicationArea(Long applicationAreaId) {
@@ -82,9 +83,9 @@ public class ConstructionSystemService {
 
   private void validateTypeOfUseOfMaterials(List<TypeOfUseOfMaterial> typeOfUseOfMaterials) {
     List<Long> materialIds = typeOfUseOfMaterials
-        .stream()
-        .map(TypeOfUseOfMaterial::getId)
-        .toList();
+            .stream()
+            .map(TypeOfUseOfMaterial::getMaterialId)
+            .toList();
 
     if (!new HashSet<>(this.materialService
         .findAllByIds(materialIds)
@@ -115,22 +116,10 @@ public class ConstructionSystemService {
     Long applicationAreaId = request.getApplicationAreaId();
     this.validateApplicationArea(applicationAreaId);
 
-    this.constructionSystemMaterialRepository
-        .findById(id)
-        .ifPresentOrElse(constructionSystemDatabase -> {
-          // TODO: No se porque me da error.
-//              ConstructionSystem constructionSystem = toConstructionSystem(request);
-//              constructionSystem.setId(id);
-//              this.constructionSystemMaterialRepository.save(constructionSystem);
-        }, () -> {
-          throw new EntityNotFoundException(CONSTRUCTION_SYSTEM_NOT_FOUND_MESSAGE + id);
-        });
-
     ConstructionSystem constructionSystem = toConstructionSystem(request);
     constructionSystem.setId(id);
     this.validateTypeOfUseOfMaterials(request.getMaterials());
 
-    // TODO: Esta duplicando los materiales.
     List<ConstructionSystemMaterial> constructionSystemMaterials = request
         .getMaterials()
         .stream()
@@ -138,13 +127,22 @@ public class ConstructionSystemService {
         .collect(Collectors.toList());
 
     this.constructionSystemMaterialRepository.saveAll(constructionSystemMaterials);
+    this.constructionSystemRepository.save(constructionSystem);
   }
 
   private ConstructionSystemMaterial updateConstructionSystemMaterial(TypeOfUseOfMaterial typeOfUseOfMaterial,
-      ConstructionSystem constructionSystem) {
-    Material material = this.materialService.findMaterialById(typeOfUseOfMaterial.getId());
-    return new ConstructionSystemMaterial(material, constructionSystem, typeOfUseOfMaterial.getTypeOfUse());
+                                                                      ConstructionSystem constructionSystem) {
+    Material material = this.materialService.findMaterialById(typeOfUseOfMaterial.getMaterialId());
+    ConstructionSystemMaterial constructionSystemMaterial = new ConstructionSystemMaterial(
+            material,
+            constructionSystem,
+            typeOfUseOfMaterial.getTypeOfUse(),
+            typeOfUseOfMaterial.getCoefficient(),
+            typeOfUseOfMaterial.getCoefficientDescription(),
+            typeOfUseOfMaterial.getMaterialDescription()
+    );
+    if (typeOfUseOfMaterial.getId() != null) constructionSystemMaterial.setId(typeOfUseOfMaterial.getId());
+    return constructionSystemMaterial;
   }
-
 
 }

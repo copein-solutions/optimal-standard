@@ -33,10 +33,13 @@ public class ConstructionSystemMaterial {
 
   private String materialDescription;
 
-  public ConstructionSystemMaterial(Material material, ConstructionSystem constructionSystem, TypeOfUse typeOfUse) {
+  public ConstructionSystemMaterial(Material material, ConstructionSystem constructionSystem, TypeOfUse typeOfUse, Integer coefficient, String coefficientDescription, String materialDescription) {
     this.material = material;
     this.constructionSystem = constructionSystem;
     this.typeOfUse = typeOfUse;
+    this.coefficient = coefficient;
+    this.coefficientDescription = coefficientDescription;
+    this.materialDescription = materialDescription;
   }
 
 }

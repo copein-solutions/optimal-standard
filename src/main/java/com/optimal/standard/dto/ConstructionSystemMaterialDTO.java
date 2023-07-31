@@ -12,6 +12,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class ConstructionSystemMaterialDTO {
 
+  private Long id;
+
   private TypeOfUse typeOfUse;
 
   private MaterialDTO material;
