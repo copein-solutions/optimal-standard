@@ -116,15 +116,20 @@ public class ConstructionSystemService {
     Long applicationAreaId = request.getApplicationAreaId();
     this.validateApplicationArea(applicationAreaId);
 
+    ApplicationArea applicationArea = this.applicationAreaService.findApplicationAreaById(applicationAreaId);
+
     ConstructionSystem constructionSystem = toConstructionSystem(request);
     constructionSystem.setId(id);
-    this.validateTypeOfUseOfMaterials(request.getMaterials());
+    constructionSystem.setApplicationArea(applicationArea);
 
+    this.validateTypeOfUseOfMaterials(request.getMaterials());
     List<ConstructionSystemMaterial> constructionSystemMaterials = request
-        .getMaterials()
-        .stream()
-        .map(typeOfUseOfMaterial -> this.updateConstructionSystemMaterial(typeOfUseOfMaterial, constructionSystem))
-        .collect(Collectors.toList());
+            .getMaterials()
+            .stream()
+            .map(typeOfUseOfMaterial -> this.updateConstructionSystemMaterial(typeOfUseOfMaterial, constructionSystem))
+            .collect(Collectors.toList());
+
+    constructionSystem.setConstructionSystemMaterials(constructionSystemMaterials);
 
     this.constructionSystemMaterialRepository.saveAll(constructionSystemMaterials);
     this.constructionSystemRepository.save(constructionSystem);
