@@ -25,7 +25,4 @@ public interface MaterialRepository extends JpaRepository<Material, Long> {
   @Query("UPDATE Material m SET m.deleted = true WHERE m.id = :id")
   void markAsDeleted(Long id);
 
-//  @Query("UPDATE RestrictionValueCode v SET v.valueId = :newValueId, v.updateDate = CURRENT_TIME WHERE v.valueId = :oldValueId")
-//  void updateValueId(String oldValueId, String newValueId);
-
 }
