@@ -1,10 +1,11 @@
 package com.optimal.standard.dto;
 
-import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.util.List;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -12,24 +13,26 @@ import lombok.NoArgsConstructor;
 @Data
 public class ResponseConstructionSystemDTO {
 
-  private Long id;
+    private Long id;
 
-  private String totalConsumption;
+    private String totalConsumption;
 
-  private Integer layers;
+    private Integer layers;
 
-  private String applicationMode;
+    private String applicationMode;
 
-  private boolean cured;
+    private boolean cured;
 
-  private String baseConditions;
+    private String baseConditions;
 
-  private String supportConditions;
+    private String supportConditions;
 
-  private String materialAreaRestrictions;
+    private String materialAreaRestrictions;
 
-  private ApplicationAreaDTO applicationArea;
+    private String materialAreaDescription;
 
-  private List<ConstructionSystemMaterialDTO> materials;
+    private ApplicationAreaDTO applicationArea;
+
+    private List<ConstructionSystemMaterialDTO> materials;
 
 }

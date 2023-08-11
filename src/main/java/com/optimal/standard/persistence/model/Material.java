@@ -56,6 +56,8 @@ public class Material {
   @Column(nullable = false)
   private String component;
 
+  private boolean deleted;
+
   private String potLife;
 
   private String minApplicableTemp;

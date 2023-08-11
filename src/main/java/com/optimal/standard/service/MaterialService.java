@@ -25,14 +25,14 @@ public class MaterialService {
 
   public List<ResponseMaterialDTO> findAll() {
     return this.materialRepository
-        .findAll()
+        .findAllByDeletedFalse()
         .stream()
         .map(MaterialMapperUtils::toResponseDTO)
         .toList();
   }
 
   public List<MaterialDTO> findAllByIds(List<Long> ids) {
-    return emptyIfNull(this.materialRepository.findAllById(ids))
+    return emptyIfNull(this.materialRepository.findMaterialsByIdInAndDeletedFalse(ids))
         .stream()
         .map(MaterialMapperUtils::toMaterialDTO)
         .toList();
@@ -57,7 +57,7 @@ public class MaterialService {
 
   public MaterialDTO findById(Long id) {
     return this.materialRepository
-        .findById(id)
+        .findByIdAndDeletedFalse(id)
         .map(MaterialMapperUtils::toResponseDTO)
         .orElseThrow(() -> new EntityNotFoundException(NOT_FOUND_MESSAGE + " ID: " + id));
   }
@@ -70,10 +70,14 @@ public class MaterialService {
 
   public List<MaterialDTO> findAllByType(String type) {
     return this.materialRepository
-        .findAllByType(type)
+        .findAllByTypeAndDeletedFalse(type)
         .stream()
         .map(MaterialMapperUtils::toResponseDTO)
         .collect(toList());
+  }
+
+  public void deleteMaterial(Long id) {
+    this.materialRepository.markAsDeleted(id);
   }
 
 }
