@@ -4,17 +4,19 @@ import com.optimal.standard.persistence.model.TypeOfUse;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
-@AllArgsConstructor
 @Builder
-public class TypeOfUseOfMaterial {
+@AllArgsConstructor
+@NoArgsConstructor
+public class ConstructionSystemMaterialDTO {
 
   private Long id;
 
-  private Long materialId;
-
   private TypeOfUse typeOfUse;
+
+  private MaterialDTO material;
 
   private Integer coefficient;
 
