@@ -3,6 +3,7 @@ package com.optimal.standard.service;
 
 import static com.optimal.standard.util.MaterialMapperUtils.toMaterial;
 import static java.util.stream.Collectors.toList;
+import static org.apache.commons.collections4.CollectionUtils.isNotEmpty;
 import static org.apache.commons.collections4.ListUtils.emptyIfNull;
 
 import com.optimal.standard.dto.MaterialDTO;
@@ -69,7 +70,7 @@ public class MaterialService {
 
   private Material findMaterialEntityById(Long id) {
     return this.materialRepository
-        .findById(id)
+        .findByIdAndDeletedFalse(id)
         .orElseThrow(() -> new EntityNotFoundException(NOT_FOUND_MESSAGE + id));
   }
 
@@ -83,11 +84,9 @@ public class MaterialService {
 
   public void deleteMaterial(Long id) {
     Material material = this.findMaterialEntityById(id);
-    emptyIfNull(material.getConstructionSystems())
-        .stream()
-        .findFirst()
-        .orElseThrow(() -> new BadRequestException(
-            "Deleting the Material: " + id + " is not possible due to references from a Construction System."));
+    if (isNotEmpty(material.getConstructionSystems())) {
+      throw new BadRequestException("Deleting the Material: " + id + " is not possible due to references from a Construction System.");
+    }
     this.materialRepository.markAsDeleted(id);
   }
 
