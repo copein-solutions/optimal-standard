@@ -16,6 +16,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.Where;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -65,6 +66,7 @@ public class Material {
   @JoinTable(name = "construction_system_material", joinColumns = @JoinColumn(name = "material_id"), inverseJoinColumns =
   @JoinColumn(name = "construction_system_id"))
   @ManyToMany(fetch = FetchType.EAGER)
+  @Where(clause = "deleted = false")
   private List<ConstructionSystem> constructionSystems;
 
 
