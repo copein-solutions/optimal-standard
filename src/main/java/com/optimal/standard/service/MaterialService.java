@@ -7,6 +7,7 @@ import static org.apache.commons.collections4.ListUtils.emptyIfNull;
 
 import com.optimal.standard.dto.MaterialDTO;
 import com.optimal.standard.dto.ResponseMaterialDTO;
+import com.optimal.standard.exception.BadRequestException;
 import com.optimal.standard.persistence.model.Material;
 import com.optimal.standard.persistence.repository.MaterialRepository;
 import com.optimal.standard.util.MaterialMapperUtils;
@@ -19,7 +20,7 @@ import org.springframework.stereotype.Service;
 @AllArgsConstructor
 public class MaterialService {
 
-  private static final String NOT_FOUND_MESSAGE = "Material not found with";
+  private static final String NOT_FOUND_MESSAGE = "Material not found with ID: ";
 
   private final MaterialRepository materialRepository;
 
@@ -51,7 +52,7 @@ public class MaterialService {
           material.setId(materialDatabase.getId());
           this.materialRepository.save(material);
         }, () -> {
-          throw new EntityNotFoundException(NOT_FOUND_MESSAGE + " ID: " + id);
+          throw new EntityNotFoundException(NOT_FOUND_MESSAGE + id);
         });
   }
 
@@ -59,13 +60,17 @@ public class MaterialService {
     return this.materialRepository
         .findByIdAndDeletedFalse(id)
         .map(MaterialMapperUtils::toResponseDTO)
-        .orElseThrow(() -> new EntityNotFoundException(NOT_FOUND_MESSAGE + " ID: " + id));
+        .orElseThrow(() -> new EntityNotFoundException(NOT_FOUND_MESSAGE + id));
   }
 
   public Material findMaterialById(Long id) {
+    return this.findMaterialEntityById(id);
+  }
+
+  private Material findMaterialEntityById(Long id) {
     return this.materialRepository
         .findById(id)
-        .orElseThrow(() -> new EntityNotFoundException(NOT_FOUND_MESSAGE + " ID: " + id));
+        .orElseThrow(() -> new EntityNotFoundException(NOT_FOUND_MESSAGE + id));
   }
 
   public List<MaterialDTO> findAllByType(String type) {
@@ -77,6 +82,12 @@ public class MaterialService {
   }
 
   public void deleteMaterial(Long id) {
+    Material material = this.findMaterialEntityById(id);
+    emptyIfNull(material.getConstructionSystems())
+        .stream()
+        .findFirst()
+        .orElseThrow(() -> new BadRequestException(
+            "Deleting the Material: " + id + " is not possible due to references from a Construction System."));
     this.materialRepository.markAsDeleted(id);
   }
 
