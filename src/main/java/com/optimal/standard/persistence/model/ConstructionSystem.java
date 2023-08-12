@@ -43,6 +43,8 @@ public class ConstructionSystem {
 
   private String materialAreaRestrictions;
 
+  private String materialAreaDescription;
+
   @ManyToOne
   @JoinColumn(name = "application_area_id")
   private ApplicationArea applicationArea;

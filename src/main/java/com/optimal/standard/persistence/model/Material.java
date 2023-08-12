@@ -10,7 +10,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import java.time.LocalDate;
-import java.util.Set;
+import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -56,6 +56,8 @@ public class Material {
   @Column(nullable = false)
   private String component;
 
+  private boolean deleted;
+
   private String potLife;
 
   private String minApplicableTemp;
@@ -63,7 +65,7 @@ public class Material {
   @JoinTable(name = "construction_system_material", joinColumns = @JoinColumn(name = "material_id"), inverseJoinColumns =
   @JoinColumn(name = "construction_system_id"))
   @ManyToMany(fetch = FetchType.EAGER)
-  private Set<ConstructionSystem> constructionSystems;
+  private List<ConstructionSystem> constructionSystems;
 
 
 }
