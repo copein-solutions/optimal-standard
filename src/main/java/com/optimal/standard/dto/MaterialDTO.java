@@ -47,4 +47,6 @@ public class MaterialDTO {
 
   private String minApplicableTemp;
 
+  private Double unitPrice;
+
 }

@@ -7,7 +7,6 @@ import static org.apache.commons.collections4.CollectionUtils.isNotEmpty;
 import static org.apache.commons.collections4.ListUtils.emptyIfNull;
 
 import com.optimal.standard.dto.MaterialDTO;
-import com.optimal.standard.dto.ResponseMaterialDTO;
 import com.optimal.standard.exception.BadRequestException;
 import com.optimal.standard.persistence.model.Material;
 import com.optimal.standard.persistence.repository.MaterialRepository;
@@ -25,11 +24,11 @@ public class MaterialService {
 
   private final MaterialRepository materialRepository;
 
-  public List<ResponseMaterialDTO> findAll() {
+  public List<MaterialDTO> findAll() {
     return this.materialRepository
         .findAllByDeletedFalse()
         .stream()
-        .map(MaterialMapperUtils::toResponseDTO)
+        .map(MaterialMapperUtils::toMaterialDTO)
         .toList();
   }
 
@@ -60,7 +59,7 @@ public class MaterialService {
   public MaterialDTO findById(Long id) {
     return this.materialRepository
         .findByIdAndDeletedFalse(id)
-        .map(MaterialMapperUtils::toResponseDTO)
+        .map(MaterialMapperUtils::toMaterialDTO)
         .orElseThrow(() -> new EntityNotFoundException(NOT_FOUND_MESSAGE + id));
   }
 
@@ -78,7 +77,7 @@ public class MaterialService {
     return this.materialRepository
         .findAllByTypeAndDeletedFalse(type)
         .stream()
-        .map(MaterialMapperUtils::toResponseDTO)
+        .map(MaterialMapperUtils::toMaterialDTO)
         .collect(toList());
   }
 

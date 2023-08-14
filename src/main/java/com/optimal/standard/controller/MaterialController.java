@@ -1,7 +1,6 @@
 package com.optimal.standard.controller;
 
 import com.optimal.standard.dto.MaterialDTO;
-import com.optimal.standard.dto.ResponseMaterialDTO;
 import com.optimal.standard.service.MaterialService;
 import jakarta.validation.Valid;
 import java.util.List;
@@ -28,7 +27,7 @@ public class MaterialController {
   private final MaterialService materialService;
 
   @GetMapping()
-  public ResponseEntity<List<ResponseMaterialDTO>> findAll() {
+  public ResponseEntity<List<MaterialDTO>> findAll() {
     return ResponseEntity
         .ok()
         .body(this.materialService.findAll());
