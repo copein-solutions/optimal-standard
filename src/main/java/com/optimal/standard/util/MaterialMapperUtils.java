@@ -1,30 +1,12 @@
 package com.optimal.standard.util;
 
 import com.optimal.standard.dto.MaterialDTO;
-import com.optimal.standard.dto.ResponseMaterialDTO;
 import com.optimal.standard.persistence.model.Material;
 
 public interface MaterialMapperUtils {
 
-  static ResponseMaterialDTO toResponseDTO(Material material) {
-    ResponseMaterialDTO responseMaterialDTO = new ResponseMaterialDTO();
-    responseMaterialDTO.setId(material.getId());
-    responseMaterialDTO.setProduct(material.getProduct());
-    responseMaterialDTO.setBrand(material.getBrand());
-    responseMaterialDTO.setPresentationQuantity(material.getPresentationQuantity());
-    responseMaterialDTO.setPresentationUnit(material.getPresentationUnit());
-    responseMaterialDTO.setPresentationPrice(material.getPresentationPrice());
-    responseMaterialDTO.setPriceDate(material.getPriceDate());
-    responseMaterialDTO.setCurrency(material.getCurrency());
-    responseMaterialDTO.setType(material.getType());
-    responseMaterialDTO.setComponent(material.getComponent());
-    responseMaterialDTO.setMinApplicableTemp(material.getMinApplicableTemp());
-    responseMaterialDTO.setPotLife(material.getPotLife());
-//    responseMaterialDTO.setCompositions(emptyIfNull(material.getConstructionSystems())
-//        .stream()
-//        .map(MaterialMapperUtils::toResponseDTO)
-//        .collect(Collectors.toList()));
-    return responseMaterialDTO;
+  static Double getUnitPrice(Material material) {
+    return material.getPresentationPrice() / material.getPresentationQuantity();
   }
 
   static MaterialDTO toMaterialDTO(Material material) {
@@ -41,6 +23,7 @@ public interface MaterialMapperUtils {
     materialDTO.setComponent(material.getComponent());
     materialDTO.setMinApplicableTemp(material.getMinApplicableTemp());
     materialDTO.setPotLife(material.getPotLife());
+    materialDTO.setUnitPrice(getUnitPrice(material));
     return materialDTO;
   }
 
