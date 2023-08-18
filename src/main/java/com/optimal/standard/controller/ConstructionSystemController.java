@@ -17,7 +17,7 @@ public class ConstructionSystemController {
     private final ConstructionSystemService constructionSystemService;
 
     @GetMapping("/user/construction_system")
-    public ResponseEntity<List<ConstructionSystemDTO>> findAll() {
+    public ResponseEntity<List<ResponseConstructionSystemDTO>> findAll() {
         return ResponseEntity
                 .ok()
                 .body(this.constructionSystemService.findAll());
