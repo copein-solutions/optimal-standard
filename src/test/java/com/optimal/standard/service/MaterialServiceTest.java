@@ -8,7 +8,9 @@ import static org.mockito.Mockito.when;
 
 import com.optimal.standard.dto.MaterialDTO;
 import com.optimal.standard.persistence.model.Material;
+import com.optimal.standard.persistence.repository.MaterialFileRepository;
 import com.optimal.standard.persistence.repository.MaterialRepository;
+import com.optimal.standard.service.files.LocalFilesService;
 import java.time.LocalDate;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
@@ -25,11 +27,17 @@ class MaterialServiceTest {
   @Mock
   private MaterialRepository materialRepository;
 
+  @Mock
+  private MaterialFileRepository materialFileRepository;
+
+  @Mock
+  private LocalFilesService localFilesService;
+
   private MaterialService materialService;
 
   @BeforeEach
   void init() {
-    this.materialService = new MaterialService(this.materialRepository);
+    this.materialService = new MaterialService(this.materialRepository, this.localFilesService, this.materialFileRepository);
   }
 
   @Test
@@ -63,9 +71,9 @@ class MaterialServiceTest {
 
   @Test
   void findAllOk() {
-    when(this.materialRepository.findAll()).thenReturn(this.mockMaterials());
+    when(this.materialRepository.findAllByDeletedFalse()).thenReturn(this.mockMaterials());
 
-    List<ResponseMaterialDTO> responseMaterials = this.materialService.findAll();
+    List<MaterialDTO> responseMaterials = this.materialService.findAll();
 
     assertNotNull(responseMaterials);
     assertEquals(2, responseMaterials.size());

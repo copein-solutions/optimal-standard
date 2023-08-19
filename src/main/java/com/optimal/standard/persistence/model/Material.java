@@ -9,7 +9,9 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
+import jakarta.persistence.OneToMany;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -68,6 +70,11 @@ public class Material {
   @ManyToMany(fetch = FetchType.EAGER)
   @Where(clause = "deleted = false")
   private List<ConstructionSystem> constructionSystems;
+
+
+  @OneToMany(mappedBy = "material", fetch = FetchType.EAGER)
+  @Where(clause = "type = 'PERMANENT'")
+  private List<MaterialFiles> materialFiles = new ArrayList<>();
 
 
 }
