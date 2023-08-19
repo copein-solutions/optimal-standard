@@ -13,26 +13,28 @@ import java.util.List;
 @Data
 public class ResponseConstructionSystemDTO {
 
-    private Long id;
+  private Long id;
 
-    private String totalConsumption;
+  private String totalConsumption;
 
-    private Integer layers;
+  private Integer layers;
 
-    private String applicationMode;
+  private String applicationMode;
 
-    private boolean cured;
+  private boolean cured;
 
-    private String baseConditions;
+  private double totalPrice;
 
-    private String supportConditions;
+  private String baseConditions;
 
-    private String materialAreaRestrictions;
+  private String supportConditions;
 
-    private String materialAreaDescription;
+  private String materialAreaRestrictions;
 
-    private ApplicationAreaDTO applicationArea;
+  private String materialAreaDescription;
 
-    private List<ConstructionSystemMaterialDTO> materials;
+  private ApplicationAreaDTO applicationArea;
+
+  private List<ConstructionSystemMaterialDTO> materials;
 
 }

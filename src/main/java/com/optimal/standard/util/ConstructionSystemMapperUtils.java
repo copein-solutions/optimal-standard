@@ -14,76 +14,77 @@ import static com.optimal.standard.util.MaterialMapperUtils.toMaterialDTO;
 
 public interface ConstructionSystemMapperUtils {
 
-    static ConstructionSystem toConstructionSystem(ConstructionSystemDTO constructionSystem, ApplicationArea applicationArea) {
-        return ConstructionSystem
-                .builder()
-                .id(constructionSystem.getId())
-                .totalConsumption(constructionSystem.getTotalConsumption())
-                .layers(constructionSystem.getLayers())
-                .applicationMode(constructionSystem.getApplicationMode())
-                .cured(constructionSystem.isCured())
-                .applicationArea(applicationArea)
-                .baseConditions(constructionSystem.getBaseConditions())
-                .supportConditions(constructionSystem.getSupportConditions())
-                .materialAreaRestrictions(constructionSystem.getMaterialAreaRestrictions())
-                .materialAreaDescription(constructionSystem.getMaterialAreaDescription())
-                .build();
-    }
+  static ConstructionSystem toConstructionSystem(ConstructionSystemDTO constructionSystem, ApplicationArea applicationArea) {
+    return ConstructionSystem
+            .builder()
+            .id(constructionSystem.getId())
+            .totalConsumption(constructionSystem.getTotalConsumption())
+            .layers(constructionSystem.getLayers())
+            .applicationMode(constructionSystem.getApplicationMode())
+            .cured(constructionSystem.isCured())
+            .applicationArea(applicationArea)
+            .baseConditions(constructionSystem.getBaseConditions())
+            .supportConditions(constructionSystem.getSupportConditions())
+            .materialAreaRestrictions(constructionSystem.getMaterialAreaRestrictions())
+            .materialAreaDescription(constructionSystem.getMaterialAreaDescription())
+            .build();
+  }
 
-    static ConstructionSystemDTO toDTO(ConstructionSystem constructionSystem) {
-        return ConstructionSystemDTO
-                .builder()
-                .id(constructionSystem.getId())
-                .totalConsumption(constructionSystem.getTotalConsumption())
-                .layers(constructionSystem.getLayers())
-                .applicationMode(constructionSystem.getApplicationMode())
-                .cured(constructionSystem.isCured())
-                .baseConditions(constructionSystem.getBaseConditions())
-                .supportConditions(constructionSystem.getSupportConditions())
-                .materialAreaRestrictions(constructionSystem.getMaterialAreaRestrictions())
-                .applicationAreaId(constructionSystem
-                        .getApplicationArea()
-                        .getId())
-                .applicationAreaName(constructionSystem
-                        .getApplicationArea()
-                        .getName())
-                .build();
-    }
+  static ConstructionSystemDTO toDTO(ConstructionSystem constructionSystem) {
+    return ConstructionSystemDTO
+            .builder()
+            .id(constructionSystem.getId())
+            .totalConsumption(constructionSystem.getTotalConsumption())
+            .layers(constructionSystem.getLayers())
+            .applicationMode(constructionSystem.getApplicationMode())
+            .cured(constructionSystem.isCured())
+            .baseConditions(constructionSystem.getBaseConditions())
+            .supportConditions(constructionSystem.getSupportConditions())
+            .materialAreaRestrictions(constructionSystem.getMaterialAreaRestrictions())
+            .applicationAreaId(constructionSystem
+                    .getApplicationArea()
+                    .getId())
+            .applicationAreaName(constructionSystem
+                    .getApplicationArea()
+                    .getName())
+            .build();
+  }
 
-    static ResponseConstructionSystemDTO toResponseDTO(ConstructionSystem constructionSystem) {
-        return ResponseConstructionSystemDTO
-                .builder()
-                .id(constructionSystem.getId())
-                .totalConsumption(constructionSystem.getTotalConsumption())
-                .layers(constructionSystem.getLayers())
-                .applicationMode(constructionSystem.getApplicationMode())
-                .cured(constructionSystem.isCured())
-                .baseConditions(constructionSystem.getBaseConditions())
-                .supportConditions(constructionSystem.getSupportConditions())
-                .materialAreaRestrictions(constructionSystem.getMaterialAreaRestrictions())
-                .materialAreaDescription(constructionSystem.getMaterialAreaDescription())
-                .applicationArea(ApplicationAreaMapperUtils.toDTO(constructionSystem.getApplicationArea()))
-                .materials(toConstructionSystemMaterials(constructionSystem.getConstructionSystemMaterials()))
-                .build();
-    }
+  static ResponseConstructionSystemDTO toResponseDTO(ConstructionSystem constructionSystem) {
+    return ResponseConstructionSystemDTO
+            .builder()
+            .id(constructionSystem.getId())
+            .totalConsumption(constructionSystem.getTotalConsumption())
+            .layers(constructionSystem.getLayers())
+            .applicationMode(constructionSystem.getApplicationMode())
+            .cured(constructionSystem.isCured())
+            .totalPrice(constructionSystem.getTotalPrice())
+            .baseConditions(constructionSystem.getBaseConditions())
+            .supportConditions(constructionSystem.getSupportConditions())
+            .materialAreaRestrictions(constructionSystem.getMaterialAreaRestrictions())
+            .materialAreaDescription(constructionSystem.getMaterialAreaDescription())
+            .applicationArea(ApplicationAreaMapperUtils.toDTO(constructionSystem.getApplicationArea()))
+            .materials(toConstructionSystemMaterials(constructionSystem.getConstructionSystemMaterials()))
+            .build();
+  }
 
-    static List<ConstructionSystemMaterialDTO> toConstructionSystemMaterials(List<ConstructionSystemMaterial> constructionSystemMaterials) {
-        return constructionSystemMaterials
-                .stream()
-                .map(ConstructionSystemMapperUtils::toConstructionSystemMaterial)
-                .collect(Collectors.toList());
-    }
+  static List<ConstructionSystemMaterialDTO> toConstructionSystemMaterials(List<ConstructionSystemMaterial> constructionSystemMaterials) {
+    return constructionSystemMaterials
+            .stream()
+            .map(ConstructionSystemMapperUtils::toConstructionSystemMaterial)
+            .collect(Collectors.toList());
+  }
 
-    static ConstructionSystemMaterialDTO toConstructionSystemMaterial(ConstructionSystemMaterial constructionSystemMaterial) {
-        return ConstructionSystemMaterialDTO
-                .builder()
-                .id(constructionSystemMaterial.getId())
-                .typeOfUse(constructionSystemMaterial.getTypeOfUse())
-                .material(toMaterialDTO(constructionSystemMaterial.getMaterial()))
-                .coefficient(constructionSystemMaterial.getCoefficient())
-                .coefficientDescription(constructionSystemMaterial.getCoefficientDescription())
-                .materialDescription(constructionSystemMaterial.getMaterialDescription())
-                .build();
-    }
+  static ConstructionSystemMaterialDTO toConstructionSystemMaterial(ConstructionSystemMaterial constructionSystemMaterial) {
+    return ConstructionSystemMaterialDTO
+            .builder()
+            .id(constructionSystemMaterial.getId())
+            .typeOfUse(constructionSystemMaterial.getTypeOfUse())
+            .material(toMaterialDTO(constructionSystemMaterial.getMaterial()))
+            .coefficient(constructionSystemMaterial.getCoefficient())
+            .coefficientDescription(constructionSystemMaterial.getCoefficientDescription())
+            .materialDescription(constructionSystemMaterial.getMaterialDescription())
+            .build();
+  }
 
 }
