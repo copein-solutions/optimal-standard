@@ -20,6 +20,7 @@ public interface ConstructionSystemMapperUtils {
             .id(constructionSystem.getId())
             .totalConsumption(constructionSystem.getTotalConsumption())
             .layers(constructionSystem.getLayers())
+            .totalPrice(constructionSystem.getTotalPrice())
             .applicationMode(constructionSystem.getApplicationMode())
             .cured(constructionSystem.isCured())
             .applicationArea(applicationArea)
