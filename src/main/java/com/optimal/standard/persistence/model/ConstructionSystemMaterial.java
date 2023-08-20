@@ -27,7 +27,7 @@ public class ConstructionSystemMaterial {
     @Enumerated(EnumType.STRING)
     private TypeOfUse typeOfUse;
 
-    private Double coefficient;
+    private double coefficient;
 
     private String coefficientDescription;
 
