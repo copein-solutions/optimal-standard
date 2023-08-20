@@ -1,7 +1,11 @@
 package com.optimal.standard.util;
 
+import static org.apache.commons.collections4.ListUtils.emptyIfNull;
+
+import com.optimal.standard.dto.FilesDTO;
 import com.optimal.standard.dto.MaterialDTO;
 import com.optimal.standard.persistence.model.Material;
+import com.optimal.standard.persistence.model.MaterialFiles;
 
 public interface MaterialMapperUtils {
 
@@ -24,7 +28,21 @@ public interface MaterialMapperUtils {
     materialDTO.setMinApplicableTemp(material.getMinApplicableTemp());
     materialDTO.setPotLife(material.getPotLife());
     materialDTO.setUnitPrice(getUnitPrice(material));
+    materialDTO.setFiles(emptyIfNull(material.getMaterialFiles())
+        .stream()
+        .map(MaterialMapperUtils::toDTO)
+        .toList());
     return materialDTO;
+  }
+
+  static FilesDTO toDTO(MaterialFiles materialFiles) {
+    return FilesDTO
+        .builder()
+        .id(materialFiles.getId())
+        .name(materialFiles.getName())
+        .type(materialFiles.getType())
+        .size(materialFiles.getSize())
+        .build();
   }
 
   static Material toMaterial(MaterialDTO material) {

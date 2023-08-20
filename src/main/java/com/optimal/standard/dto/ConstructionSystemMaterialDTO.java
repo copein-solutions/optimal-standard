@@ -12,16 +12,16 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class ConstructionSystemMaterialDTO {
 
-  private Long id;
+    private Long id;
 
-  private TypeOfUse typeOfUse;
+    private TypeOfUse typeOfUse;
 
-  private MaterialDTO material;
+    private MaterialDTO material;
 
-  private Integer coefficient;
+    private Double coefficient;
 
-  private String coefficientDescription;
+    private String coefficientDescription;
 
-  private String materialDescription;
+    private String materialDescription;
 
 }

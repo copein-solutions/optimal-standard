@@ -36,3 +36,4 @@ build/
 *.swp
 **.DS_Store
 inbound
+uploads

@@ -20,9 +20,11 @@ import org.springframework.stereotype.Service;
 @AllArgsConstructor
 public class MaterialService {
 
-  private static final String NOT_FOUND_MESSAGE = "Material not found with ID: ";
+  private static final String MATERIAL_NOT_FOUND_MESSAGE = "Material not found with ID: ";
 
   private final MaterialRepository materialRepository;
+
+  private final MaterialFileService materialFileService;
 
   public List<MaterialDTO> findAll() {
     return this.materialRepository
@@ -41,18 +43,21 @@ public class MaterialService {
 
   public void saveMaterial(MaterialDTO request) {
     //TODO: falta validar de alguna forma que no pueda ingresar materiales repetidos
-    this.materialRepository.save(toMaterial(request));
+    Material material = this.materialRepository.save(toMaterial(request));
+    this.materialFileService.saveMaterialFileAndMoveTempFile(request.getFiles(), material);
   }
 
   public void updateMaterial(Long id, MaterialDTO request) {
     this.materialRepository
         .findById(id)
         .ifPresentOrElse(materialDatabase -> {
+          Long materialId = materialDatabase.getId();
+          this.materialFileService.processMaterialFiles(materialDatabase, request.getFiles());
           Material material = toMaterial(request);
-          material.setId(materialDatabase.getId());
+          material.setId(materialId);
           this.materialRepository.save(material);
         }, () -> {
-          throw new EntityNotFoundException(NOT_FOUND_MESSAGE + id);
+          throw new EntityNotFoundException(MATERIAL_NOT_FOUND_MESSAGE + id);
         });
   }
 
@@ -60,17 +65,23 @@ public class MaterialService {
     return this.materialRepository
         .findByIdAndDeletedFalse(id)
         .map(MaterialMapperUtils::toMaterialDTO)
-        .orElseThrow(() -> new EntityNotFoundException(NOT_FOUND_MESSAGE + id));
+        .orElseThrow(() -> new EntityNotFoundException(MATERIAL_NOT_FOUND_MESSAGE + id));
   }
 
   public Material findMaterialById(Long id) {
     return this.findMaterialEntityById(id);
   }
 
-  private Material findMaterialEntityById(Long id) {
+  public Material findMaterialByIdWithoutException(Long id) {
     return this.materialRepository
         .findByIdAndDeletedFalse(id)
-        .orElseThrow(() -> new EntityNotFoundException(NOT_FOUND_MESSAGE + id));
+        .orElse(null);
+  }
+
+  public Material findMaterialEntityById(Long id) {
+    return this.materialRepository
+        .findByIdAndDeletedFalse(id)
+        .orElseThrow(() -> new EntityNotFoundException(MATERIAL_NOT_FOUND_MESSAGE + id));
   }
 
   public List<MaterialDTO> findAllByType(String type) {

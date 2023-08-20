@@ -3,6 +3,7 @@ package com.optimal.standard.dto;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import java.time.LocalDate;
+import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -48,5 +49,7 @@ public class MaterialDTO {
   private String minApplicableTemp;
 
   private Double unitPrice;
+
+  private List<FilesDTO> files;
 
 }

@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 @AllArgsConstructor
 @RestController
 @Validated
-@RequestMapping("/material")
+@RequestMapping("/admin/material")
 public class MaterialController {
 
   private final MaterialService materialService;
@@ -56,7 +56,6 @@ public class MaterialController {
   public void update(@PathVariable Long id, @RequestBody @Valid MaterialDTO request) {
     this.materialService.updateMaterial(id, request);
   }
-
 
   @DeleteMapping("/{id}")
   public void delete(@PathVariable Long id) {
