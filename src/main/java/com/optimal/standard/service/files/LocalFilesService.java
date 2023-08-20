@@ -1,6 +1,10 @@
 package com.optimal.standard.service.files;
 
+import static com.optimal.standard.util.TextUtils.sanitizeFileName;
+import static java.util.Objects.requireNonNull;
+
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -23,6 +27,9 @@ public class LocalFilesService {
 
   private static final String ERROR_WRITING_LOCAL_FILE = "Error writing local file: ";
 
+
+  private static final String ERROR_MOVING_LOCAL_FILE = "Error moving temp file: ";
+
   private static final String LOCAL_DIRECTORY_INBOUND = "inbound";
 
   private static Path DIRECTORY_UPLOADS = Paths
@@ -32,6 +39,27 @@ public class LocalFilesService {
   private static Path DIRECTORY_TEMP = Paths
       .get(LOCAL_DIRECTORY_INBOUND)
       .toAbsolutePath();
+
+  private static String getNonDuplicateFileName(String directoryPath, String originalFileName) {
+    File directory = new File(directoryPath);
+    String fileName = originalFileName;
+    int counter = 1;
+
+    while (new File(directory, fileName).exists()) {
+      int dotIndex = originalFileName.lastIndexOf(".");
+      String nameWithoutExtension = dotIndex != -1 ? originalFileName.substring(0, dotIndex) : originalFileName;
+      String extension = dotIndex != -1 ? originalFileName.substring(dotIndex) : "";
+
+      fileName = nameWithoutExtension + "_" + counter + extension;
+      counter++;
+    }
+
+    return fileName;
+  }
+
+  public static String getFinalName(String originalName) {
+    return getNonDuplicateFileName(DIRECTORY_TEMP + DIRECTORY_SEPARATOR, sanitizeFileName(requireNonNull(originalName)));
+  }
 
   public String assembleFilePath(String... params) {
     return String.join(DIRECTORY_SEPARATOR, params);
@@ -56,10 +84,32 @@ public class LocalFilesService {
     }
   }
 
-  public void saveToTempFile(MultipartFile multipartFile) {
-    String localTempPath = DIRECTORY_TEMP + DIRECTORY_SEPARATOR + multipartFile.getOriginalFilename();
+  public void saveFile(MultipartFile multipartFile) {
+    final String finalFileName = getFinalName(multipartFile.getOriginalFilename());
+    String localTempPath = DIRECTORY_TEMP + DIRECTORY_SEPARATOR + finalFileName;
     TempFile file = new TempFile(new File(localTempPath));
     this.writeToFile(file, multipartFile);
+  }
+
+  private void writeToFile(TempFile localTempFile, MultipartFile multipartFile) {
+    try (OutputStream fop = Files.newOutputStream(localTempFile.getPath()); InputStream is = multipartFile.getInputStream()) {
+      is.transferTo(fop);
+    } catch (IOException e) {
+      localTempFile.close();
+      throw new RuntimeException(ERROR_WRITING_LOCAL_FILE + localTempFile.getAbsolutePath(), e);
+    }
+  }
+
+  public void moveTempFile(String filename) {
+    String localTempPath = DIRECTORY_TEMP + DIRECTORY_SEPARATOR + filename;
+    String localFinalPath = DIRECTORY_UPLOADS + DIRECTORY_SEPARATOR + filename;
+    try {
+      OutputStream fop = Files.newOutputStream(Path.of(localFinalPath));
+      FileInputStream input = new FileInputStream(localTempPath);
+      input.transferTo(fop);
+    } catch (IOException e) {
+      throw new RuntimeException(ERROR_MOVING_LOCAL_FILE + localTempPath, e);
+    }
   }
 
   public String deleteFile(String fileName) {
@@ -70,21 +120,6 @@ public class LocalFilesService {
     } catch (IOException e) {
       throw new RuntimeException("Error deleting local file: " + fileName, e);
     }
-  }
-
-  private void writeToFile(TempFile localTempFile, MultipartFile multipartFile) {
-    try (OutputStream fop = Files.newOutputStream(localTempFile.getPath()); InputStream is = multipartFile.getInputStream()) {
-      is.transferTo(fop);
-      this.moveTempFileToPermanentDirectory(multipartFile);
-    } catch (IOException e) {
-      localTempFile.close();
-      throw new RuntimeException(ERROR_WRITING_LOCAL_FILE + localTempFile.getAbsolutePath(), e);
-    }
-  }
-
-  private void moveTempFileToPermanentDirectory(MultipartFile multipartFile) throws IOException {
-    String localFinalPath = DIRECTORY_UPLOADS + DIRECTORY_SEPARATOR + multipartFile.getOriginalFilename();
-    multipartFile.transferTo(new File(localFinalPath));
   }
 
 }

@@ -8,9 +8,7 @@ import static org.mockito.Mockito.when;
 
 import com.optimal.standard.dto.MaterialDTO;
 import com.optimal.standard.persistence.model.Material;
-import com.optimal.standard.persistence.repository.MaterialFileRepository;
 import com.optimal.standard.persistence.repository.MaterialRepository;
-import com.optimal.standard.service.files.LocalFilesService;
 import java.time.LocalDate;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
@@ -28,16 +26,13 @@ class MaterialServiceTest {
   private MaterialRepository materialRepository;
 
   @Mock
-  private MaterialFileRepository materialFileRepository;
-
-  @Mock
-  private LocalFilesService localFilesService;
+  private MaterialFileService materialFileService;
 
   private MaterialService materialService;
 
   @BeforeEach
   void init() {
-    this.materialService = new MaterialService(this.materialRepository, this.localFilesService, this.materialFileRepository);
+    this.materialService = new MaterialService(this.materialRepository, this.materialFileService);
   }
 
   @Test

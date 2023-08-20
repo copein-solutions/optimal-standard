@@ -7,7 +7,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 public interface MaterialFileRepository extends JpaRepository<MaterialFiles, Long> {
 
-  List<MaterialFiles> findAllByMaterialIdAndTempTrueAndNameIn(Long materialId, List<String> fileName);
+  List<MaterialFiles> findAllByTempTrueAndMaterialIdAndIdIn(Long materialId, List<Long> ids);
+
+  List<MaterialFiles> findAllByTempTrueAndIdIn(List<Long> ids);
 
   @Transactional
   void deleteAllByMaterialId(Long materialId);
