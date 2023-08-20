@@ -13,6 +13,7 @@ import com.optimal.standard.persistence.repository.MaterialFileRepository;
 import com.optimal.standard.service.files.LocalFilesService;
 import jakarta.persistence.EntityNotFoundException;
 import java.util.List;
+import java.util.stream.Collectors;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -68,25 +69,47 @@ public class MaterialFileService {
   }
 
   public void processMaterialFiles(Material material, List<FilesDTO> files) {
+    //TODO: cuando entro a editar un material y elimino un file
     if (isNotEmpty(files)) {
       List<Long> fileIds = collectMaterialIds(files);
-      List<MaterialFiles> materialFiles =
-          emptyIfNull(this.materialFileRepository.findAllByTempTrueAndMaterialIdAndIdIn(material.getId(), fileIds))
-              .stream()
-              .peek(mf -> {
-                this.localFilesService.moveTempFile(mf.getName());
-                mf.setTemp(Boolean.FALSE);
-              })
-              .toList();
+
+      List<MaterialFiles> materialFiles = this.processTempFile(material, fileIds);
+      List<Long> fileIdsForDelete = this.getFileIdsForDeleteAndDeleteFile(material, fileIds);
+
       if (isNotEmpty(materialFiles)) {
         this.materialFileRepository.saveAll(materialFiles);
       }
+
+      if (isNotEmpty(fileIdsForDelete)) {
+        this.materialFileRepository.deleteAllByIdIn(fileIdsForDelete);
+      }
+
     } else {
       material
           .getMaterialFiles()
           .forEach(file -> this.localFilesService.deleteFile(file.getName()));
       this.materialFileRepository.deleteAllByMaterialId(material.getId());
     }
+  }
+
+  private List<MaterialFiles> processTempFile(Material material, List<Long> fileIds) {
+    return emptyIfNull(this.materialFileRepository.findAllByTempTrueAndMaterialIdAndIdIn(material.getId(), fileIds))
+        .stream()
+        .peek(mf -> {
+          this.localFilesService.moveTempFile(mf.getName());
+          mf.setTemp(Boolean.FALSE);
+        })
+        .toList();
+  }
+
+  private List<Long> getFileIdsForDeleteAndDeleteFile(Material material, List<Long> requestFileIds) {
+    return this.materialFileRepository
+        .findAllByMaterialId(material.getId())
+        .stream()
+        .filter(materialFile -> !requestFileIds.contains(materialFile.getId()))
+        .peek(file -> this.localFilesService.deleteFile(file.getName()))
+        .map(MaterialFiles::getId)
+        .collect(Collectors.toList());
   }
 
   public void saveMaterialFileAndMoveTempFile(List<FilesDTO> requestFiles, Material material) {

@@ -1,5 +1,7 @@
 package com.optimal.standard.dto;
 
-public record TokenInfo(String token) {
+import java.util.List;
+
+public record TokenInfo(String token, List<String> authorities) {
 
 }

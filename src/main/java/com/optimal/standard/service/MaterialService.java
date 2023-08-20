@@ -72,6 +72,12 @@ public class MaterialService {
     return this.findMaterialEntityById(id);
   }
 
+  public Material findMaterialByIdWithoutException(Long id) {
+    return this.materialRepository
+        .findByIdAndDeletedFalse(id)
+        .orElse(null);
+  }
+
   public Material findMaterialEntityById(Long id) {
     return this.materialRepository
         .findByIdAndDeletedFalse(id)

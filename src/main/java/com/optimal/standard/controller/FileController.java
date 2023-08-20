@@ -59,7 +59,7 @@ public class FileController {
   @PostMapping("/upload")
   public FilesDTO uploadFile(@RequestParam(value = "material_id", required = false) Long materialId,
       @RequestParam("files") MultipartFile files) {
-    return this.materialFileService.saveFiles(this.materialService.findMaterialEntityById(materialId), files);
+    return this.materialFileService.saveFiles(this.materialService.findMaterialByIdWithoutException(materialId), files);
   }
 
   @DeleteMapping("/delete")

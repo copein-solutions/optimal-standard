@@ -13,29 +13,31 @@ import java.util.List;
 @Builder
 public class ConstructionSystemDTO {
 
-    private Long id;
+  private Long id;
 
-    private String totalConsumption;
+  private String totalConsumption;
 
-    private Integer layers;
+  private Integer layers;
 
-    private String applicationMode;
+  private String applicationMode;
 
-    private boolean cured;
+  private boolean cured;
 
-    //  @NotNull
-    private Long applicationAreaId;
+  private double totalPrice;
 
-    private String applicationAreaName;
+  //  @NotNull
+  private Long applicationAreaId;
 
-    private String baseConditions;
+  private String applicationAreaName;
 
-    private String supportConditions;
+  private String baseConditions;
 
-    private String materialAreaRestrictions;
+  private String supportConditions;
 
-    private String materialAreaDescription;
+  private String materialAreaRestrictions;
 
-    private List<TypeOfUseOfMaterial> materials;
+  private String materialAreaDescription;
+
+  private List<TypeOfUseOfMaterial> materials;
 
 }

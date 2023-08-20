@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 @AllArgsConstructor
 @RestController
 @Validated
-@RequestMapping("/material")
+@RequestMapping("/admin/material")
 public class MaterialController {
 
   private final MaterialService materialService;
