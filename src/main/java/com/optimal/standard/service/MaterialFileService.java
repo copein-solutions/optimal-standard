@@ -69,11 +69,14 @@ public class MaterialFileService {
 
   public void processMaterialFiles(Material material, List<FilesDTO> files) {
     if (isNotEmpty(files)) {
-      List<Long> fileIds = MaterialFileService.collectMaterialIds(files);
+      List<Long> fileIds = collectMaterialIds(files);
       List<MaterialFiles> materialFiles =
           emptyIfNull(this.materialFileRepository.findAllByTempTrueAndMaterialIdAndIdIn(material.getId(), fileIds))
               .stream()
-              .peek(mf -> mf.setTemp(Boolean.FALSE))
+              .peek(mf -> {
+                this.localFilesService.moveTempFile(mf.getName());
+                mf.setTemp(Boolean.FALSE);
+              })
               .toList();
       if (isNotEmpty(materialFiles)) {
         this.materialFileRepository.saveAll(materialFiles);

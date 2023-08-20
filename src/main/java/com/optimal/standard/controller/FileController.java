@@ -34,7 +34,7 @@ public class FileController {
 
   private MaterialService materialService;
 
-  @GetMapping(value = "/load/files", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
+  @GetMapping(value = "/load", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
   public ResponseEntity<ByteArrayResource> getFile(@RequestParam("file_id") Long fileId) throws IOException {
     MaterialFiles materialFiles = this.materialFileService.getFile(fileId);
     Path uploadsDirectory = Paths
@@ -56,13 +56,13 @@ public class FileController {
         .body(new ByteArrayResource(Files.readAllBytes(Path.of(localFinalPath))));
   }
 
-  @PostMapping("/file/upload")
+  @PostMapping("/upload")
   public FilesDTO uploadFile(@RequestParam(value = "material_id", required = false) Long materialId,
       @RequestParam("files") MultipartFile files) {
     return this.materialFileService.saveFiles(this.materialService.findMaterialEntityById(materialId), files);
   }
 
-  @DeleteMapping("/file/delete")
+  @DeleteMapping("/delete")
   public void deleteFile(@RequestBody FilesDTO files) {
     this.materialFileService.deleteFiles(files);
   }
