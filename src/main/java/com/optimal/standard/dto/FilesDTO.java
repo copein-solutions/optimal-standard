@@ -1,6 +1,5 @@
 package com.optimal.standard.dto;
 
-import com.optimal.standard.persistence.model.MaterialTypeFiles;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -18,6 +17,6 @@ public class FilesDTO {
 
   private Long size;
 
-  private MaterialTypeFiles type;
+  private String type;
 
 }

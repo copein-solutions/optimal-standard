@@ -73,7 +73,6 @@ public class Material {
 
 
   @OneToMany(mappedBy = "material", fetch = FetchType.EAGER)
-  @Where(clause = "type = 'PERMANENT'")
   private List<MaterialFiles> materialFiles = new ArrayList<>();
 
 

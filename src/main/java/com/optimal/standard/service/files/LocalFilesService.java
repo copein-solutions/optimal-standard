@@ -25,6 +25,14 @@ public class LocalFilesService {
 
   private static final String LOCAL_DIRECTORY_INBOUND = "inbound";
 
+  private static Path DIRECTORY_UPLOADS = Paths
+      .get(LOCAL_DIRECTORY_UPLOADS)
+      .toAbsolutePath();
+
+  private static Path DIRECTORY_TEMP = Paths
+      .get(LOCAL_DIRECTORY_INBOUND)
+      .toAbsolutePath();
+
   public String assembleFilePath(String... params) {
     return String.join(DIRECTORY_SEPARATOR, params);
   }
@@ -49,23 +57,18 @@ public class LocalFilesService {
   }
 
   public void saveToTempFile(MultipartFile multipartFile) {
-    Path tempDirectory = Paths
-        .get(LOCAL_DIRECTORY_INBOUND)
-        .toAbsolutePath();
-    String localTempPath = tempDirectory + DIRECTORY_SEPARATOR + multipartFile.getOriginalFilename();
-
+    String localTempPath = DIRECTORY_TEMP + DIRECTORY_SEPARATOR + multipartFile.getOriginalFilename();
     TempFile file = new TempFile(new File(localTempPath));
-
     this.writeToFile(file, multipartFile);
   }
 
-  public String deleteTempFile(String path) {
+  public String deleteFile(String fileName) {
     try {
-      Path filePath = Paths.get(new File(path).getAbsolutePath());
+      Path filePath = Paths.get(new File(DIRECTORY_UPLOADS + DIRECTORY_SEPARATOR + fileName).getAbsolutePath());
       Files.delete(filePath);
       return filePath.toString();
     } catch (IOException e) {
-      throw new RuntimeException("Error deleting local file: " + path, e);
+      throw new RuntimeException("Error deleting local file: " + fileName, e);
     }
   }
 
@@ -80,10 +83,7 @@ public class LocalFilesService {
   }
 
   private void moveTempFileToPermanentDirectory(MultipartFile multipartFile) throws IOException {
-    Path uploadsDirectory = Paths
-        .get(LOCAL_DIRECTORY_UPLOADS)
-        .toAbsolutePath();
-    String localFinalPath = uploadsDirectory + DIRECTORY_SEPARATOR + multipartFile.getOriginalFilename();
+    String localFinalPath = DIRECTORY_UPLOADS + DIRECTORY_SEPARATOR + multipartFile.getOriginalFilename();
     multipartFile.transferTo(new File(localFinalPath));
   }
 

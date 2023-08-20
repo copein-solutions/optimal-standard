@@ -9,14 +9,12 @@ import com.optimal.standard.service.MaterialService;
 import jakarta.validation.Valid;
 import java.io.File;
 import java.io.IOException;
-import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 import java.util.stream.Stream;
 import lombok.AllArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -37,13 +35,12 @@ import org.springframework.web.multipart.MultipartFile;
 @RestController
 @Validated
 @RequestMapping("/material")
-@Slf4j
 public class MaterialController {
 
   private final MaterialService materialService;
 
   @GetMapping(value = "/load/files", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
-  public ResponseEntity<ByteArrayResource> getFile(@RequestParam("file_id") Long fileId) throws IOException, URISyntaxException {
+  public ResponseEntity<ByteArrayResource> getFile(@RequestParam("file_id") Long fileId) throws IOException {
     MaterialFiles materialFiles = this.materialService.getFile(fileId);
     Path uploadsDirectory = Paths
         .get(LOCAL_DIRECTORY_UPLOADS)

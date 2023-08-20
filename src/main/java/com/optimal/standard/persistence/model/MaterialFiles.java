@@ -2,8 +2,6 @@ package com.optimal.standard.persistence.model;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -32,11 +30,11 @@ public class MaterialFiles {
   @Column(nullable = false)
   private String name;
 
-
-  @Enumerated(EnumType.STRING)
-  private MaterialTypeFiles type;
+  private String type;
 
   private Long size;
+
+  private boolean temp;
 
   @ManyToOne
   @JoinColumn(name = "material_id")
@@ -48,17 +46,19 @@ public class MaterialFiles {
   @CreationTimestamp
   private LocalDateTime dateUpdated;
 
-  public MaterialFiles(String name, Long size, MaterialTypeFiles type, Material material) {
+  public MaterialFiles(String name, Long size, String type, boolean temp, Material material) {
     this.name = name;
-    this.size = size;
     this.type = type;
+    this.size = size;
+    this.temp = temp;
     this.material = material;
   }
 
-  public MaterialFiles(String name, Long size, MaterialTypeFiles type) {
+  public MaterialFiles(String name, Long size, String type, boolean temp) {
     this.name = name;
-    this.size = size;
     this.type = type;
+    this.size = size;
+    this.temp = temp;
   }
 
 }
