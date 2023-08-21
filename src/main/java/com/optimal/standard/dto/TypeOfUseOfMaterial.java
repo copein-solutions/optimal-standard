@@ -10,16 +10,16 @@ import lombok.Data;
 @Builder
 public class TypeOfUseOfMaterial {
 
-    private Long id;
+  private Long id;
 
-    private Long materialId;
+  private Long materialId;
 
-    private TypeOfUse typeOfUse;
+  private TypeOfUse typeOfUse;
 
-    private Double coefficient;
+  private double coefficient;
 
-    private String coefficientDescription;
+  private String coefficientDescription;
 
-    private String materialDescription;
+  private String materialDescription;
 
 }

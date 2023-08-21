@@ -45,7 +45,7 @@ public class ConstructionSystem {
   @OneToMany(mappedBy = "constructionSystem", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
   private List<ConstructionSystemMaterial> constructionSystemMaterials = new ArrayList<>();
 
-  @OneToMany(mappedBy = "constructionSystem", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
+  @OneToMany(mappedBy = "constructionSystem", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
   private List<ConstructionSystemComment> constructionSystemComments = new ArrayList<>();
 
 }

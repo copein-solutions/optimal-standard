@@ -55,8 +55,13 @@ public class ConstructionSystemService {
   private ConstructionSystemMaterial buildConstructionSystemMaterial(TypeOfUseOfMaterial typeOfUseOfMaterial,
                                                                      ConstructionSystem constructionSystem) {
     Material material = this.materialService.findMaterialById(typeOfUseOfMaterial.getMaterialId());
-    return new ConstructionSystemMaterial(typeOfUseOfMaterial.getId(), material, constructionSystem, typeOfUseOfMaterial.getTypeOfUse(),
-            typeOfUseOfMaterial.getCoefficient(), typeOfUseOfMaterial.getCoefficientDescription(),
+    return new ConstructionSystemMaterial(
+            typeOfUseOfMaterial.getId(),
+            material,
+            constructionSystem,
+            typeOfUseOfMaterial.getTypeOfUse(),
+            typeOfUseOfMaterial.getCoefficient(),
+            typeOfUseOfMaterial.getCoefficientDescription(),
             typeOfUseOfMaterial.getMaterialDescription());
   }
 
