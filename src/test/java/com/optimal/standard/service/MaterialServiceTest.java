@@ -25,11 +25,14 @@ class MaterialServiceTest {
   @Mock
   private MaterialRepository materialRepository;
 
+  @Mock
+  private MaterialFileService materialFileService;
+
   private MaterialService materialService;
 
   @BeforeEach
   void init() {
-    this.materialService = new MaterialService(this.materialRepository);
+    this.materialService = new MaterialService(this.materialRepository, this.materialFileService);
   }
 
   @Test
@@ -63,9 +66,9 @@ class MaterialServiceTest {
 
   @Test
   void findAllOk() {
-    when(this.materialRepository.findAll()).thenReturn(this.mockMaterials());
+    when(this.materialRepository.findAllByDeletedFalse()).thenReturn(this.mockMaterials());
 
-    List<ResponseMaterialDTO> responseMaterials = this.materialService.findAll();
+    List<MaterialDTO> responseMaterials = this.materialService.findAll();
 
     assertNotNull(responseMaterials);
     assertEquals(2, responseMaterials.size());
