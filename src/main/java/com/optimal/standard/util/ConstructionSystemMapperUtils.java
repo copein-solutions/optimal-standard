@@ -2,9 +2,11 @@ package com.optimal.standard.util;
 
 import com.optimal.standard.dto.ConstructionSystemDTO;
 import com.optimal.standard.dto.ConstructionSystemMaterialDTO;
+import com.optimal.standard.dto.ResponseConstructionSystemCommentDTO;
 import com.optimal.standard.dto.ResponseConstructionSystemDTO;
 import com.optimal.standard.persistence.model.ApplicationArea;
 import com.optimal.standard.persistence.model.ConstructionSystem;
+import com.optimal.standard.persistence.model.ConstructionSystemComment;
 import com.optimal.standard.persistence.model.ConstructionSystemMaterial;
 
 import java.util.List;
@@ -66,6 +68,7 @@ public interface ConstructionSystemMapperUtils {
             .materialAreaDescription(constructionSystem.getMaterialAreaDescription())
             .applicationArea(ApplicationAreaMapperUtils.toDTO(constructionSystem.getApplicationArea()))
             .materials(toConstructionSystemMaterials(constructionSystem.getConstructionSystemMaterials()))
+            .comments(toConstructionSystemComments(constructionSystem.getConstructionSystemComments()))
             .build();
   }
 
@@ -85,6 +88,25 @@ public interface ConstructionSystemMapperUtils {
             .coefficient(constructionSystemMaterial.getCoefficient())
             .coefficientDescription(constructionSystemMaterial.getCoefficientDescription())
             .materialDescription(constructionSystemMaterial.getMaterialDescription())
+            .build();
+  }
+
+  static List<ResponseConstructionSystemCommentDTO> toConstructionSystemComments(List<ConstructionSystemComment> constructionSystemComments) {
+    return constructionSystemComments
+            .stream()
+            .sorted()
+            .limit(5)
+            .map(ConstructionSystemMapperUtils::toConstructionSystemComment)
+            .collect(Collectors.toList());
+  }
+
+  static ResponseConstructionSystemCommentDTO toConstructionSystemComment(ConstructionSystemComment constructionSystemComment) {
+    return ResponseConstructionSystemCommentDTO
+            .builder()
+            .id(constructionSystemComment.getId())
+            .comment(constructionSystemComment.getComment())
+            .date(constructionSystemComment.getCreatedDate())
+            .userName(constructionSystemComment.getRegisteredUser().getUsername())
             .build();
   }
 

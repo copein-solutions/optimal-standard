@@ -1,5 +1,6 @@
 package com.optimal.standard.controller;
 
+import com.optimal.standard.dto.ConstructionSystemCommentDTO;
 import com.optimal.standard.dto.ConstructionSystemDTO;
 import com.optimal.standard.dto.ResponseConstructionSystemDTO;
 import com.optimal.standard.service.ConstructionSystemService;
@@ -14,30 +15,35 @@ import java.util.List;
 @AllArgsConstructor
 public class ConstructionSystemController {
 
-    private final ConstructionSystemService constructionSystemService;
+  private final ConstructionSystemService constructionSystemService;
 
-    @GetMapping("/user/construction_system")
-    public ResponseEntity<List<ResponseConstructionSystemDTO>> findAll() {
-        return ResponseEntity
-                .ok()
-                .body(this.constructionSystemService.findAll());
-    }
+  @GetMapping("/user/construction_system")
+  public ResponseEntity<List<ResponseConstructionSystemDTO>> findAll() {
+    return ResponseEntity
+            .ok()
+            .body(this.constructionSystemService.findAll());
+  }
 
-    @GetMapping("/admin/construction_system/{id}")
-    public ResponseEntity<ResponseConstructionSystemDTO> findById(@PathVariable Long id) {
-        return ResponseEntity
-                .ok()
-                .body(this.constructionSystemService.findById(id));
-    }
+  @GetMapping("/user/construction_system/{id}")
+  public ResponseEntity<ResponseConstructionSystemDTO> findById(@PathVariable Long id) {
+    return ResponseEntity
+            .ok()
+            .body(this.constructionSystemService.findById(id));
+  }
 
-    @PostMapping("/admin/construction_system")
-    public void create(@RequestBody @Valid ConstructionSystemDTO request) {
-        this.constructionSystemService.saveConstructionSystem(request);
-    }
+  @PostMapping("/admin/construction_system")
+  public void create(@RequestBody @Valid ConstructionSystemDTO request) {
+    this.constructionSystemService.saveConstructionSystem(request);
+  }
 
-    @PutMapping("/admin/construction_system/{id}")
-    public void update(@PathVariable Long id, @RequestBody @Valid ConstructionSystemDTO request) {
-        this.constructionSystemService.updateConstructionSystem(id, request);
-    }
+  @PostMapping("/user/construction_system/{id}/comment")
+  public void createComment(@PathVariable Long id, @RequestBody @Valid ConstructionSystemCommentDTO request) {
+    this.constructionSystemService.saveConstructionSystemComment(id, request);
+  }
+
+  @PutMapping("/admin/construction_system/{id}")
+  public void update(@PathVariable Long id, @RequestBody @Valid ConstructionSystemDTO request) {
+    this.constructionSystemService.updateConstructionSystem(id, request);
+  }
 
 }
