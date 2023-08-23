@@ -44,8 +44,13 @@ public class ConstructionSystemController {
     this.constructionSystemService.saveConstructionSystem(request);
   }
 
-  @PutMapping("/user/construction_system/{id}/comment")
+  @PostMapping("/user/construction_system/{id}/comment")
   public void createComment(@PathVariable Long id, @RequestBody @Valid ConstructionSystemCommentDTO request) {
+    this.constructionSystemService.saveConstructionSystemComment(id, request);
+  }
+
+  @PutMapping("/user/construction_system/{id}/comment")
+  public void updateComment(@PathVariable Long id, @RequestBody @Valid ConstructionSystemCommentDTO request) {
     this.constructionSystemService.saveConstructionSystemComment(id, request);
   }
 

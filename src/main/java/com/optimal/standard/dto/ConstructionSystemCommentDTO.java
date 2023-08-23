@@ -11,6 +11,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class ConstructionSystemCommentDTO {
 
+  private Long id;
+
   private String comment;
 
   private String userName;

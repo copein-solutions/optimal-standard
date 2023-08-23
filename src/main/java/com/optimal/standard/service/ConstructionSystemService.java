@@ -9,6 +9,8 @@ import com.optimal.standard.persistence.repository.UserRepository;
 import com.optimal.standard.util.ConstructionSystemMapperUtils;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -136,12 +138,15 @@ public class ConstructionSystemService {
     this.constructionSystemRepository
             .findById(id)
             .ifPresentOrElse(constructionSystemDatabase -> {
+              Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+              String username = authentication.getName();
+
               this.constructionSystemCommentRepository.save(new ConstructionSystemComment(
-                      null,
+                      request.getId(),
                       request.getComment(),
                       LocalDate.now(),
                       constructionSystemDatabase,
-                      this.userRepository.findByUsername(request.getUserName())
+                      this.userRepository.findByUsername(username)
               ));
             }, () -> {
               throw new EntityNotFoundException(CONSTRUCTION_SYSTEM_NOT_FOUND_MESSAGE + id);
@@ -157,4 +162,5 @@ public class ConstructionSystemService {
 
     return response.getComments();
   }
+
 }
