@@ -2,6 +2,7 @@ package com.optimal.standard.controller;
 
 import com.optimal.standard.dto.ConstructionSystemCommentDTO;
 import com.optimal.standard.dto.ConstructionSystemDTO;
+import com.optimal.standard.dto.ResponseConstructionSystemCommentDTO;
 import com.optimal.standard.dto.ResponseConstructionSystemDTO;
 import com.optimal.standard.service.ConstructionSystemService;
 import jakarta.validation.Valid;
@@ -31,12 +32,19 @@ public class ConstructionSystemController {
             .body(this.constructionSystemService.findById(id));
   }
 
+  @GetMapping("/user/construction_system/{id}/comment")
+  public ResponseEntity<List<ResponseConstructionSystemCommentDTO>> findCommentsById(@PathVariable Long id) {
+    return ResponseEntity
+            .ok()
+            .body(this.constructionSystemService.findCommentsById(id));
+  }
+
   @PostMapping("/admin/construction_system")
   public void create(@RequestBody @Valid ConstructionSystemDTO request) {
     this.constructionSystemService.saveConstructionSystem(request);
   }
 
-  @PostMapping("/user/construction_system/{id}/comment")
+  @PutMapping("/user/construction_system/{id}/comment")
   public void createComment(@PathVariable Long id, @RequestBody @Valid ConstructionSystemCommentDTO request) {
     this.constructionSystemService.saveConstructionSystemComment(id, request);
   }

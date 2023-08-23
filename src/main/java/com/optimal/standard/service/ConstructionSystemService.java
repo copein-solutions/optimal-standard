@@ -147,4 +147,14 @@ public class ConstructionSystemService {
               throw new EntityNotFoundException(CONSTRUCTION_SYSTEM_NOT_FOUND_MESSAGE + id);
             });
   }
+
+  public List<ResponseConstructionSystemCommentDTO> findCommentsById(Long id) {
+    ResponseConstructionSystemDTO response = this.constructionSystemRepository
+            .findById(id)
+            .map(ConstructionSystemMapperUtils::toResponseCommentsDTO)
+            .orElseThrow(() -> new EntityNotFoundException(CONSTRUCTION_SYSTEM_NOT_FOUND_MESSAGE + id));
+    ;
+
+    return response.getComments();
+  }
 }

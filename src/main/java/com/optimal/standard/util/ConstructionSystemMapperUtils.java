@@ -9,6 +9,7 @@ import com.optimal.standard.persistence.model.ConstructionSystem;
 import com.optimal.standard.persistence.model.ConstructionSystemComment;
 import com.optimal.standard.persistence.model.ConstructionSystemMaterial;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -94,7 +95,7 @@ public interface ConstructionSystemMapperUtils {
   static List<ResponseConstructionSystemCommentDTO> toConstructionSystemComments(List<ConstructionSystemComment> constructionSystemComments) {
     return constructionSystemComments
             .stream()
-            .sorted()
+            .sorted(Comparator.comparing(ConstructionSystemComment::getCreatedDate, Comparator.reverseOrder()))
             .limit(5)
             .map(ConstructionSystemMapperUtils::toConstructionSystemComment)
             .collect(Collectors.toList());
@@ -110,4 +111,18 @@ public interface ConstructionSystemMapperUtils {
             .build();
   }
 
+  static ResponseConstructionSystemDTO toResponseCommentsDTO(ConstructionSystem constructionSystem) {
+    return ResponseConstructionSystemDTO
+            .builder()
+            .comments(toConstructionSystemAllComments(constructionSystem.getConstructionSystemComments()))
+            .build();
+  }
+
+  static List<ResponseConstructionSystemCommentDTO> toConstructionSystemAllComments(List<ConstructionSystemComment> constructionSystemComments) {
+    return constructionSystemComments
+            .stream()
+            .sorted(Comparator.comparing(ConstructionSystemComment::getCreatedDate, Comparator.reverseOrder()))
+            .map(ConstructionSystemMapperUtils::toConstructionSystemComment)
+            .collect(Collectors.toList());
+  }
 }
