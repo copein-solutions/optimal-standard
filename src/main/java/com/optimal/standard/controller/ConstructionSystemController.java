@@ -59,4 +59,13 @@ public class ConstructionSystemController {
     this.constructionSystemService.updateConstructionSystem(id, request);
   }
 
+//  @DeleteMapping("/admin/construction_system/{id}")
+//  public void delete(@PathVariable Long id) {
+//    this.constructionSystemService.deleteConstructionSystem(id);
+//  }
+
+  @DeleteMapping("/user/construction_system/comment/{id}")
+  public void deleteComment(@PathVariable Long id) {
+    this.constructionSystemService.deleteConstructionSystemComment(id);
+  }
 }

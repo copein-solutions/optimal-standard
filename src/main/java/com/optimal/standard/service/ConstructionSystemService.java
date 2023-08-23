@@ -26,6 +26,7 @@ import static com.optimal.standard.util.ConstructionSystemMapperUtils.toConstruc
 public class ConstructionSystemService {
 
   public static final String CONSTRUCTION_SYSTEM_NOT_FOUND_MESSAGE = "Construction system not found with ID: ";
+  public static final String CONSTRUCTION_SYSTEM_COMMENT_NOT_FOUND_MESSAGE = "Construction system comment not found with ID: ";
 
   private final ApplicationAreaService applicationAreaService;
 
@@ -163,4 +164,20 @@ public class ConstructionSystemService {
     return response.getComments();
   }
 
+//  public void deleteConstructionSystem(Long id) {
+//    this.constructionSystemRepository.deleteById(id);
+//  }
+
+  public void deleteConstructionSystemComment(Long id) {
+    ConstructionSystemComment constructionSystemComment = this.constructionSystemCommentRepository
+            .findById(id)
+            .orElseThrow(() -> new EntityNotFoundException(CONSTRUCTION_SYSTEM_COMMENT_NOT_FOUND_MESSAGE + id));
+    this.constructionSystemRepository
+            .findById(constructionSystemComment.getConstructionSystem().getId())
+            .ifPresentOrElse(constructionSystem -> {
+              constructionSystem.getConstructionSystemComments().remove(constructionSystemComment);
+            }, () -> {
+              throw new EntityNotFoundException(CONSTRUCTION_SYSTEM_NOT_FOUND_MESSAGE + constructionSystemComment.getConstructionSystem().getId());
+            });
+  }
 }
