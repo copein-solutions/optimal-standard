@@ -12,6 +12,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class SystemCategoryDTO {
 
-  private SystemCategory type;
+    private SystemCategory type;
 
 }

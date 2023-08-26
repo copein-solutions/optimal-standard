@@ -18,6 +18,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static com.optimal.standard.persistence.model.SystemCategory.ALTERNATIVE_OPTIMAL_STANDARD;
+import static com.optimal.standard.persistence.model.SystemCategory.OPTIMAL_STANDARD;
 import static com.optimal.standard.service.ApplicationAreaService.APPLICATION_AREA_NOT_FOUND_MESSAGE;
 import static com.optimal.standard.util.ConstructionSystemMapperUtils.toConstructionSystem;
 
@@ -25,181 +27,183 @@ import static com.optimal.standard.util.ConstructionSystemMapperUtils.toConstruc
 @AllArgsConstructor
 public class ConstructionSystemService {
 
-  public static final String CONSTRUCTION_SYSTEM_NOT_FOUND_MESSAGE = "Construction system not found with ID: ";
-  public static final String CONSTRUCTION_SYSTEM_COMMENT_NOT_FOUND_MESSAGE = "Construction system comment not found with ID: ";
+    public static final String CONSTRUCTION_SYSTEM_NOT_FOUND_MESSAGE = "Construction system not found with ID: ";
+    public static final String CONSTRUCTION_SYSTEM_COMMENT_NOT_FOUND_MESSAGE = "Construction system comment not found with ID: ";
 
-  private final ApplicationAreaService applicationAreaService;
+    private final ApplicationAreaService applicationAreaService;
 
-  private final MaterialService materialService;
+    private final MaterialService materialService;
 
-  private final ConstructionSystemMaterialService constructionSystemMaterialService;
+    private final ConstructionSystemMaterialService constructionSystemMaterialService;
 
-  private final ConstructionSystemRepository constructionSystemRepository;
+    private final ConstructionSystemRepository constructionSystemRepository;
 
-  private final ConstructionSystemCommentRepository constructionSystemCommentRepository;
+    private final ConstructionSystemCommentRepository constructionSystemCommentRepository;
 
-  private final UserRepository userRepository;
+    private final UserRepository userRepository;
 
-  public void saveConstructionSystem(ConstructionSystemDTO request) {
-    Long applicationAreaId = request.getApplicationAreaId();
-    this.validateApplicationArea(applicationAreaId);
-    this.validateTypeOfUseOfMaterials(request.getMaterials());
+    public void saveConstructionSystem(ConstructionSystemDTO request) {
+        Long applicationAreaId = request.getApplicationAreaId();
+        this.validateApplicationArea(applicationAreaId);
+        this.validateTypeOfUseOfMaterials(request.getMaterials());
 
-    ConstructionSystem constructionSystem = this.createConstructionSystem(applicationAreaId, request);
-    List<ConstructionSystemMaterial> constructionSystemMaterials = this.buildConstructionSystemMaterials(request, constructionSystem);
-    this.constructionSystemMaterialService.saveAllConstructionSystemMaterials(constructionSystemMaterials);
-  }
-
-  private ConstructionSystem createConstructionSystem(Long applicationAreaId, ConstructionSystemDTO request) {
-    ApplicationArea applicationArea = this.applicationAreaService.findApplicationAreaById(applicationAreaId);
-    return this.constructionSystemRepository.save(toConstructionSystem(request, applicationArea));
-  }
-
-  private ConstructionSystemMaterial buildConstructionSystemMaterial(TypeOfUseOfMaterial typeOfUseOfMaterial,
-                                                                     ConstructionSystem constructionSystem) {
-    Material material = this.materialService.findMaterialById(typeOfUseOfMaterial.getMaterialId());
-    return new ConstructionSystemMaterial(
-            typeOfUseOfMaterial.getId(),
-            material,
-            constructionSystem,
-            typeOfUseOfMaterial.getTypeOfUse(),
-            typeOfUseOfMaterial.getCoefficient(),
-            typeOfUseOfMaterial.getCoefficientDescription(),
-            typeOfUseOfMaterial.getMaterialDescription());
-  }
-
-  private void validateApplicationArea(Long applicationAreaId) {
-    if (!this.applicationAreaService.existById(applicationAreaId)) {
-      throw new EntityNotFoundException(APPLICATION_AREA_NOT_FOUND_MESSAGE + applicationAreaId);
+        ConstructionSystem constructionSystem = this.createConstructionSystem(applicationAreaId, request);
+        List<ConstructionSystemMaterial> constructionSystemMaterials = this.buildConstructionSystemMaterials(request, constructionSystem);
+        this.constructionSystemMaterialService.saveAllConstructionSystemMaterials(constructionSystemMaterials);
     }
-  }
 
-  private void validateTypeOfUseOfMaterials(List<TypeOfUseOfMaterial> typeOfUseOfMaterials) {
-    List<Long> materialIds = typeOfUseOfMaterials
-            .stream()
-            .map(TypeOfUseOfMaterial::getMaterialId)
-            .toList();
-
-    if (!new HashSet<>(this.materialService
-            .findAllByIds(materialIds)
-            .stream()
-            .map(MaterialDTO::getId)
-            .toList()).containsAll(materialIds)) {
-      throw new BadRequestException("Some of the materials provided do not exist");
+    private ConstructionSystem createConstructionSystem(Long applicationAreaId, ConstructionSystemDTO request) {
+        ApplicationArea applicationArea = this.applicationAreaService.findApplicationAreaById(applicationAreaId);
+        return this.constructionSystemRepository.save(toConstructionSystem(request, applicationArea));
     }
-  }
 
-  public List<ResponseConstructionSystemDTO> findAll() {
-    return this.constructionSystemRepository
-            .findAll()
-            .stream()
-            .map(ConstructionSystemMapperUtils::toResponseDTO)
-            .toList();
-  }
+    private ConstructionSystemMaterial buildConstructionSystemMaterial(TypeOfUseOfMaterial typeOfUseOfMaterial,
+                                                                       ConstructionSystem constructionSystem) {
+        Material material = this.materialService.findMaterialById(typeOfUseOfMaterial.getMaterialId());
+        return new ConstructionSystemMaterial(
+                typeOfUseOfMaterial.getId(),
+                material,
+                constructionSystem,
+                typeOfUseOfMaterial.getTypeOfUse(),
+                typeOfUseOfMaterial.getCoefficient(),
+                typeOfUseOfMaterial.getCoefficientDescription(),
+                typeOfUseOfMaterial.getMaterialDescription());
+    }
 
-  public ResponseConstructionSystemDTO findById(Long id) {
-    return this.constructionSystemRepository
-            .findById(id)
-            .map(ConstructionSystemMapperUtils::toResponseDTO)
-            .orElseThrow(() -> new EntityNotFoundException(CONSTRUCTION_SYSTEM_NOT_FOUND_MESSAGE + id));
-  }
+    private void validateApplicationArea(Long applicationAreaId) {
+        if (!this.applicationAreaService.existById(applicationAreaId)) {
+            throw new EntityNotFoundException(APPLICATION_AREA_NOT_FOUND_MESSAGE + applicationAreaId);
+        }
+    }
 
-  public void updateConstructionSystem(Long id, ConstructionSystemDTO request) {
-    this.validateTypeOfUseOfMaterials(request.getMaterials());
-    Long applicationAreaId = request.getApplicationAreaId();
-    this.validateApplicationArea(applicationAreaId);
+    private void validateTypeOfUseOfMaterials(List<TypeOfUseOfMaterial> typeOfUseOfMaterials) {
+        List<Long> materialIds = typeOfUseOfMaterials
+                .stream()
+                .map(TypeOfUseOfMaterial::getMaterialId)
+                .toList();
 
-    this.constructionSystemRepository
-            .findById(id)
-            .ifPresentOrElse(constructionSystemDatabase -> {
+        if (!new HashSet<>(this.materialService
+                .findAllByIds(materialIds)
+                .stream()
+                .map(MaterialDTO::getId)
+                .toList()).containsAll(materialIds)) {
+            throw new BadRequestException("Some of the materials provided do not exist");
+        }
+    }
 
-              ApplicationArea applicationArea = this.applicationAreaService.findApplicationAreaById(applicationAreaId);
-              ConstructionSystem constructionSystem = toConstructionSystem(request, applicationArea);
-              constructionSystem.setId(constructionSystemDatabase.getId());
+    public List<ResponseConstructionSystemDTO> findAll() {
+        return this.constructionSystemRepository
+                .findAll()
+                .stream()
+                .map(ConstructionSystemMapperUtils::toResponseDTO)
+                .toList();
+    }
 
-              List<ConstructionSystemMaterial> constructionSystemMaterials = this.buildConstructionSystemMaterials(request, constructionSystem);
-              constructionSystem.setConstructionSystemMaterials(constructionSystemMaterials);
-              this.constructionSystemRepository.save(constructionSystem);
+    public ResponseConstructionSystemDTO findById(Long id) {
+        return this.constructionSystemRepository
+                .findById(id)
+                .map(ConstructionSystemMapperUtils::toResponseDTO)
+                .orElseThrow(() -> new EntityNotFoundException(CONSTRUCTION_SYSTEM_NOT_FOUND_MESSAGE + id));
+    }
 
-            }, () -> {
-              throw new EntityNotFoundException(CONSTRUCTION_SYSTEM_NOT_FOUND_MESSAGE + id);
-            });
-  }
+    public void updateConstructionSystem(Long id, ConstructionSystemDTO request) {
+        this.validateTypeOfUseOfMaterials(request.getMaterials());
+        Long applicationAreaId = request.getApplicationAreaId();
+        this.validateApplicationArea(applicationAreaId);
 
-  private List<ConstructionSystemMaterial> buildConstructionSystemMaterials(ConstructionSystemDTO request,
-                                                                            ConstructionSystem constructionSystem) {
-    return request
-            .getMaterials()
-            .stream()
-            .map(typeOfUseOfMaterial -> this.buildConstructionSystemMaterial(typeOfUseOfMaterial, constructionSystem))
-            .collect(Collectors.toList());
-  }
+        this.constructionSystemRepository
+                .findById(id)
+                .ifPresentOrElse(constructionSystemDatabase -> {
 
-  public void saveConstructionSystemComment(Long id, ConstructionSystemCommentDTO request) {
-    this.constructionSystemRepository
-            .findById(id)
-            .ifPresentOrElse(constructionSystemDatabase -> {
-              Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-              String username = authentication.getName();
+                    ApplicationArea applicationArea = this.applicationAreaService.findApplicationAreaById(applicationAreaId);
+                    ConstructionSystem constructionSystem = toConstructionSystem(request, applicationArea);
+                    constructionSystem.setId(constructionSystemDatabase.getId());
 
-              this.constructionSystemCommentRepository.save(new ConstructionSystemComment(
-                      request.getId(),
-                      request.getComment(),
-                      LocalDate.now(),
-                      constructionSystemDatabase,
-                      this.userRepository.findByUsername(username)
-              ));
-            }, () -> {
-              throw new EntityNotFoundException(CONSTRUCTION_SYSTEM_NOT_FOUND_MESSAGE + id);
-            });
-  }
+                    List<ConstructionSystemMaterial> constructionSystemMaterials = this.buildConstructionSystemMaterials(request, constructionSystem);
+                    constructionSystem.setConstructionSystemMaterials(constructionSystemMaterials);
+                    this.constructionSystemRepository.save(constructionSystem);
 
-  public List<ResponseConstructionSystemCommentDTO> findCommentsById(Long id) {
-    ResponseConstructionSystemDTO response = this.constructionSystemRepository
-            .findById(id)
-            .map(ConstructionSystemMapperUtils::toResponseCommentsDTO)
-            .orElseThrow(() -> new EntityNotFoundException(CONSTRUCTION_SYSTEM_NOT_FOUND_MESSAGE + id));
-    ;
+                }, () -> {
+                    throw new EntityNotFoundException(CONSTRUCTION_SYSTEM_NOT_FOUND_MESSAGE + id);
+                });
+    }
 
-    return response.getComments();
-  }
+    private List<ConstructionSystemMaterial> buildConstructionSystemMaterials(ConstructionSystemDTO request,
+                                                                              ConstructionSystem constructionSystem) {
+        return request
+                .getMaterials()
+                .stream()
+                .map(typeOfUseOfMaterial -> this.buildConstructionSystemMaterial(typeOfUseOfMaterial, constructionSystem))
+                .collect(Collectors.toList());
+    }
+
+    public void saveConstructionSystemComment(Long id, ConstructionSystemCommentDTO request) {
+        this.constructionSystemRepository
+                .findById(id)
+                .ifPresentOrElse(constructionSystemDatabase -> {
+                    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+                    String username = authentication.getName();
+
+                    this.constructionSystemCommentRepository.save(new ConstructionSystemComment(
+                            request.getId(),
+                            request.getComment(),
+                            LocalDate.now(),
+                            constructionSystemDatabase,
+                            this.userRepository.findByUsername(username)
+                    ));
+                }, () -> {
+                    throw new EntityNotFoundException(CONSTRUCTION_SYSTEM_NOT_FOUND_MESSAGE + id);
+                });
+    }
+
+    public List<ResponseConstructionSystemCommentDTO> findCommentsById(Long id) {
+        ResponseConstructionSystemDTO response = this.constructionSystemRepository
+                .findById(id)
+                .map(ConstructionSystemMapperUtils::toResponseCommentsDTO)
+                .orElseThrow(() -> new EntityNotFoundException(CONSTRUCTION_SYSTEM_NOT_FOUND_MESSAGE + id));
+        ;
+
+        return response.getComments();
+    }
 
 //  public void deleteConstructionSystem(Long id) {
 //    this.constructionSystemRepository.deleteById(id);
 //  }
 
-  public void deleteConstructionSystemComment(Long id) {
-    ConstructionSystemComment constructionSystemComment = this.constructionSystemCommentRepository
-            .findById(id)
-            .orElseThrow(() -> new EntityNotFoundException(CONSTRUCTION_SYSTEM_COMMENT_NOT_FOUND_MESSAGE + id));
-    this.constructionSystemRepository
-            .findById(constructionSystemComment.getConstructionSystem().getId())
-            .ifPresentOrElse(constructionSystem -> {
-              constructionSystem.getConstructionSystemComments().remove(constructionSystemComment);
-            }, () -> {
-              throw new EntityNotFoundException(CONSTRUCTION_SYSTEM_NOT_FOUND_MESSAGE + constructionSystemComment.getConstructionSystem().getId());
-            });
-  }
+    public void deleteConstructionSystemComment(Long id) {
+        ConstructionSystemComment constructionSystemComment = this.constructionSystemCommentRepository
+                .findById(id)
+                .orElseThrow(() -> new EntityNotFoundException(CONSTRUCTION_SYSTEM_COMMENT_NOT_FOUND_MESSAGE + id));
+        this.constructionSystemRepository
+                .findById(constructionSystemComment.getConstructionSystem().getId())
+                .ifPresentOrElse(constructionSystem -> {
+                    constructionSystem.getConstructionSystemComments().remove(constructionSystemComment);
+                }, () -> {
+                    throw new EntityNotFoundException(CONSTRUCTION_SYSTEM_NOT_FOUND_MESSAGE + constructionSystemComment.getConstructionSystem().getId());
+                });
+    }
 
     public void updateSystemCategory(Long id, SystemCategoryDTO request) {
+        ConstructionSystem constructionSystem = this.constructionSystemRepository
+                .findById(id)
+                .orElseThrow(() -> new EntityNotFoundException(CONSTRUCTION_SYSTEM_NOT_FOUND_MESSAGE + id));
 
-      ConstructionSystem constructionSystem = this.constructionSystemRepository
-              .findById(id)
-              .orElseThrow(() -> new EntityNotFoundException(CONSTRUCTION_SYSTEM_NOT_FOUND_MESSAGE + id));
+        List<ConstructionSystem> constructionSystemChanged =
+                constructionSystem
+                        .getApplicationArea()
+                        .getConstructionSystems()
+                        .stream()
+                        .peek(cs -> {
+                            if (OPTIMAL_STANDARD.equals(request.getType()) && OPTIMAL_STANDARD.name().equals(cs.getSystemCategory())) {
+                                cs.setSystemCategory(null);
+                            } else if (ALTERNATIVE_OPTIMAL_STANDARD.equals(request.getType()) && ALTERNATIVE_OPTIMAL_STANDARD.name().equals(cs.getSystemCategory())) {
+                                cs.setSystemCategory(null);
+                            }
+                        }).collect(Collectors.toList());
 
-      ConstructionSystem constructionSystem1 =
-              constructionSystem
-                      .getApplicationArea()
-                      .getConstructionSystems().stream()
-                      .filter(cs -> SystemCategory.OPTIMAL_STANDARD.equals(cs.getSystemCategory()))
-                      .findAny()
-                      .orElse(null);
+        this.constructionSystemRepository.saveAll(constructionSystemChanged);
 
-      List<ConstructionSystem> constructionSystemList = this.constructionSystemRepository.findAll();
-
-
-
-      constructionSystem.setSystemCategory(request.getType());
-      constructionSystemRepository.save(constructionSystem);
+        constructionSystem.setSystemCategory(request.getType().name());
+        this.constructionSystemRepository.save(constructionSystem);
     }
 }

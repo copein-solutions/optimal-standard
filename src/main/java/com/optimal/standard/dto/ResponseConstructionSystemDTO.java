@@ -1,6 +1,5 @@
 package com.optimal.standard.dto;
 
-import com.optimal.standard.persistence.model.SystemCategory;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -14,32 +13,32 @@ import java.util.List;
 @Data
 public class ResponseConstructionSystemDTO {
 
-  private Long id;
+    private Long id;
 
-  private String totalConsumption;
+    private String totalConsumption;
 
-  private Integer layers;
+    private Integer layers;
 
-  private String applicationMode;
+    private String applicationMode;
 
-  private boolean cured;
+    private boolean cured;
 
-  private double totalPrice;
+    private double totalPrice;
 
-  private String baseConditions;
+    private String baseConditions;
 
-  private String supportConditions;
+    private String supportConditions;
 
-  private String materialAreaRestrictions;
+    private String materialAreaRestrictions;
 
-  private String materialAreaDescription;
+    private String materialAreaDescription;
 
-  private ApplicationAreaDTO applicationArea;
+    private ApplicationAreaDTO applicationArea;
 
-  private List<ConstructionSystemMaterialDTO> materials;
+    private List<ConstructionSystemMaterialDTO> materials;
 
-  private List<ResponseConstructionSystemCommentDTO> comments;
+    private List<ResponseConstructionSystemCommentDTO> comments;
 
-  private String systemCategory;
+    private String systemCategory;
 
 }
