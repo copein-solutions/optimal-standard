@@ -45,14 +45,13 @@ public class FileController {
     final File iFile = new File(localFinalPath);
     final long resourceLength = iFile.length();
     final long lastModified = iFile.lastModified();
-    //final InputStream resource = new FileInputStream(iFile);
 
     return ResponseEntity
         .ok()
         .header("Content-Disposition", "inline; filename=" + materialFiles.getName())
         .contentLength(resourceLength)
         .lastModified(lastModified)
-        .contentType(MediaType.APPLICATION_OCTET_STREAM)
+        .contentType(MediaType.APPLICATION_PDF)
         .body(new ByteArrayResource(Files.readAllBytes(Path.of(localFinalPath))));
   }
 
