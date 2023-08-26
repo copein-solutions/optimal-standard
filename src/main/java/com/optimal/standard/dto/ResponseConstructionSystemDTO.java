@@ -1,5 +1,6 @@
 package com.optimal.standard.dto;
 
+import com.optimal.standard.persistence.model.SystemCategory;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -38,5 +39,7 @@ public class ResponseConstructionSystemDTO {
   private List<ConstructionSystemMaterialDTO> materials;
 
   private List<ResponseConstructionSystemCommentDTO> comments;
+
+  private String systemCategory;
 
 }

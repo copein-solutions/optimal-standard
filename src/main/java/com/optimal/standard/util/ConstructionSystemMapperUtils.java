@@ -70,6 +70,7 @@ public interface ConstructionSystemMapperUtils {
             .applicationArea(ApplicationAreaMapperUtils.toDTO(constructionSystem.getApplicationArea()))
             .materials(toConstructionSystemMaterials(constructionSystem.getConstructionSystemMaterials()))
             .comments(toConstructionSystemComments(constructionSystem.getConstructionSystemComments()))
+            .systemCategory(constructionSystem.getSystemCategory().toString())
             .build();
   }
 

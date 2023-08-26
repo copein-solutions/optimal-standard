@@ -180,4 +180,26 @@ public class ConstructionSystemService {
               throw new EntityNotFoundException(CONSTRUCTION_SYSTEM_NOT_FOUND_MESSAGE + constructionSystemComment.getConstructionSystem().getId());
             });
   }
+
+    public void updateSystemCategory(Long id, SystemCategoryDTO request) {
+
+      ConstructionSystem constructionSystem = this.constructionSystemRepository
+              .findById(id)
+              .orElseThrow(() -> new EntityNotFoundException(CONSTRUCTION_SYSTEM_NOT_FOUND_MESSAGE + id));
+
+      ConstructionSystem constructionSystem1 =
+              constructionSystem
+                      .getApplicationArea()
+                      .getConstructionSystems().stream()
+                      .filter(cs -> SystemCategory.OPTIMAL_STANDARD.equals(cs.getSystemCategory()))
+                      .findAny()
+                      .orElse(null);
+
+      List<ConstructionSystem> constructionSystemList = this.constructionSystemRepository.findAll();
+
+
+
+      constructionSystem.setSystemCategory(request.getType());
+      constructionSystemRepository.save(constructionSystem);
+    }
 }

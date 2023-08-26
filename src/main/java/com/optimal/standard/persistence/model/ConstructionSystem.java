@@ -36,6 +36,9 @@ public class ConstructionSystem {
 
   private String materialAreaDescription;
 
+  @Enumerated(EnumType.STRING)
+  private SystemCategory systemCategory;
+
   private boolean deleted;
 
   @ManyToOne

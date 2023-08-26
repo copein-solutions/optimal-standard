@@ -1,9 +1,6 @@
 package com.optimal.standard.controller;
 
-import com.optimal.standard.dto.ConstructionSystemCommentDTO;
-import com.optimal.standard.dto.ConstructionSystemDTO;
-import com.optimal.standard.dto.ResponseConstructionSystemCommentDTO;
-import com.optimal.standard.dto.ResponseConstructionSystemDTO;
+import com.optimal.standard.dto.*;
 import com.optimal.standard.service.ConstructionSystemService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
@@ -57,6 +54,11 @@ public class ConstructionSystemController {
   @PutMapping("/admin/construction_system/{id}")
   public void update(@PathVariable Long id, @RequestBody @Valid ConstructionSystemDTO request) {
     this.constructionSystemService.updateConstructionSystem(id, request);
+  }
+
+  @PutMapping("/admin/construction_system/{id}/stdo")
+  public void updateOptimalStandard(@PathVariable Long id, @RequestBody @Valid SystemCategoryDTO request) {
+    this.constructionSystemService.updateSystemCategory(id, request);
   }
 
 //  @DeleteMapping("/admin/construction_system/{id}")
