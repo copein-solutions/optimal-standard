@@ -108,7 +108,9 @@ public interface ConstructionSystemMapperUtils {
                 .id(constructionSystemComment.getId())
                 .comment(constructionSystemComment.getComment())
                 .date(constructionSystemComment.getCreatedDate())
+                .constructionSystemId(constructionSystemComment.getConstructionSystem().getId())
                 .userName(constructionSystemComment.getRegisteredUser().getUsername())
+                .userCompleteName(constructionSystemComment.getRegisteredUser().getName())
                 .build();
     }
 

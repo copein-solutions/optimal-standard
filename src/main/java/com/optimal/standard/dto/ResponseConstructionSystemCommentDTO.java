@@ -13,14 +13,16 @@ import java.time.LocalDate;
 @NoArgsConstructor
 public class ResponseConstructionSystemCommentDTO {
 
-  private Long id;
+    private Long id;
 
-  private String comment;
+    private String comment;
 
-  private LocalDate date;
+    private LocalDate date;
 
-  private Long constructionSystemId;
+    private Long constructionSystemId;
 
-  private String userName;
+    private String userName;
+
+    private String userCompleteName;
 
 }

@@ -156,12 +156,39 @@ public class ConstructionSystemService {
                 });
     }
 
+    public void updateConstructionSystemComment(Long id, ConstructionSystemCommentDTO request) {
+        this.constructionSystemRepository
+                .findById(id)
+                .ifPresentOrElse(constructionSystemDatabase -> {
+                    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+                    String username = authentication.getName();
+                    ConstructionSystemComment constructionSystemComment = this.constructionSystemCommentRepository
+                            .findById(request.getId())
+                            .orElseThrow(() -> {
+                                throw new EntityNotFoundException(CONSTRUCTION_SYSTEM_COMMENT_NOT_FOUND_MESSAGE + id);
+                            });
+
+                    if (constructionSystemComment.getRegisteredUser().getUsername().equals(username)) {
+                        this.constructionSystemCommentRepository.save(new ConstructionSystemComment(
+                                request.getId(),
+                                request.getComment(),
+                                LocalDate.now(),
+                                constructionSystemDatabase,
+                                this.userRepository.findByUsername(username)
+                        ));
+                    } else {
+                        throw new BadRequestException("Only the creator has permission on this registry.");
+                    }
+                }, () -> {
+                    throw new EntityNotFoundException(CONSTRUCTION_SYSTEM_NOT_FOUND_MESSAGE + id);
+                });
+    }
+
     public List<ResponseConstructionSystemCommentDTO> findCommentsById(Long id) {
         ResponseConstructionSystemDTO response = this.constructionSystemRepository
                 .findById(id)
                 .map(ConstructionSystemMapperUtils::toResponseCommentsDTO)
                 .orElseThrow(() -> new EntityNotFoundException(CONSTRUCTION_SYSTEM_NOT_FOUND_MESSAGE + id));
-        ;
 
         return response.getComments();
     }
@@ -174,13 +201,18 @@ public class ConstructionSystemService {
         ConstructionSystemComment constructionSystemComment = this.constructionSystemCommentRepository
                 .findById(id)
                 .orElseThrow(() -> new EntityNotFoundException(CONSTRUCTION_SYSTEM_COMMENT_NOT_FOUND_MESSAGE + id));
-        this.constructionSystemRepository
-                .findById(constructionSystemComment.getConstructionSystem().getId())
-                .ifPresentOrElse(constructionSystem -> {
-                    constructionSystem.getConstructionSystemComments().remove(constructionSystemComment);
-                }, () -> {
-                    throw new EntityNotFoundException(CONSTRUCTION_SYSTEM_NOT_FOUND_MESSAGE + constructionSystemComment.getConstructionSystem().getId());
-                });
+
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+
+        if (!constructionSystemComment.getRegisteredUser().getUsername().equals(username)) {
+            throw new BadRequestException("Only the creator has permission on this registry.");
+        }
+
+        ConstructionSystem constructionSystem = constructionSystemComment.getConstructionSystem();
+        constructionSystem.getConstructionSystemComments().remove(constructionSystemComment);
+
+        this.constructionSystemRepository.save(constructionSystem);
     }
 
     public void updateSystemCategory(Long id, SystemCategoryDTO request) {
