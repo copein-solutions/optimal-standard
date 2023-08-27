@@ -18,7 +18,7 @@ public class ConstructionSystemMaterialDTO {
 
     private MaterialDTO material;
 
-    private Double coefficient;
+    private double coefficient;
 
     private String coefficientDescription;
 

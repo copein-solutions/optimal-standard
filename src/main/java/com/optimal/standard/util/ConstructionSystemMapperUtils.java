@@ -152,7 +152,7 @@ public interface ConstructionSystemMapperUtils {
 
     private static JasperPrint getReport(List<ConstructionSystem> list) throws FileNotFoundException, JRException {
         Map<String, Object> params = new HashMap<String, Object>();
-        params.put("systemsDataSet", new JRBeanCollectionDataSource(list));
+        params.put("systemsData", new JRBeanCollectionDataSource(list));
 
         JasperPrint report = JasperFillManager.fillReport(JasperCompileManager.compileReport(
                 ResourceUtils.getFile("classpath:optimalStandard_Report.jrxml")
