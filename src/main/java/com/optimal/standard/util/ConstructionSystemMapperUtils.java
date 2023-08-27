@@ -8,9 +8,19 @@ import com.optimal.standard.persistence.model.ApplicationArea;
 import com.optimal.standard.persistence.model.ConstructionSystem;
 import com.optimal.standard.persistence.model.ConstructionSystemComment;
 import com.optimal.standard.persistence.model.ConstructionSystemMaterial;
+import net.sf.jasperreports.engine.*;
+import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
+import net.sf.jasperreports.engine.export.JRXlsExporter;
+import net.sf.jasperreports.export.SimpleExporterInput;
+import net.sf.jasperreports.export.SimpleOutputStreamExporterOutput;
+import org.springframework.util.ResourceUtils;
 
+import java.io.ByteArrayOutputStream;
+import java.io.FileNotFoundException;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import static com.optimal.standard.util.MaterialMapperUtils.toMaterialDTO;
@@ -127,5 +137,27 @@ public interface ConstructionSystemMapperUtils {
                 .sorted(Comparator.comparing(ConstructionSystemComment::getCreatedDate, Comparator.reverseOrder()))
                 .map(ConstructionSystemMapperUtils::toConstructionSystemComment)
                 .collect(Collectors.toList());
+    }
+
+    public static byte[] exportToXls(List<ConstructionSystem> list) throws JRException, FileNotFoundException {
+        ByteArrayOutputStream byteArray = new ByteArrayOutputStream();
+        SimpleOutputStreamExporterOutput output = new SimpleOutputStreamExporterOutput(byteArray);
+        JRXlsExporter exporter = new JRXlsExporter();
+        exporter.setExporterInput(new SimpleExporterInput(getReport(list)));
+        exporter.setExporterOutput(output);
+        exporter.exportReport();
+        output.close();
+        return byteArray.toByteArray();
+    }
+
+    private static JasperPrint getReport(List<ConstructionSystem> list) throws FileNotFoundException, JRException {
+        Map<String, Object> params = new HashMap<String, Object>();
+        params.put("systemsDataSet", new JRBeanCollectionDataSource(list));
+
+        JasperPrint report = JasperFillManager.fillReport(JasperCompileManager.compileReport(
+                ResourceUtils.getFile("classpath:optimalStandard_Report.jrxml")
+                        .getAbsolutePath()), params, new JREmptyDataSource());
+
+        return report;
     }
 }

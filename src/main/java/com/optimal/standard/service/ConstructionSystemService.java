@@ -9,10 +9,12 @@ import com.optimal.standard.persistence.repository.UserRepository;
 import com.optimal.standard.util.ConstructionSystemMapperUtils;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
+import net.sf.jasperreports.engine.JRException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import java.io.FileNotFoundException;
 import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.List;
@@ -237,5 +239,9 @@ public class ConstructionSystemService {
 
         constructionSystem.setSystemCategory(request.getType().name());
         this.constructionSystemRepository.save(constructionSystem);
+    }
+
+    public byte[] exportXls() throws JRException, FileNotFoundException {
+        return ConstructionSystemMapperUtils.exportToXls(constructionSystemRepository.findAll());
     }
 }
