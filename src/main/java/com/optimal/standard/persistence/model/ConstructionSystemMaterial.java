@@ -1,6 +1,15 @@
 package com.optimal.standard.persistence.model;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -12,25 +21,27 @@ import lombok.NoArgsConstructor;
 @Table(name = "construction_system_material")
 public class ConstructionSystemMaterial {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private Long id;
 
-    @ManyToOne
-    @JoinColumn(name = "material_id")
-    private Material material;
+  @ManyToOne
+  @JoinColumn(name = "material_id")
+  private Material material;
 
-    @ManyToOne
-    @JoinColumn(name = "construction_system_id")
-    private ConstructionSystem constructionSystem;
+  @ManyToOne
+  @JoinColumn(name = "construction_system_id")
+  private ConstructionSystem constructionSystem;
 
-    @Enumerated(EnumType.STRING)
-    private TypeOfUse typeOfUse;
+  @Enumerated(EnumType.STRING)
+  private TypeOfUse typeOfUse;
 
-    private double coefficient;
+  private double coefficient;
 
-    private String coefficientDescription;
+  @Column(columnDefinition = "text")
+  private String coefficientDescription;
 
-    private String materialDescription;
+  @Column(columnDefinition = "text")
+  private String materialDescription;
 
 }
