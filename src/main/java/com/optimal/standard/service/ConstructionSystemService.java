@@ -118,7 +118,7 @@ public class ConstructionSystemService {
                     ApplicationArea applicationArea = this.applicationAreaService.findApplicationAreaById(applicationAreaId);
                     ConstructionSystem constructionSystem = toConstructionSystem(request, applicationArea);
                     constructionSystem.setId(constructionSystemDatabase.getId());
-
+                    constructionSystem.setConstructionSystemComments(constructionSystemDatabase.getConstructionSystemComments());
                     List<ConstructionSystemMaterial> constructionSystemMaterials = this.buildConstructionSystemMaterials(request, constructionSystem);
                     constructionSystem.setConstructionSystemMaterials(constructionSystemMaterials);
                     this.constructionSystemRepository.save(constructionSystem);
