@@ -1,5 +1,8 @@
 package com.optimal.standard.service;
 
+import static com.optimal.standard.service.files.LocalFilesService.DIRECTORY_SEPARATOR;
+import static com.optimal.standard.service.files.LocalFilesService.DIRECTORY_TEMP;
+import static com.optimal.standard.service.files.LocalFilesService.DIRECTORY_UPLOADS;
 import static com.optimal.standard.service.files.LocalFilesService.getFinalName;
 import static com.optimal.standard.util.MaterialMapperUtils.toDTO;
 import static java.util.Objects.nonNull;
@@ -39,6 +42,13 @@ public class MaterialFileService {
     return this.materialFileRepository
         .findById(fileId)
         .orElse(null);
+  }
+
+  public String getLocalFilePath(MaterialFiles materialFiles) {
+    if (materialFiles.isTemp()) {
+      return DIRECTORY_TEMP + DIRECTORY_SEPARATOR + materialFiles.getName();
+    }
+    return DIRECTORY_UPLOADS + DIRECTORY_SEPARATOR + materialFiles.getName();
   }
 
   private MaterialFiles findMaterialFilesById(Long id) {
