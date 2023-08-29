@@ -32,11 +32,11 @@ public class LocalFilesService {
 
   private static final String LOCAL_DIRECTORY_INBOUND = "inbound";
 
-  private static Path DIRECTORY_UPLOADS = Paths
+  public static Path DIRECTORY_UPLOADS = Paths
       .get(LOCAL_DIRECTORY_UPLOADS)
       .toAbsolutePath();
 
-  private static Path DIRECTORY_TEMP = Paths
+  public static Path DIRECTORY_TEMP = Paths
       .get(LOCAL_DIRECTORY_INBOUND)
       .toAbsolutePath();
 
