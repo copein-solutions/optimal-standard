@@ -93,7 +93,7 @@ public class ConstructionSystemService {
 
     public List<ResponseConstructionSystemDTO> findAll() {
         return this.constructionSystemRepository
-                .findAll()
+                .findAllByDeletedFalse()
                 .stream()
                 .map(ConstructionSystemMapperUtils::toResponseDTO)
                 .toList();
@@ -101,7 +101,7 @@ public class ConstructionSystemService {
 
     public ResponseConstructionSystemDTO findById(Long id) {
         return this.constructionSystemRepository
-                .findById(id)
+                .findByIdAndDeletedFalse(id)
                 .map(ConstructionSystemMapperUtils::toResponseDTO)
                 .orElseThrow(() -> new EntityNotFoundException(CONSTRUCTION_SYSTEM_NOT_FOUND_MESSAGE + id));
     }
@@ -112,7 +112,7 @@ public class ConstructionSystemService {
         this.validateApplicationArea(applicationAreaId);
 
         this.constructionSystemRepository
-                .findById(id)
+                .findByIdAndDeletedFalse(id)
                 .ifPresentOrElse(constructionSystemDatabase -> {
 
                     ApplicationArea applicationArea = this.applicationAreaService.findApplicationAreaById(applicationAreaId);
@@ -139,7 +139,7 @@ public class ConstructionSystemService {
 
     public void saveConstructionSystemComment(Long id, ConstructionSystemCommentDTO request) {
         this.constructionSystemRepository
-                .findById(id)
+                .findByIdAndDeletedFalse(id)
                 .ifPresentOrElse(constructionSystemDatabase -> {
                     Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
                     String username = authentication.getName();
@@ -158,7 +158,7 @@ public class ConstructionSystemService {
 
     public void updateConstructionSystemComment(Long id, ConstructionSystemCommentDTO request) {
         this.constructionSystemRepository
-                .findById(id)
+                .findByIdAndDeletedFalse(id)
                 .ifPresentOrElse(constructionSystemDatabase -> {
                     Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
                     String username = authentication.getName();
@@ -186,16 +186,16 @@ public class ConstructionSystemService {
 
     public List<ResponseConstructionSystemCommentDTO> findCommentsById(Long id) {
         ResponseConstructionSystemDTO response = this.constructionSystemRepository
-                .findById(id)
+                .findByIdAndDeletedFalse(id)
                 .map(ConstructionSystemMapperUtils::toResponseCommentsDTO)
                 .orElseThrow(() -> new EntityNotFoundException(CONSTRUCTION_SYSTEM_NOT_FOUND_MESSAGE + id));
 
         return response.getComments();
     }
 
-//  public void deleteConstructionSystem(Long id) {
-//    this.constructionSystemRepository.deleteById(id);
-//  }
+    public void deleteConstructionSystem(Long id) {
+        this.constructionSystemRepository.markAsDeleted(id);
+    }
 
     public void deleteConstructionSystemComment(Long id) {
         ConstructionSystemComment constructionSystemComment = this.constructionSystemCommentRepository
@@ -217,7 +217,7 @@ public class ConstructionSystemService {
 
     public void updateSystemCategory(Long id, SystemCategoryDTO request) {
         ConstructionSystem constructionSystem = this.constructionSystemRepository
-                .findById(id)
+                .findByIdAndDeletedFalse(id)
                 .orElseThrow(() -> new EntityNotFoundException(CONSTRUCTION_SYSTEM_NOT_FOUND_MESSAGE + id));
 
         List<ConstructionSystem> constructionSystemChanged =
