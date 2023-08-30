@@ -26,18 +26,22 @@ public class MaterialService {
 
   private final MaterialFileService materialFileService;
 
+  private final GlobalVariableService globalVariableService;
+
   public List<MaterialDTO> findAll() {
+    double quotationDollar = this.globalVariableService.getQuotationDollar();
     return this.materialRepository
         .findAllByDeletedFalse()
         .stream()
-        .map(MaterialMapperUtils::toMaterialDTO)
+        .map(material -> MaterialMapperUtils.toMaterialDTO(material, quotationDollar))
         .toList();
   }
 
   public List<MaterialDTO> findAllByIds(List<Long> ids) {
+    double quotationDollar = this.globalVariableService.getQuotationDollar();
     return emptyIfNull(this.materialRepository.findMaterialsByIdInAndDeletedFalse(ids))
         .stream()
-        .map(MaterialMapperUtils::toMaterialDTO)
+        .map(material -> MaterialMapperUtils.toMaterialDTO(material, quotationDollar))
         .toList();
   }
 
@@ -55,6 +59,8 @@ public class MaterialService {
           this.materialFileService.processMaterialFiles(materialDatabase, request.getFiles());
           Material material = toMaterial(request);
           material.setId(materialId);
+          material.setConstructionSystems(materialDatabase.getConstructionSystems());
+          material.setMaterialFiles(materialDatabase.getMaterialFiles());
           this.materialRepository.save(material);
         }, () -> {
           throw new EntityNotFoundException(MATERIAL_NOT_FOUND_MESSAGE + id);
@@ -62,9 +68,10 @@ public class MaterialService {
   }
 
   public MaterialDTO findById(Long id) {
+    double quotationDollar = this.globalVariableService.getQuotationDollar();
     return this.materialRepository
         .findByIdAndDeletedFalse(id)
-        .map(MaterialMapperUtils::toMaterialDTO)
+        .map(material -> MaterialMapperUtils.toMaterialDTO(material, quotationDollar))
         .orElseThrow(() -> new EntityNotFoundException(MATERIAL_NOT_FOUND_MESSAGE + id));
   }
 
@@ -85,10 +92,11 @@ public class MaterialService {
   }
 
   public List<MaterialDTO> findAllByType(String type) {
+    double quotationDollar = this.globalVariableService.getQuotationDollar();
     return this.materialRepository
         .findAllByTypeAndDeletedFalse(type)
         .stream()
-        .map(MaterialMapperUtils::toMaterialDTO)
+        .map(material -> MaterialMapperUtils.toMaterialDTO(material, quotationDollar))
         .collect(toList());
   }
 
