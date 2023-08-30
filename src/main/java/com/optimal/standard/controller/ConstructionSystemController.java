@@ -1,6 +1,8 @@
 package com.optimal.standard.controller;
 
-import com.optimal.standard.dto.*;
+import com.optimal.standard.dto.ConstructionSystemDTO;
+import com.optimal.standard.dto.ResponseConstructionSystemDTO;
+import com.optimal.standard.dto.SystemCategoryDTO;
 import com.optimal.standard.service.ConstructionSystemService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
@@ -29,26 +31,9 @@ public class ConstructionSystemController {
                 .body(this.constructionSystemService.findById(id));
     }
 
-    @GetMapping("/user/construction_system/{id}/comment")
-    public ResponseEntity<List<ResponseConstructionSystemCommentDTO>> findCommentsById(@PathVariable Long id) {
-        return ResponseEntity
-                .ok()
-                .body(this.constructionSystemService.findCommentsById(id));
-    }
-
     @PostMapping("/admin/construction_system")
     public void create(@RequestBody @Valid ConstructionSystemDTO request) {
         this.constructionSystemService.saveConstructionSystem(request);
-    }
-
-    @PostMapping("/user/construction_system/{id}/comment")
-    public void createComment(@PathVariable Long id, @RequestBody @Valid ConstructionSystemCommentDTO request) {
-        this.constructionSystemService.saveConstructionSystemComment(id, request);
-    }
-
-    @PutMapping("/user/construction_system/{id}/comment")
-    public void updateComment(@PathVariable Long id, @RequestBody @Valid ConstructionSystemCommentDTO request) {
-        this.constructionSystemService.updateConstructionSystemComment(id, request);
     }
 
     @PutMapping("/admin/construction_system/{id}")
@@ -64,10 +49,5 @@ public class ConstructionSystemController {
     @DeleteMapping("/admin/construction_system/{id}")
     public void delete(@PathVariable Long id) {
         this.constructionSystemService.deleteConstructionSystem(id);
-    }
-
-    @DeleteMapping("/user/construction_system/comment/{id}")
-    public void deleteComment(@PathVariable Long id) {
-        this.constructionSystemService.deleteConstructionSystemComment(id);
     }
 }

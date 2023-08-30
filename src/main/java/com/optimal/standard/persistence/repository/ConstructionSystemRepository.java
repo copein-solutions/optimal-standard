@@ -21,4 +21,5 @@ public interface ConstructionSystemRepository extends JpaRepository<Construction
     @Modifying
     @Query("UPDATE ConstructionSystem cs SET cs.deleted = true WHERE cs.id = :id")
     void markAsDeleted(Long id);
+
 }

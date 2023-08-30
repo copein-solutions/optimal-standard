@@ -96,6 +96,7 @@ public interface ConstructionSystemMapperUtils {
     static List<ResponseConstructionSystemCommentDTO> toConstructionSystemComments(List<ConstructionSystemComment> constructionSystemComments) {
         return constructionSystemComments
                 .stream()
+                .filter(cs -> cs.getStatus().equals("VALIDATED"))
                 .sorted(Comparator.comparing(ConstructionSystemComment::getCreatedDate, Comparator.reverseOrder()))
                 .limit(5)
                 .map(ConstructionSystemMapperUtils::toConstructionSystemComment)
@@ -111,13 +112,7 @@ public interface ConstructionSystemMapperUtils {
                 .constructionSystemId(constructionSystemComment.getConstructionSystem().getId())
                 .userName(constructionSystemComment.getRegisteredUser().getUsername())
                 .userCompleteName(constructionSystemComment.getRegisteredUser().getName())
-                .build();
-    }
-
-    static ResponseConstructionSystemDTO toResponseCommentsDTO(ConstructionSystem constructionSystem) {
-        return ResponseConstructionSystemDTO
-                .builder()
-                .comments(toConstructionSystemAllComments(constructionSystem.getConstructionSystemComments()))
+                .status(constructionSystemComment.getStatus())
                 .build();
     }
 

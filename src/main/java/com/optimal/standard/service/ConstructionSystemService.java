@@ -2,18 +2,17 @@ package com.optimal.standard.service;
 
 import com.optimal.standard.dto.*;
 import com.optimal.standard.exception.BadRequestException;
-import com.optimal.standard.persistence.model.*;
+import com.optimal.standard.persistence.model.ApplicationArea;
+import com.optimal.standard.persistence.model.ConstructionSystem;
+import com.optimal.standard.persistence.model.ConstructionSystemMaterial;
+import com.optimal.standard.persistence.model.Material;
 import com.optimal.standard.persistence.repository.ConstructionSystemCommentRepository;
 import com.optimal.standard.persistence.repository.ConstructionSystemRepository;
-import com.optimal.standard.persistence.repository.UserRepository;
 import com.optimal.standard.util.ConstructionSystemMapperUtils;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -28,7 +27,6 @@ import static com.optimal.standard.util.ConstructionSystemMapperUtils.toConstruc
 public class ConstructionSystemService {
 
     public static final String CONSTRUCTION_SYSTEM_NOT_FOUND_MESSAGE = "Construction system not found with ID: ";
-    public static final String CONSTRUCTION_SYSTEM_COMMENT_NOT_FOUND_MESSAGE = "Construction system comment not found with ID: ";
 
     private final ApplicationAreaService applicationAreaService;
 
@@ -39,8 +37,6 @@ public class ConstructionSystemService {
     private final ConstructionSystemRepository constructionSystemRepository;
 
     private final ConstructionSystemCommentRepository constructionSystemCommentRepository;
-
-    private final UserRepository userRepository;
 
     public void saveConstructionSystem(ConstructionSystemDTO request) {
         Long applicationAreaId = request.getApplicationAreaId();
@@ -137,82 +133,14 @@ public class ConstructionSystemService {
                 .collect(Collectors.toList());
     }
 
-    public void saveConstructionSystemComment(Long id, ConstructionSystemCommentDTO request) {
-        this.constructionSystemRepository
+    public void deleteConstructionSystem(Long id) {
+        ConstructionSystem constructionSystem = this.constructionSystemRepository
                 .findByIdAndDeletedFalse(id)
-                .ifPresentOrElse(constructionSystemDatabase -> {
-                    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-                    String username = authentication.getName();
-
-                    this.constructionSystemCommentRepository.save(new ConstructionSystemComment(
-                            request.getId(),
-                            request.getComment(),
-                            LocalDate.now(),
-                            constructionSystemDatabase,
-                            this.userRepository.findByUsername(username)
-                    ));
-                }, () -> {
-                    throw new EntityNotFoundException(CONSTRUCTION_SYSTEM_NOT_FOUND_MESSAGE + id);
-                });
-    }
-
-    public void updateConstructionSystemComment(Long id, ConstructionSystemCommentDTO request) {
-        this.constructionSystemRepository
-                .findByIdAndDeletedFalse(id)
-                .ifPresentOrElse(constructionSystemDatabase -> {
-                    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-                    String username = authentication.getName();
-                    ConstructionSystemComment constructionSystemComment = this.constructionSystemCommentRepository
-                            .findById(request.getId())
-                            .orElseThrow(() -> {
-                                throw new EntityNotFoundException(CONSTRUCTION_SYSTEM_COMMENT_NOT_FOUND_MESSAGE + id);
-                            });
-
-                    if (constructionSystemComment.getRegisteredUser().getUsername().equals(username)) {
-                        this.constructionSystemCommentRepository.save(new ConstructionSystemComment(
-                                request.getId(),
-                                request.getComment(),
-                                LocalDate.now(),
-                                constructionSystemDatabase,
-                                this.userRepository.findByUsername(username)
-                        ));
-                    } else {
-                        throw new BadRequestException("Only the creator has permission on this registry.");
-                    }
-                }, () -> {
-                    throw new EntityNotFoundException(CONSTRUCTION_SYSTEM_NOT_FOUND_MESSAGE + id);
-                });
-    }
-
-    public List<ResponseConstructionSystemCommentDTO> findCommentsById(Long id) {
-        ResponseConstructionSystemDTO response = this.constructionSystemRepository
-                .findByIdAndDeletedFalse(id)
-                .map(ConstructionSystemMapperUtils::toResponseCommentsDTO)
                 .orElseThrow(() -> new EntityNotFoundException(CONSTRUCTION_SYSTEM_NOT_FOUND_MESSAGE + id));
 
-        return response.getComments();
-    }
+        this.constructionSystemCommentRepository.deleteByConstructionSystemId(id);
 
-    public void deleteConstructionSystem(Long id) {
         this.constructionSystemRepository.markAsDeleted(id);
-    }
-
-    public void deleteConstructionSystemComment(Long id) {
-        ConstructionSystemComment constructionSystemComment = this.constructionSystemCommentRepository
-                .findById(id)
-                .orElseThrow(() -> new EntityNotFoundException(CONSTRUCTION_SYSTEM_COMMENT_NOT_FOUND_MESSAGE + id));
-
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String username = authentication.getName();
-
-        if (!constructionSystemComment.getRegisteredUser().getUsername().equals(username)) {
-            throw new BadRequestException("Only the creator has permission on this registry.");
-        }
-
-        ConstructionSystem constructionSystem = constructionSystemComment.getConstructionSystem();
-        constructionSystem.getConstructionSystemComments().remove(constructionSystemComment);
-
-        this.constructionSystemRepository.save(constructionSystem);
     }
 
     public void updateSystemCategory(Long id, SystemCategoryDTO request) {
