@@ -2,6 +2,7 @@ package com.optimal.standard.service;
 
 
 import static com.optimal.standard.util.MaterialMapperUtils.toMaterial;
+import static com.optimal.standard.util.MaterialMapperUtils.toMaterialDTO;
 import static java.util.stream.Collectors.toList;
 import static org.apache.commons.collections4.CollectionUtils.isNotEmpty;
 import static org.apache.commons.collections4.ListUtils.emptyIfNull;
@@ -10,7 +11,6 @@ import com.optimal.standard.dto.MaterialDTO;
 import com.optimal.standard.exception.BadRequestException;
 import com.optimal.standard.persistence.model.Material;
 import com.optimal.standard.persistence.repository.MaterialRepository;
-import com.optimal.standard.util.MaterialMapperUtils;
 import jakarta.persistence.EntityNotFoundException;
 import java.util.List;
 import lombok.AllArgsConstructor;
@@ -29,19 +29,23 @@ public class MaterialService {
   private final GlobalVariableService globalVariableService;
 
   public List<MaterialDTO> findAll() {
-    double quotationDollar = this.globalVariableService.getQuotationDollar();
     return this.materialRepository
         .findAllByDeletedFalse()
         .stream()
-        .map(material -> MaterialMapperUtils.toMaterialDTO(material, quotationDollar))
+        .map(material -> {
+          double unitPrice = this.globalVariableService.getUnitPrice(material);
+          return toMaterialDTO(material, unitPrice);
+        })
         .toList();
   }
 
   public List<MaterialDTO> findAllByIds(List<Long> ids) {
-    double quotationDollar = this.globalVariableService.getQuotationDollar();
     return emptyIfNull(this.materialRepository.findMaterialsByIdInAndDeletedFalse(ids))
         .stream()
-        .map(material -> MaterialMapperUtils.toMaterialDTO(material, quotationDollar))
+        .map(material -> {
+          double unitPrice = this.globalVariableService.getUnitPrice(material);
+          return toMaterialDTO(material, unitPrice);
+        })
         .toList();
   }
 
@@ -68,10 +72,12 @@ public class MaterialService {
   }
 
   public MaterialDTO findById(Long id) {
-    double quotationDollar = this.globalVariableService.getQuotationDollar();
     return this.materialRepository
         .findByIdAndDeletedFalse(id)
-        .map(material -> MaterialMapperUtils.toMaterialDTO(material, quotationDollar))
+        .map(material -> {
+          double unitPrice = this.globalVariableService.getUnitPrice(material);
+          return toMaterialDTO(material, unitPrice);
+        })
         .orElseThrow(() -> new EntityNotFoundException(MATERIAL_NOT_FOUND_MESSAGE + id));
   }
 
@@ -92,11 +98,13 @@ public class MaterialService {
   }
 
   public List<MaterialDTO> findAllByType(String type) {
-    double quotationDollar = this.globalVariableService.getQuotationDollar();
     return this.materialRepository
         .findAllByTypeAndDeletedFalse(type)
         .stream()
-        .map(material -> MaterialMapperUtils.toMaterialDTO(material, quotationDollar))
+        .map(material -> {
+          double unitPrice = this.globalVariableService.getUnitPrice(material);
+          return toMaterialDTO(material, unitPrice);
+        })
         .collect(toList());
   }
 

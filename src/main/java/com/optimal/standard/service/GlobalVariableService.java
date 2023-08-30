@@ -2,6 +2,7 @@ package com.optimal.standard.service;
 
 import com.optimal.standard.exception.BadRequestException;
 import com.optimal.standard.persistence.model.GlobalVariable;
+import com.optimal.standard.persistence.model.Material;
 import com.optimal.standard.persistence.repository.GlobalVariableRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -9,6 +10,8 @@ import org.springframework.stereotype.Service;
 @Service
 @AllArgsConstructor
 public class GlobalVariableService {
+
+  private static final String USD = "USD";
 
   private static final String LABOR_COST = "labor_cost";
 
@@ -48,6 +51,14 @@ public class GlobalVariableService {
         }, () -> {
           throw new BadRequestException("");
         });
+  }
+
+  public Double getUnitPrice(Material material) {
+    if (USD.equals(material.getCurrency())) {
+      double quotationDollar = this.fetchGlobalVariable(QUOTATION_DOLLAR);
+      return (material.getPresentationPrice() * quotationDollar) / material.getPresentationQuantity();
+    }
+    return material.getPresentationPrice() / material.getPresentationQuantity();
   }
 
 

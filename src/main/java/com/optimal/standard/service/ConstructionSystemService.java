@@ -2,8 +2,11 @@ package com.optimal.standard.service;
 
 import static com.optimal.standard.service.ApplicationAreaService.APPLICATION_AREA_NOT_FOUND_MESSAGE;
 import static com.optimal.standard.util.ConstructionSystemMapperUtils.toConstructionSystem;
+import static com.optimal.standard.util.ConstructionSystemMapperUtils.toResponseDTO;
 
 import com.optimal.standard.dto.ConstructionSystemDTO;
+import com.optimal.standard.dto.ConstructionSystemMaterialDTO;
+import com.optimal.standard.dto.ConstructionSystemMaterialPrices;
 import com.optimal.standard.dto.MaterialDTO;
 import com.optimal.standard.dto.ResponseConstructionSystemDTO;
 import com.optimal.standard.dto.TypeOfUseOfMaterial;
@@ -12,11 +15,13 @@ import com.optimal.standard.persistence.model.ApplicationArea;
 import com.optimal.standard.persistence.model.ConstructionSystem;
 import com.optimal.standard.persistence.model.ConstructionSystemMaterial;
 import com.optimal.standard.persistence.model.Material;
+import com.optimal.standard.persistence.model.TypeOfUse;
 import com.optimal.standard.persistence.repository.ConstructionSystemRepository;
-import com.optimal.standard.util.ConstructionSystemMapperUtils;
 import jakarta.persistence.EntityNotFoundException;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -82,20 +87,25 @@ public class ConstructionSystemService {
   }
 
   public List<ResponseConstructionSystemDTO> findAll() {
-    double quotationDollar = this.globalVariableService.getQuotationDollar();
     return this.constructionSystemRepository
         .findAll()
         .stream()
-        .map(cs -> ConstructionSystemMapperUtils.toResponseDTO(cs, quotationDollar))
+        .map(this::buildResponseConstructionSystemDTO)
         .toList();
   }
 
   public ResponseConstructionSystemDTO findById(Long id) {
-    double quotationDollar = this.globalVariableService.getQuotationDollar();
     return this.constructionSystemRepository
         .findById(id)
-        .map(cs -> ConstructionSystemMapperUtils.toResponseDTO(cs, quotationDollar))
+        .map(this::buildResponseConstructionSystemDTO)
         .orElseThrow(() -> new EntityNotFoundException(CONSTRUCTION_SYSTEM_NOT_FOUND_MESSAGE + id));
+  }
+
+  private ResponseConstructionSystemDTO buildResponseConstructionSystemDTO(ConstructionSystem constructionSystem) {
+    double totalPrice = this.getSystemTotalPrice(constructionSystem);
+    List<ConstructionSystemMaterialDTO> csm =
+        this.constructionSystemMaterialService.toConstructionSystemMaterialsDTO(constructionSystem.getConstructionSystemMaterials());
+    return toResponseDTO(constructionSystem, totalPrice, csm);
   }
 
   public void updateConstructionSystem(Long id, ConstructionSystemDTO request) {
@@ -127,6 +137,41 @@ public class ConstructionSystemService {
         .stream()
         .map(typeOfUseOfMaterial -> this.buildConstructionSystemMaterial(typeOfUseOfMaterial, constructionSystem))
         .collect(Collectors.toList());
+  }
+
+  private double getSystemTotalPrice(ConstructionSystem constructionSystem) {
+
+    AtomicReference<Double> totalPluginPrice = new AtomicReference<>(0.0);
+    double totalConsumption = constructionSystem.getTotalConsumption();
+    Map<TypeOfUse, ConstructionSystemMaterialPrices> materialPrices = constructionSystem
+        .getConstructionSystemMaterials()
+        .stream()
+        .filter(csm -> !TypeOfUse.PLUGIN_MATERIAL.equals(csm.getTypeOfUse()))
+        .collect(Collectors.toMap(ConstructionSystemMaterial::getTypeOfUse, this::buildConstructionSystemMaterialPrices));
+
+    List<ConstructionSystemMaterialPrices> pluginPrices = constructionSystem
+        .getConstructionSystemMaterials()
+        .stream()
+        .filter(csm -> TypeOfUse.PLUGIN_MATERIAL.equals(csm.getTypeOfUse()))
+        .map(this::buildConstructionSystemMaterialPrices)
+        .peek(csmp -> totalPluginPrice.accumulateAndGet((csmp.getUnitPrice() * csmp.getCoefficient()), Double::sum))
+        .toList();
+
+    double materialBasePrice = materialPrices
+        .get(TypeOfUse.BASE)
+        .getUnitPrice();
+    double totalMeshPrice = materialPrices
+        .get(TypeOfUse.TOTAL_MESH)
+        .getUnitPrice();
+    ConstructionSystemMaterialPrices partialMeshPrices = materialPrices.get(TypeOfUse.PARTIAL_MESH);
+    double partialMeshPrice = partialMeshPrices.getUnitPrice();
+    double coefficientPartialMesh = partialMeshPrices.getCoefficient();
+
+    return (materialBasePrice * totalConsumption) + totalMeshPrice + (partialMeshPrice * coefficientPartialMesh) + totalPluginPrice.get();
+  }
+
+  private ConstructionSystemMaterialPrices buildConstructionSystemMaterialPrices(ConstructionSystemMaterial csm) {
+    return new ConstructionSystemMaterialPrices(this.globalVariableService.getUnitPrice(csm.getMaterial()), csm.getCoefficient());
   }
 
 }
