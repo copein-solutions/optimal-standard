@@ -37,8 +37,6 @@ public class ConstructionSystem {
 
   private boolean cured;
 
-  private double totalPrice;
-
   private String baseConditions;
 
   private String supportConditions;
