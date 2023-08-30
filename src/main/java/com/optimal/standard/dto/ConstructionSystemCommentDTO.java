@@ -11,10 +11,12 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class ConstructionSystemCommentDTO {
 
-  private Long id;
+    private Long id;
 
-  private String comment;
+    private String comment;
 
-  private String userName;
+    private String userName;
+
+    private String status;
 
 }

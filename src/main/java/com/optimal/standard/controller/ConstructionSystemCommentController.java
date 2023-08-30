@@ -40,8 +40,8 @@ public class ConstructionSystemCommentController {
         this.constructionSystemCommentService.updateConstructionSystemComment(id, request);
     }
 
-    @PutMapping("/admin/construction_system/comment_status/{id}/")
-    public void statusComment(@PathVariable Long id, @RequestBody @Valid String request) {
+    @PutMapping("/admin/construction_system/comment_status/{id}")
+    public void statusComment(@PathVariable Long id, @RequestBody @Valid ConstructionSystemCommentDTO request) {
         this.constructionSystemCommentService.setStatusConstructionSystemComment(id, request);
     }
 }

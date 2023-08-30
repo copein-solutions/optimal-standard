@@ -2,6 +2,8 @@ package com.optimal.standard.service;
 
 import com.optimal.standard.dto.ConstructionSystemCommentDTO;
 import com.optimal.standard.dto.ResponseConstructionSystemCommentDTO;
+import com.optimal.standard.persistence.model.CommentStatus;
+import com.optimal.standard.persistence.model.ConstructionSystem;
 import com.optimal.standard.persistence.model.ConstructionSystemComment;
 import com.optimal.standard.persistence.repository.ConstructionSystemCommentRepository;
 import com.optimal.standard.persistence.repository.ConstructionSystemRepository;
@@ -41,7 +43,7 @@ public class ConstructionSystemCommentService {
                             request.getId(),
                             request.getComment(),
                             LocalDate.now(),
-                            "PENDING",
+                            CommentStatus.PENDING.name(),
                             constructionSystemDatabase,
                             this.userRepository.findByUsername(username)
                     ));
@@ -69,9 +71,9 @@ public class ConstructionSystemCommentService {
 
     public List<ResponseConstructionSystemCommentDTO> findCommentsById(Long id, String user) {
         List<String> status = new ArrayList<>();
-        status.add("VALIDATED");
+        status.add(CommentStatus.VALIDATED.name());
         if (user.equals("ADMIN")) {
-            status.add("PENDING");
+            status.add(CommentStatus.PENDING.name());
         }
         return this.constructionSystemCommentRepository
                 .findByConstructionSystemIdAndStatusIn(id, status)
@@ -80,16 +82,27 @@ public class ConstructionSystemCommentService {
                 .toList();
     }
 
-    public void setStatusConstructionSystemComment(Long id, String request) {
-        if (request.equals("REJECTED")) {
-            this.constructionSystemCommentRepository.deleteById(id);
+    public void setStatusConstructionSystemComment(Long id, ConstructionSystemCommentDTO request) {
+        if (request.getStatus().equals(CommentStatus.REJECTED.name())) {
+            this.deleteConstructionSystemComment(id);
         } else {
             ConstructionSystemComment constructionSystemComment = this.constructionSystemCommentRepository
                     .findById(id)
                     .orElseThrow(() -> new EntityNotFoundException(CONSTRUCTION_SYSTEM_COMMENT_NOT_FOUND_MESSAGE + id));
-            constructionSystemComment.setStatus("VALIDATED");
+            constructionSystemComment.setStatus(CommentStatus.VALIDATED.name());
 
             this.constructionSystemCommentRepository.save(constructionSystemComment);
         }
     }
+
+    public void deleteConstructionSystemComment(Long id) {
+        ConstructionSystemComment constructionSystemComment = this.constructionSystemCommentRepository
+                .findById(id)
+                .orElseThrow(() -> new EntityNotFoundException(CONSTRUCTION_SYSTEM_COMMENT_NOT_FOUND_MESSAGE + id));
+
+        ConstructionSystem constructionSystem = constructionSystemComment.getConstructionSystem();
+        constructionSystem.getConstructionSystemComments().remove(constructionSystemComment);
+        this.constructionSystemRepository.save(constructionSystem);
+    }
+
 }

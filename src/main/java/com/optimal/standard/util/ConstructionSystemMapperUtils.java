@@ -4,10 +4,7 @@ import com.optimal.standard.dto.ConstructionSystemDTO;
 import com.optimal.standard.dto.ConstructionSystemMaterialDTO;
 import com.optimal.standard.dto.ResponseConstructionSystemCommentDTO;
 import com.optimal.standard.dto.ResponseConstructionSystemDTO;
-import com.optimal.standard.persistence.model.ApplicationArea;
-import com.optimal.standard.persistence.model.ConstructionSystem;
-import com.optimal.standard.persistence.model.ConstructionSystemComment;
-import com.optimal.standard.persistence.model.ConstructionSystemMaterial;
+import com.optimal.standard.persistence.model.*;
 
 import java.util.Comparator;
 import java.util.List;
@@ -96,7 +93,7 @@ public interface ConstructionSystemMapperUtils {
     static List<ResponseConstructionSystemCommentDTO> toConstructionSystemComments(List<ConstructionSystemComment> constructionSystemComments) {
         return constructionSystemComments
                 .stream()
-                .filter(cs -> cs.getStatus().equals("VALIDATED"))
+                .filter(cs -> cs.getStatus().equals(CommentStatus.VALIDATED.name()))
                 .sorted(Comparator.comparing(ConstructionSystemComment::getCreatedDate, Comparator.reverseOrder()))
                 .limit(5)
                 .map(ConstructionSystemMapperUtils::toConstructionSystemComment)
