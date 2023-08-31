@@ -138,7 +138,8 @@ public class ConstructionSystemService {
                 .findByIdAndDeletedFalse(id)
                 .orElseThrow(() -> new EntityNotFoundException(CONSTRUCTION_SYSTEM_NOT_FOUND_MESSAGE + id));
 
-        this.constructionSystemCommentRepository.deleteByConstructionSystemId(id);
+//        Error on deleted comments.
+//        this.constructionSystemCommentRepository.deleteByConstructionSystemId(id);
 
         this.constructionSystemRepository.markAsDeleted(id);
     }
