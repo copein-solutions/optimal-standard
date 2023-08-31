@@ -161,9 +161,10 @@ public class ConstructionSystemService {
         .get(TypeOfUse.BASE)
         .getUnitPrice();
     double totalMeshPrice = materialPrices
-        .get(TypeOfUse.TOTAL_MESH)
+        .getOrDefault(TypeOfUse.TOTAL_MESH, new ConstructionSystemMaterialPrices(0.0, 0.0))
         .getUnitPrice();
-    ConstructionSystemMaterialPrices partialMeshPrices = materialPrices.get(TypeOfUse.PARTIAL_MESH);
+    ConstructionSystemMaterialPrices partialMeshPrices =
+        materialPrices.getOrDefault(TypeOfUse.PARTIAL_MESH, new ConstructionSystemMaterialPrices(0.0, 0.0));
     double partialMeshPrice = partialMeshPrices.getUnitPrice();
     double coefficientPartialMesh = partialMeshPrices.getCoefficient();
 
