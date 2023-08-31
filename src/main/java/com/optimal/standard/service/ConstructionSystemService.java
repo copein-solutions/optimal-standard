@@ -134,12 +134,11 @@ public class ConstructionSystemService {
     }
 
     public void deleteConstructionSystem(Long id) {
-        ConstructionSystem constructionSystem = this.constructionSystemRepository
+        this.constructionSystemRepository
                 .findByIdAndDeletedFalse(id)
                 .orElseThrow(() -> new EntityNotFoundException(CONSTRUCTION_SYSTEM_NOT_FOUND_MESSAGE + id));
 
-//        Error on deleted comments.
-//        this.constructionSystemCommentRepository.deleteByConstructionSystemId(id);
+        this.constructionSystemCommentRepository.deleteByConstructionSystemId(id);
 
         this.constructionSystemRepository.markAsDeleted(id);
     }
