@@ -2,6 +2,7 @@ package com.optimal.standard.service;
 
 
 import static com.optimal.standard.util.MaterialMapperUtils.toMaterial;
+import static com.optimal.standard.util.MaterialMapperUtils.toMaterialDTO;
 import static java.util.stream.Collectors.toList;
 import static org.apache.commons.collections4.CollectionUtils.isNotEmpty;
 import static org.apache.commons.collections4.ListUtils.emptyIfNull;
@@ -10,7 +11,6 @@ import com.optimal.standard.dto.MaterialDTO;
 import com.optimal.standard.exception.BadRequestException;
 import com.optimal.standard.persistence.model.Material;
 import com.optimal.standard.persistence.repository.MaterialRepository;
-import com.optimal.standard.util.MaterialMapperUtils;
 import jakarta.persistence.EntityNotFoundException;
 import java.util.List;
 import lombok.AllArgsConstructor;
@@ -26,18 +26,26 @@ public class MaterialService {
 
   private final MaterialFileService materialFileService;
 
+  private final GlobalVariableService globalVariableService;
+
   public List<MaterialDTO> findAll() {
     return this.materialRepository
         .findAllByDeletedFalse()
         .stream()
-        .map(MaterialMapperUtils::toMaterialDTO)
+        .map(material -> {
+          double unitPrice = this.globalVariableService.getUnitPrice(material);
+          return toMaterialDTO(material, unitPrice);
+        })
         .toList();
   }
 
   public List<MaterialDTO> findAllByIds(List<Long> ids) {
     return emptyIfNull(this.materialRepository.findMaterialsByIdInAndDeletedFalse(ids))
         .stream()
-        .map(MaterialMapperUtils::toMaterialDTO)
+        .map(material -> {
+          double unitPrice = this.globalVariableService.getUnitPrice(material);
+          return toMaterialDTO(material, unitPrice);
+        })
         .toList();
   }
 
@@ -55,6 +63,8 @@ public class MaterialService {
           this.materialFileService.processMaterialFiles(materialDatabase, request.getFiles());
           Material material = toMaterial(request);
           material.setId(materialId);
+          material.setConstructionSystems(materialDatabase.getConstructionSystems());
+          material.setMaterialFiles(materialDatabase.getMaterialFiles());
           this.materialRepository.save(material);
         }, () -> {
           throw new EntityNotFoundException(MATERIAL_NOT_FOUND_MESSAGE + id);
@@ -64,7 +74,10 @@ public class MaterialService {
   public MaterialDTO findById(Long id) {
     return this.materialRepository
         .findByIdAndDeletedFalse(id)
-        .map(MaterialMapperUtils::toMaterialDTO)
+        .map(material -> {
+          double unitPrice = this.globalVariableService.getUnitPrice(material);
+          return toMaterialDTO(material, unitPrice);
+        })
         .orElseThrow(() -> new EntityNotFoundException(MATERIAL_NOT_FOUND_MESSAGE + id));
   }
 
@@ -88,7 +101,10 @@ public class MaterialService {
     return this.materialRepository
         .findAllByTypeAndDeletedFalse(type)
         .stream()
-        .map(MaterialMapperUtils::toMaterialDTO)
+        .map(material -> {
+          double unitPrice = this.globalVariableService.getUnitPrice(material);
+          return toMaterialDTO(material, unitPrice);
+        })
         .collect(toList());
   }
 
