@@ -2,11 +2,13 @@ package com.optimal.standard.controller;
 
 import com.optimal.standard.dto.ConstructionSystemDTO;
 import com.optimal.standard.dto.ResponseConstructionSystemDTO;
+import com.optimal.standard.dto.SystemCategoryDTO;
 import com.optimal.standard.service.ConstructionSystemService;
 import jakarta.validation.Valid;
 import java.util.List;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -42,6 +44,16 @@ public class ConstructionSystemController {
   @PutMapping("/admin/construction_system/{id}")
   public void update(@PathVariable Long id, @RequestBody @Valid ConstructionSystemDTO request) {
     this.constructionSystemService.updateConstructionSystem(id, request);
+  }
+
+  @PutMapping("/admin/construction_system/{id}/stdo")
+  public void updateOptimalStandard(@PathVariable Long id, @RequestBody @Valid SystemCategoryDTO request) {
+    this.constructionSystemService.updateSystemCategory(id, request);
+  }
+
+  @DeleteMapping("/admin/construction_system/{id}")
+  public void delete(@PathVariable Long id) {
+    this.constructionSystemService.deleteConstructionSystem(id);
   }
 
 }

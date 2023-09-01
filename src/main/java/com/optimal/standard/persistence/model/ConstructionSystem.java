@@ -1,6 +1,7 @@
 package com.optimal.standard.persistence.model;
 
 import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -37,13 +38,19 @@ public class ConstructionSystem {
 
   private boolean cured;
 
+  @Column(columnDefinition = "text")
   private String baseConditions;
 
+  @Column(columnDefinition = "text")
   private String supportConditions;
 
+  @Column(columnDefinition = "text")
   private String materialAreaRestrictions;
 
+  @Column(columnDefinition = "text")
   private String materialAreaDescription;
+
+  private String systemCategory;
 
   private boolean deleted;
 
@@ -53,5 +60,8 @@ public class ConstructionSystem {
 
   @OneToMany(mappedBy = "constructionSystem", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
   private List<ConstructionSystemMaterial> constructionSystemMaterials = new ArrayList<>();
+
+  @OneToMany(mappedBy = "constructionSystem", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
+  private List<ConstructionSystemComment> constructionSystemComments = new ArrayList<>();
 
 }

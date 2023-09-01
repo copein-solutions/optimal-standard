@@ -36,4 +36,8 @@ public class ResponseConstructionSystemDTO {
 
   private List<ConstructionSystemMaterialDTO> materials;
 
+  private List<ResponseConstructionSystemCommentDTO> comments;
+
+  private String systemCategory;
+
 }

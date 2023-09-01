@@ -1,5 +1,7 @@
 package com.optimal.standard.service;
 
+import static com.optimal.standard.persistence.model.SystemCategory.ALTERNATIVE_OPTIMAL_STANDARD;
+import static com.optimal.standard.persistence.model.SystemCategory.OPTIMAL_STANDARD;
 import static com.optimal.standard.service.ApplicationAreaService.APPLICATION_AREA_NOT_FOUND_MESSAGE;
 import static com.optimal.standard.util.ConstructionSystemMapperUtils.toConstructionSystem;
 import static com.optimal.standard.util.ConstructionSystemMapperUtils.toResponseDTO;
@@ -9,6 +11,7 @@ import com.optimal.standard.dto.ConstructionSystemMaterialDTO;
 import com.optimal.standard.dto.ConstructionSystemMaterialPrices;
 import com.optimal.standard.dto.MaterialDTO;
 import com.optimal.standard.dto.ResponseConstructionSystemDTO;
+import com.optimal.standard.dto.SystemCategoryDTO;
 import com.optimal.standard.dto.TypeOfUseOfMaterial;
 import com.optimal.standard.exception.BadRequestException;
 import com.optimal.standard.persistence.model.ApplicationArea;
@@ -16,6 +19,7 @@ import com.optimal.standard.persistence.model.ConstructionSystem;
 import com.optimal.standard.persistence.model.ConstructionSystemMaterial;
 import com.optimal.standard.persistence.model.Material;
 import com.optimal.standard.persistence.model.TypeOfUse;
+import com.optimal.standard.persistence.repository.ConstructionSystemCommentRepository;
 import com.optimal.standard.persistence.repository.ConstructionSystemRepository;
 import jakarta.persistence.EntityNotFoundException;
 import java.util.HashSet;
@@ -41,6 +45,8 @@ public class ConstructionSystemService {
   private final ConstructionSystemRepository constructionSystemRepository;
 
   private final GlobalVariableService globalVariableService;
+
+  private final ConstructionSystemCommentRepository constructionSystemCommentRepository;
 
   public void saveConstructionSystem(ConstructionSystemDTO request) {
     Long applicationAreaId = request.getApplicationAreaId();
@@ -77,6 +83,7 @@ public class ConstructionSystemService {
         .map(TypeOfUseOfMaterial::getMaterialId)
         .toList();
 
+    // TODO: Contemplar solo los deleted false;
     if (!new HashSet<>(this.materialService
         .findAllByIds(materialIds)
         .stream()
@@ -88,7 +95,7 @@ public class ConstructionSystemService {
 
   public List<ResponseConstructionSystemDTO> findAll() {
     return this.constructionSystemRepository
-        .findAll()
+        .findAllByDeletedFalse()
         .stream()
         .map(this::buildResponseConstructionSystemDTO)
         .toList();
@@ -114,13 +121,13 @@ public class ConstructionSystemService {
     this.validateApplicationArea(applicationAreaId);
 
     this.constructionSystemRepository
-        .findById(id)
+        .findByIdAndDeletedFalse(id)
         .ifPresentOrElse(constructionSystemDatabase -> {
 
           ApplicationArea applicationArea = this.applicationAreaService.findApplicationAreaById(applicationAreaId);
           ConstructionSystem constructionSystem = toConstructionSystem(request, applicationArea);
           constructionSystem.setId(constructionSystemDatabase.getId());
-
+          constructionSystem.setConstructionSystemComments(constructionSystemDatabase.getConstructionSystemComments());
           List<ConstructionSystemMaterial> constructionSystemMaterials = this.buildConstructionSystemMaterials(request, constructionSystem);
           constructionSystem.setConstructionSystemMaterials(constructionSystemMaterials);
           this.constructionSystemRepository.save(constructionSystem);
@@ -167,12 +174,51 @@ public class ConstructionSystemService {
         materialPrices.getOrDefault(TypeOfUse.PARTIAL_MESH, new ConstructionSystemMaterialPrices(0.0, 0.0));
     double partialMeshPrice = partialMeshPrices.getUnitPrice();
     double coefficientPartialMesh = partialMeshPrices.getCoefficient();
-
     return (materialBasePrice * totalConsumption) + totalMeshPrice + (partialMeshPrice * coefficientPartialMesh) + totalPluginPrice.get();
   }
 
   private ConstructionSystemMaterialPrices buildConstructionSystemMaterialPrices(ConstructionSystemMaterial csm) {
     return new ConstructionSystemMaterialPrices(this.globalVariableService.getUnitPrice(csm.getMaterial()), csm.getCoefficient());
+  }
+
+  public void deleteConstructionSystem(Long id) {
+    this.constructionSystemRepository
+        .findByIdAndDeletedFalse(id)
+        .orElseThrow(() -> new EntityNotFoundException(CONSTRUCTION_SYSTEM_NOT_FOUND_MESSAGE + id));
+
+    this.constructionSystemCommentRepository.deleteByConstructionSystemId(id);
+
+    this.constructionSystemRepository.markAsDeleted(id);
+  }
+
+  public void updateSystemCategory(Long id, SystemCategoryDTO request) {
+    ConstructionSystem constructionSystem = this.constructionSystemRepository
+        .findByIdAndDeletedFalse(id)
+        .orElseThrow(() -> new EntityNotFoundException(CONSTRUCTION_SYSTEM_NOT_FOUND_MESSAGE + id));
+
+    List<ConstructionSystem> constructionSystemChanged = constructionSystem
+        .getApplicationArea()
+        .getConstructionSystems()
+        .stream()
+        .peek(cs -> {
+          if (OPTIMAL_STANDARD.equals(request.getType()) && OPTIMAL_STANDARD
+              .name()
+              .equals(cs.getSystemCategory())) {
+            cs.setSystemCategory(null);
+          } else if (ALTERNATIVE_OPTIMAL_STANDARD.equals(request.getType()) && ALTERNATIVE_OPTIMAL_STANDARD
+              .name()
+              .equals(cs.getSystemCategory())) {
+            cs.setSystemCategory(null);
+          }
+        })
+        .collect(Collectors.toList());
+
+    this.constructionSystemRepository.saveAll(constructionSystemChanged);
+
+    constructionSystem.setSystemCategory(request
+        .getType()
+        .name());
+    this.constructionSystemRepository.save(constructionSystem);
   }
 
 }
