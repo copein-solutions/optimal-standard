@@ -30,15 +30,13 @@ public class ConstructionSystem {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   protected Long id;
 
-  private String totalConsumption;
+  private double totalConsumption;
 
   private Integer layers;
 
   private String applicationMode;
 
   private boolean cured;
-
-  private double totalPrice;
 
   @Column(columnDefinition = "text")
   private String baseConditions;

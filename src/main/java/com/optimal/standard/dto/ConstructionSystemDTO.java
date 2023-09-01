@@ -1,11 +1,10 @@
 package com.optimal.standard.dto;
 
+import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-import java.util.List;
 
 @Data
 @AllArgsConstructor
@@ -15,7 +14,7 @@ public class ConstructionSystemDTO {
 
   private Long id;
 
-  private String totalConsumption;
+  private double totalConsumption;
 
   private Integer layers;
 

@@ -9,11 +9,7 @@ import com.optimal.standard.persistence.model.MaterialFiles;
 
 public interface MaterialMapperUtils {
 
-  static Double getUnitPrice(Material material) {
-    return material.getPresentationPrice() / material.getPresentationQuantity();
-  }
-
-  static MaterialDTO toMaterialDTO(Material material) {
+  static MaterialDTO toMaterialDTO(Material material, double unitPrice) {
     MaterialDTO materialDTO = new MaterialDTO();
     materialDTO.setId(material.getId());
     materialDTO.setProduct(material.getProduct());
@@ -27,7 +23,7 @@ public interface MaterialMapperUtils {
     materialDTO.setComponent(material.getComponent());
     materialDTO.setMinApplicableTemp(material.getMinApplicableTemp());
     materialDTO.setPotLife(material.getPotLife());
-    materialDTO.setUnitPrice(getUnitPrice(material));
+    materialDTO.setUnitPrice(unitPrice);
     materialDTO.setFiles(emptyIfNull(material.getMaterialFiles())
         .stream()
         .map(MaterialMapperUtils::toDTO)
