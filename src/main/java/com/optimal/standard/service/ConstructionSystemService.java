@@ -127,6 +127,7 @@ public class ConstructionSystemService {
           ApplicationArea applicationArea = this.applicationAreaService.findApplicationAreaById(applicationAreaId);
           ConstructionSystem constructionSystem = toConstructionSystem(request, applicationArea);
           constructionSystem.setId(constructionSystemDatabase.getId());
+          constructionSystem.setSystemCategory(constructionSystemDatabase.getSystemCategory());
           constructionSystem.setConstructionSystemComments(constructionSystemDatabase.getConstructionSystemComments());
           List<ConstructionSystemMaterial> constructionSystemMaterials = this.buildConstructionSystemMaterials(request, constructionSystem);
           constructionSystem.setConstructionSystemMaterials(constructionSystemMaterials);
@@ -194,30 +195,17 @@ public class ConstructionSystemService {
   public void updateSystemCategory(Long id, SystemCategoryDTO request) {
     ConstructionSystem constructionSystem = this.constructionSystemRepository
         .findByIdAndDeletedFalse(id)
-        .orElseThrow(() -> new EntityNotFoundException(CONSTRUCTION_SYSTEM_NOT_FOUND_MESSAGE + id));
-
-    List<ConstructionSystem> constructionSystemChanged = constructionSystem
-        .getApplicationArea()
-        .getConstructionSystems()
-        .stream()
-        .peek(cs -> {
-          if (OPTIMAL_STANDARD.equals(request.getType()) && OPTIMAL_STANDARD
-              .name()
-              .equals(cs.getSystemCategory())) {
-            cs.setSystemCategory(null);
-          } else if (ALTERNATIVE_OPTIMAL_STANDARD.equals(request.getType()) && ALTERNATIVE_OPTIMAL_STANDARD
-              .name()
-              .equals(cs.getSystemCategory())) {
-            cs.setSystemCategory(null);
+        .map(cs -> {
+          if (List
+              .of(OPTIMAL_STANDARD, ALTERNATIVE_OPTIMAL_STANDARD)
+              .contains(request.getType())) {
+            cs.setSystemCategory(request
+                .getType()
+                .name());
           }
+          return cs;
         })
-        .collect(Collectors.toList());
-
-    this.constructionSystemRepository.saveAll(constructionSystemChanged);
-
-    constructionSystem.setSystemCategory(request
-        .getType()
-        .name());
+        .orElseThrow(() -> new EntityNotFoundException(CONSTRUCTION_SYSTEM_NOT_FOUND_MESSAGE + id));
     this.constructionSystemRepository.save(constructionSystem);
   }
 
