@@ -1,5 +1,6 @@
 package com.optimal.standard.persistence.model;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -29,8 +30,10 @@ public class ApplicationArea {
 
   private String name;
 
+  @Column(columnDefinition = "text")
   private String specification;
 
+  @Column(columnDefinition = "text")
   private String considerations;
 
   private boolean deleted;

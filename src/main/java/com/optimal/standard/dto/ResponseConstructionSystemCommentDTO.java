@@ -25,4 +25,6 @@ public class ResponseConstructionSystemCommentDTO {
 
     private String userCompleteName;
 
+    private String status;
+
 }

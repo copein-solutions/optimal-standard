@@ -29,17 +29,12 @@ public class SecurityConfig {
         http
                 .csrf()
                 .disable()
-                .authorizeHttpRequests((authorize) -> authorize
-                        .requestMatchers("/public/**")
-                        .permitAll()
-                        .requestMatchers("/admin/**")
-                        .hasRole("ADMIN")
-                        .requestMatchers("/user/**")
-                        .hasAnyRole("ADMIN", "COMMENTOR")
-                        .requestMatchers(HttpMethod.GET, "/user/**")
-                        .hasRole("READONLY")
-                        .anyRequest()
-                        .authenticated()
+                .authorizeRequests(authorize -> authorize
+                        .requestMatchers("/public/**").permitAll()
+                        .requestMatchers("/admin/**").hasRole("ADMIN")
+                        .requestMatchers("/user/**").hasAnyRole("ADMIN", "COMMENTOR", "READONLY")
+                        .requestMatchers(HttpMethod.GET, "/user/**").hasRole("READONLY")
+                        .anyRequest().authenticated()
                 )
                 .cors(withDefaults())
                 .addFilterBefore(this.jwtRequestFilter, UsernamePasswordAuthenticationFilter.class)

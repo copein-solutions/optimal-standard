@@ -35,5 +35,5 @@ build/
 #### custom
 *.swp
 **.DS_Store
-inbound
-uploads
+/uploads/*
+/inbound/*

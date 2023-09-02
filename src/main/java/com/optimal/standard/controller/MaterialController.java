@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -21,43 +20,42 @@ import org.springframework.web.bind.annotation.RestController;
 @AllArgsConstructor
 @RestController
 @Validated
-@RequestMapping("/admin/material")
 public class MaterialController {
 
   private final MaterialService materialService;
 
-  @GetMapping()
+  @GetMapping("/user/material")
   public ResponseEntity<List<MaterialDTO>> findAll() {
     return ResponseEntity
         .ok()
         .body(this.materialService.findAll());
   }
 
-  @GetMapping("/{id}")
+  @GetMapping("/admin/material/{id}")
   public ResponseEntity<MaterialDTO> findById(@PathVariable Long id) {
     return ResponseEntity
         .ok()
         .body(this.materialService.findById(id));
   }
 
-  @GetMapping("/search")
+  @GetMapping("/admin/material/search")
   public ResponseEntity<List<MaterialDTO>> findAllByType(@RequestParam(value = "type") String type) {
     return ResponseEntity
         .ok()
         .body(this.materialService.findAllByType(type));
   }
 
-  @PostMapping()
+  @PostMapping("/admin/material")
   public void create(@RequestBody @Valid MaterialDTO request) {
     this.materialService.saveMaterial(request);
   }
 
-  @PutMapping("/{id}")
+  @PutMapping("/admin/material/{id}")
   public void update(@PathVariable Long id, @RequestBody @Valid MaterialDTO request) {
     this.materialService.updateMaterial(id, request);
   }
 
-  @DeleteMapping("/{id}")
+  @DeleteMapping("/admin/material/{id}")
   public void delete(@PathVariable Long id) {
     this.materialService.deleteMaterial(id);
   }
