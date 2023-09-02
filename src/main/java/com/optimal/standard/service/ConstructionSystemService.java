@@ -2,6 +2,7 @@ package com.optimal.standard.service;
 
 import static com.optimal.standard.persistence.model.SystemCategory.ALTERNATIVE_OPTIMAL_STANDARD;
 import static com.optimal.standard.persistence.model.SystemCategory.OPTIMAL_STANDARD;
+import static com.optimal.standard.persistence.model.SystemCategory.REMOVE;
 import static com.optimal.standard.service.ApplicationAreaService.APPLICATION_AREA_NOT_FOUND_MESSAGE;
 import static com.optimal.standard.util.ConstructionSystemMapperUtils.toConstructionSystem;
 import static com.optimal.standard.util.ConstructionSystemMapperUtils.toResponseDTO;
@@ -197,7 +198,7 @@ public class ConstructionSystemService {
         .findByIdAndDeletedFalse(id)
         .map(cs -> {
           if (List
-              .of(OPTIMAL_STANDARD, ALTERNATIVE_OPTIMAL_STANDARD)
+              .of(OPTIMAL_STANDARD, ALTERNATIVE_OPTIMAL_STANDARD, REMOVE)
               .contains(request.getType())) {
             cs.setSystemCategory(request
                 .getType()
