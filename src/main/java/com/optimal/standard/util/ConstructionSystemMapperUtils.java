@@ -106,7 +106,7 @@ public interface ConstructionSystemMapperUtils {
         .collect(Collectors.toList());
   }
 
-  public static byte[] exportToXls(List<ConstructionSystem> list) throws JRException, FileNotFoundException {
+  static byte[] exportToXls(List<ConstructionSystem> list) throws JRException, FileNotFoundException {
     ByteArrayOutputStream byteArray = new ByteArrayOutputStream();
     SimpleOutputStreamExporterOutput output = new SimpleOutputStreamExporterOutput(byteArray);
     JRXlsExporter exporter = new JRXlsExporter();
@@ -117,7 +117,7 @@ public interface ConstructionSystemMapperUtils {
     return byteArray.toByteArray();
   }
 
-  private static JasperPrint getReport(List<ConstructionSystem> list) throws FileNotFoundException, JRException {
+  static JasperPrint getReport(List<ConstructionSystem> list) throws FileNotFoundException, JRException {
     Map<String, Object> params = new HashMap<String, Object>();
     params.put("systemsData", new JRBeanCollectionDataSource(list));
 

@@ -32,7 +32,7 @@ public class ConstructionSystemController {
         .body(this.constructionSystemService.findAll());
   }
 
-  @GetMapping("user/construction_system/export-xls")
+  @GetMapping("/public/user/construction_system/export-xls")
   public ResponseEntity<byte[]> exportXls() throws Exception, ChangeSetPersister.NotFoundException {
     HttpHeaders headers = new HttpHeaders();
     headers.set("Content-Type", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet; charset=UTF-8");
