@@ -38,6 +38,7 @@ public class ConstructionSystemMaterialService {
         .material(toMaterialDTO(constructionSystemMaterial.getMaterial(),
             this.globalVariableService.getUnitPrice(constructionSystemMaterial.getMaterial())))
         .coefficient(constructionSystemMaterial.getCoefficient())
+        .performance(constructionSystemMaterial.getPerformance())
         .coefficientDescription(constructionSystemMaterial.getCoefficientDescription())
         .materialDescription(constructionSystemMaterial.getMaterialDescription())
         .build();

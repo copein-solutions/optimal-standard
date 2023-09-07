@@ -38,6 +38,8 @@ public class ConstructionSystemMaterial {
 
   private double coefficient;
 
+  private double performance;
+
   @Column(columnDefinition = "text")
   private String coefficientDescription;
 
