@@ -18,6 +18,8 @@ public class TypeOfUseOfMaterial {
 
   private double coefficient;
 
+  private double performance;
+
   private String coefficientDescription;
 
   private String materialDescription;
