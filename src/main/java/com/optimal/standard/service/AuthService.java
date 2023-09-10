@@ -27,7 +27,7 @@ public class AuthService {
 
   public TokenInfo authenticate(LoginDTO request) {
     String username = request.getUsername();
-    this.authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword()));
+    this.authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, request.getPassword()));
     var user = this.userRepository
         .findByUsername(username)
         .orElseThrow(() -> new UsernameNotFoundException(username));
