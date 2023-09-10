@@ -1,12 +1,12 @@
 package com.optimal.standard.filters;
 
+import com.optimal.standard.persistence.repository.TokenRepository;
 import com.optimal.standard.service.JwtService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -18,11 +18,17 @@ import org.springframework.web.filter.OncePerRequestFilter;
 @Component
 public class JwtRequestFilter extends OncePerRequestFilter {
 
-  @Autowired
+  private final TokenRepository tokenRepository;
+
   private UserDetailsService userDetailsService;
 
-  @Autowired
   private JwtService jwtService;
+
+  public JwtRequestFilter(TokenRepository tokenRepository, UserDetailsService userDetailsService, JwtService jwtService) {
+    this.tokenRepository = tokenRepository;
+    this.userDetailsService = userDetailsService;
+    this.jwtService = jwtService;
+  }
 
   @Override
   protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
@@ -43,8 +49,12 @@ public class JwtRequestFilter extends OncePerRequestFilter {
         .getAuthentication() == null) {
 
       UserDetails userDetails = this.userDetailsService.loadUserByUsername(username);
+      var isTokenValid = this.tokenRepository
+          .findByToken(jwt)
+          .map(t -> !t.isExpired() && !t.isRevoked())
+          .orElse(false);
 
-      if (this.jwtService.validateToken(jwt, userDetails)) {
+      if (this.jwtService.validateToken(jwt, userDetails) && isTokenValid) {
 
         UsernamePasswordAuthenticationToken authenticationToken =
             new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());

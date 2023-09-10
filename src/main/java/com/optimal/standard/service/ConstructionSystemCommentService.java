@@ -22,6 +22,8 @@ import org.springframework.stereotype.Service;
 @AllArgsConstructor
 public class ConstructionSystemCommentService {
 
+  public static final String ROLE_ADMIN = "ROLE_ADMIN";
+
   public static final String CONSTRUCTION_SYSTEM_NOT_FOUND_MESSAGE = "Construction system not found with ID: ";
 
   public static final String CONSTRUCTION_SYSTEM_COMMENT_NOT_FOUND_MESSAGE = "Construction system comment not found with ID: ";
@@ -43,7 +45,9 @@ public class ConstructionSystemCommentService {
 
           this.constructionSystemCommentRepository.save(
               new ConstructionSystemComment(request.getId(), request.getComment(), LocalDate.now(), CommentStatus.PENDING.name(),
-                  constructionSystemDatabase, this.userRepository.findByUsername(username)));
+                  constructionSystemDatabase, this.userRepository
+                  .findByUsername(username)
+                  .get()));
         }, () -> {
           throw new EntityNotFoundException(CONSTRUCTION_SYSTEM_NOT_FOUND_MESSAGE + id);
         });
@@ -66,10 +70,10 @@ public class ConstructionSystemCommentService {
         });
   }
 
-  public List<ResponseConstructionSystemCommentDTO> findCommentsById(Long id, String user) {
+  public List<ResponseConstructionSystemCommentDTO> findCommentsById(Long id, List<String> authorities) {
     List<String> status = new ArrayList<>();
     status.add(CommentStatus.VALIDATED.name());
-    if (user.equals("ADMIN")) {
+    if (authorities.contains(ROLE_ADMIN)) {
       status.add(CommentStatus.PENDING.name());
     }
     return this.constructionSystemCommentRepository

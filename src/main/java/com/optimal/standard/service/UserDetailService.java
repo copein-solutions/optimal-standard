@@ -19,15 +19,18 @@ public class UserDetailService implements UserDetailsService {
 
   @Override
   public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-    RegisteredUser registeredUser = this.userRepository.findByUsername(username);
-    if (registeredUser == null) {
-      throw new UsernameNotFoundException(username);
-    }
+    RegisteredUser registeredUser = this.findUserByUsername(username);
     return User
         .withUsername(username)
         .password(registeredUser.getPassword())
-        .roles(registeredUser.getRol())
+        .roles(String.valueOf(registeredUser.getRol()))
         .build();
+  }
+
+  private RegisteredUser findUserByUsername(String username) {
+    return this.userRepository
+        .findByUsername(username)
+        .orElseThrow(() -> new UsernameNotFoundException(username));
   }
 
 }
