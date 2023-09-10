@@ -1,0 +1,54 @@
+package com.optimal.standard.util;
+
+import static org.apache.commons.collections4.ListUtils.emptyIfNull;
+
+import com.optimal.standard.dto.ConstructionSystemMaterialDTO;
+import com.optimal.standard.persistence.model.TypeOfUse;
+import java.util.List;
+import org.apache.poi.hssf.usermodel.HSSFCell;
+import org.apache.poi.hssf.usermodel.HSSFRow;
+import org.apache.poi.hssf.usermodel.HSSFSheet;
+
+public interface SheetUtils {
+
+  String[] HEADERS =
+      {"Id", "Campo de aplicación", "Precio sist.", "Material", "Tipo", "Precio unitario", "Composición", "Consumo total", "Manos",
+          "Modo de aplicación", "Curado", "Malla 100%", "Precio unitario", "Malla parcial", "Precio unitario", "Coef. por m2",
+          "Complemento del sistema 1", "Descripción", "Precio unitario", "Coef. por m2", "Descripción coef.", "Complemento del sistema 2",
+          "Descripción", "Precio unitario", "Coef. por m2", "Descripción coef.", "Complemento del sistema 3", "Descripción",
+          "Precio unitario", "Coef. por m2", "Descripción coef.", "Por área m2", "Vida útil (hrs)", "Temp. mínima de aplicación (°C)",
+          "Otras", "Condiciones de base", "Condiciones de soporte"};
+
+  static void createHeaders(HSSFSheet sheet) {
+    HSSFRow row = sheet.createRow(0);
+    for (int i = 0; i < HEADERS.length; i++) {
+      HSSFCell cell = row.createCell(i);
+      cell.setCellValue(HEADERS[i]);
+    }
+  }
+
+  static ConstructionSystemMaterialDTO fetchBaseMaterial(List<ConstructionSystemMaterialDTO> constructionSystems) {
+    return emptyIfNull(constructionSystems)
+        .stream()
+        .filter(constructionSystem -> TypeOfUse.BASE.equals(constructionSystem.getTypeOfUse()))
+        .findFirst()
+        .orElse(null);
+  }
+
+  static ConstructionSystemMaterialDTO fetchTotalMesh(List<ConstructionSystemMaterialDTO> constructionSystems) {
+    return emptyIfNull(constructionSystems)
+        .stream()
+        .filter(constructionSystem -> TypeOfUse.TOTAL_MESH.equals(constructionSystem.getTypeOfUse()))
+        .findFirst()
+        .orElse(null);
+  }
+
+  static ConstructionSystemMaterialDTO fetchPartialMesh(List<ConstructionSystemMaterialDTO> constructionSystems) {
+    return emptyIfNull(constructionSystems)
+        .stream()
+        .filter(constructionSystem -> TypeOfUse.PARTIAL_MESH.equals(constructionSystem.getTypeOfUse()))
+        .findFirst()
+        .orElse(null);
+  }
+
+}

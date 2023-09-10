@@ -54,7 +54,6 @@
       <artifactId>lombok</artifactId>
       <scope>provided</scope>
     </dependency>
-
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-security</artifactId>
@@ -64,8 +63,6 @@
       <artifactId>jjwt</artifactId>
       <version>0.9.1</version>
     </dependency>
-
-    <!-- NoClassDefFoundError: javax/xml/bind/DatatypeConverter] with root cause -->
     <dependency>
       <groupId>javax.xml.bind</groupId>
       <artifactId>jaxb-api</artifactId>
@@ -84,6 +81,11 @@
       <groupId>org.apache.commons</groupId>
       <artifactId>commons-lang3</artifactId>
       <version>3.12.0</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.poi</groupId>
+      <artifactId>poi-ooxml</artifactId>
+      <version>4.1.0</version>
     </dependency>
   </dependencies>
 
