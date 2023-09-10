@@ -1,5 +1,9 @@
 package com.optimal.standard.service;
 
+import com.optimal.standard.persistence.model.RegisteredUser;
+import com.optimal.standard.persistence.model.Token;
+import com.optimal.standard.persistence.model.TokenType;
+import com.optimal.standard.persistence.repository.TokenRepository;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -7,18 +11,20 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
-import java.util.stream.Collectors;
+import lombok.AllArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 
 @Service
+@AllArgsConstructor
 public class JwtService {
 
   public static final long JWT_TOKEN_VALIDITY = 1000 * 60 * 60 * (long) 8; // 8 Horas
 
-  // TODO: pasar secret key a el yml
   private static final String JWT_SECRET_KEY = "TExBVkVfTVVZX1NFQ1JFVEE=";
+
+  private final TokenRepository tokenRepository;
 
   public String extractUsername(String token) {
     return extractClaim(token, Claims::getSubject);
@@ -46,14 +52,25 @@ public class JwtService {
 
   public String generateToken(UserDetails userDetails) {
     Map<String, Object> claims = new HashMap<>();
-    // Agregando informacion adicional como "claim"
+
     var rol = userDetails
         .getAuthorities()
         .stream()
-        .collect(Collectors.toList())
+        .toList()
         .get(0);
     claims.put("rol", rol);
     return createToken(claims, userDetails.getUsername());
+  }
+
+  public void saveUserToken(RegisteredUser user, String token) {
+    this.tokenRepository.save(Token
+        .builder()
+        .user(user)
+        .token(token)
+        .tokenType(TokenType.BEARER)
+        .expired(false)
+        .revoked(false)
+        .build());
   }
 
   private String createToken(Map<String, Object> claims, String subject) {

@@ -45,7 +45,9 @@ public class ConstructionSystemCommentService {
 
           this.constructionSystemCommentRepository.save(
               new ConstructionSystemComment(request.getId(), request.getComment(), LocalDate.now(), CommentStatus.PENDING.name(),
-                  constructionSystemDatabase, this.userRepository.findByUsername(username)));
+                  constructionSystemDatabase, this.userRepository
+                  .findByUsername(username)
+                  .get()));
         }, () -> {
           throw new EntityNotFoundException(CONSTRUCTION_SYSTEM_NOT_FOUND_MESSAGE + id);
         });

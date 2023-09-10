@@ -1,41 +1,25 @@
 package com.optimal.standard.controller;
 
-import static com.optimal.standard.util.AuthUtils.collectAuthorities;
-
 import com.optimal.standard.dto.LoginDTO;
 import com.optimal.standard.dto.TokenInfo;
-import com.optimal.standard.service.JwtService;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.optimal.standard.service.AuthService;
+import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
+@AllArgsConstructor
 @RequestMapping("/optimal_standard")
 public class AuthController {
 
-  @Autowired
-  private UserDetailsService userDetailsService;
-
-  @Autowired
-  private AuthenticationManager authenticationManager;
-
-  @Autowired
-  private JwtService jwtService;
+  private final AuthService authService;
 
   @PostMapping("/public/login")
   public ResponseEntity<TokenInfo> login(@RequestBody LoginDTO request) {
-    this.authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword()));
-    final UserDetails userDetails = this.userDetailsService.loadUserByUsername(request.getUsername());
-    final String jwt = this.jwtService.generateToken(userDetails);
-
-    return ResponseEntity.ok(new TokenInfo(jwt, collectAuthorities(userDetails.getAuthorities())));
+    return ResponseEntity.ok(this.authService.authenticate(request));
   }
 
 }
