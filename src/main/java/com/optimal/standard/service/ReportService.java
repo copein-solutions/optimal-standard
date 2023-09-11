@@ -16,9 +16,11 @@ import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicInteger;
 import lombok.AllArgsConstructor;
+import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.usermodel.HorizontalAlignment;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -36,14 +38,17 @@ public class ReportService {
 
     try {
       HSSFSheet sheet = workbook.createSheet(SHEET_NAME);
-      createHeaders(sheet);
+      createHeaders(sheet, workbook);
 
       AtomicInteger dataRowIndex = new AtomicInteger(1);
       for (ResponseConstructionSystemDTO cs : constructionSystems) {
         HSSFRow dataRow = sheet.createRow(dataRowIndex.get());
-        dataRow
-            .createCell(0)
-            .setCellValue(cs.getId());
+
+        HSSFCell cell0 = dataRow.createCell(0);
+        cell0.setCellValue(cs.getId());
+        cell0
+            .getCellStyle()
+            .setAlignment(HorizontalAlignment.LEFT);
         dataRow
             .createCell(1)
             .setCellValue(cs
@@ -72,9 +77,6 @@ public class ReportService {
         this.buildPartialMesh(cs, dataRow);
 
         int indexAfterPlugins = this.buildPlugins(cs, dataRow);
-        if (indexAfterPlugins == 16) {
-          indexAfterPlugins++;
-        }
         // Restrictions
         dataRow
             .createCell(indexAfterPlugins)
@@ -209,9 +211,8 @@ public class ReportService {
             .setCellValue(csm.getCoefficientDescription());
         dataRowForPluginsIndex.getAndIncrement();
       }
-
     });
-    return dataRowForPluginsIndex.get();
+    return (dataRowForPluginsIndex.get() == 16) ? 30 : dataRowForPluginsIndex.get();
   }
 
 

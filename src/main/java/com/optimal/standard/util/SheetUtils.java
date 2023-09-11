@@ -6,8 +6,12 @@ import com.optimal.standard.dto.ConstructionSystemMaterialDTO;
 import com.optimal.standard.persistence.model.TypeOfUse;
 import java.util.List;
 import org.apache.poi.hssf.usermodel.HSSFCell;
+import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.usermodel.Font;
+import org.apache.poi.ss.usermodel.HorizontalAlignment;
 
 public interface SheetUtils {
 
@@ -19,12 +23,24 @@ public interface SheetUtils {
           "Precio unitario", "Coef. por m2", "Descripción coef.", "Por área m2", "Vida útil (hrs)", "Temp. mínima de aplicación (°C)",
           "Otras", "Condiciones de base", "Condiciones de soporte"};
 
-  static void createHeaders(HSSFSheet sheet) {
+  static void createHeaders(HSSFSheet sheet, HSSFWorkbook workbook) {
+    Font font = workbook.createFont();
+    HSSFCellStyle style = workbook.createCellStyle();
+    font.setBold(true);
+    style.setFont(font);
     HSSFRow row = sheet.createRow(0);
+    row.setRowStyle(style);
+
     for (int i = 0; i < HEADERS.length; i++) {
+      sheet.setColumnWidth(i, (HEADERS[i].length() + 4) * 256);
       HSSFCell cell = row.createCell(i);
+      cell.setCellStyle(style);
       cell.setCellValue(HEADERS[i]);
     }
+    row
+        .getCell(0)
+        .getCellStyle()
+        .setAlignment(HorizontalAlignment.LEFT);
   }
 
   static ConstructionSystemMaterialDTO fetchBaseMaterial(List<ConstructionSystemMaterialDTO> constructionSystems) {
