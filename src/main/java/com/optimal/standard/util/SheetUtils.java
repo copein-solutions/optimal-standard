@@ -27,6 +27,7 @@ public interface SheetUtils {
     Font font = workbook.createFont();
     HSSFCellStyle style = workbook.createCellStyle();
     font.setBold(true);
+    font.setFontHeightInPoints((short) 12);
     style.setFont(font);
     HSSFRow row = sheet.createRow(0);
     row.setRowStyle(style);

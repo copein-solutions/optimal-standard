@@ -36,87 +36,79 @@ public class ReportService {
     HSSFWorkbook workbook = new HSSFWorkbook();
     ByteArrayOutputStream out = new ByteArrayOutputStream();
 
-    try {
-      HSSFSheet sheet = workbook.createSheet(SHEET_NAME);
-      createHeaders(sheet, workbook);
+    HSSFSheet sheet = workbook.createSheet(SHEET_NAME);
+    createHeaders(sheet, workbook);
 
-      AtomicInteger dataRowIndex = new AtomicInteger(1);
-      for (ResponseConstructionSystemDTO cs : constructionSystems) {
-        HSSFRow dataRow = sheet.createRow(dataRowIndex.get());
+    AtomicInteger dataRowIndex = new AtomicInteger(1);
+    for (ResponseConstructionSystemDTO cs : constructionSystems) {
+      HSSFRow dataRow = sheet.createRow(dataRowIndex.get());
 
-        HSSFCell cell0 = dataRow.createCell(0);
-        cell0.setCellValue(cs.getId());
-        cell0
-            .getCellStyle()
-            .setAlignment(HorizontalAlignment.LEFT);
-        dataRow
-            .createCell(1)
-            .setCellValue(cs
-                .getApplicationArea()
-                .getName());
-        dataRow
-            .createCell(2)
-            .setCellValue(cs.getTotalPrice());
+      HSSFCell cell0 = dataRow.createCell(0);
+      cell0.setCellValue(cs.getId());
+      cell0
+          .getCellStyle()
+          .setAlignment(HorizontalAlignment.LEFT);
+      dataRow
+          .createCell(1)
+          .setCellValue(cs
+              .getApplicationArea()
+              .getName());
+      dataRow
+          .createCell(2)
+          .setCellValue(cs.getTotalPrice());
 
-        ConstructionSystemMaterialDTO constructionSystemBaseMaterial = this.buildBaseMaterial(cs, dataRow);
+      ConstructionSystemMaterialDTO constructionSystemBaseMaterial = this.buildBaseMaterial(cs, dataRow);
 
-        dataRow
-            .createCell(7)
-            .setCellValue(cs.getTotalConsumption());
-        dataRow
-            .createCell(8)
-            .setCellValue(cs.getLayers());
-        dataRow
-            .createCell(9)
-            .setCellValue(cs.getApplicationMode());
-        dataRow
-            .createCell(10)
-            .setCellValue(cs.isCured() ? "SI" : "NO");
+      dataRow
+          .createCell(7)
+          .setCellValue(cs.getTotalConsumption());
+      dataRow
+          .createCell(8)
+          .setCellValue(cs.getLayers());
+      dataRow
+          .createCell(9)
+          .setCellValue(cs.getApplicationMode());
+      dataRow
+          .createCell(10)
+          .setCellValue(cs.isCured() ? "SI" : "NO");
 
-        this.buildTotalMesh(cs, dataRow);
-        this.buildPartialMesh(cs, dataRow);
+      this.buildTotalMesh(cs, dataRow);
+      this.buildPartialMesh(cs, dataRow);
 
-        int indexAfterPlugins = this.buildPlugins(cs, dataRow);
-        // Restrictions
-        dataRow
-            .createCell(indexAfterPlugins)
-            .setCellValue(cs.getMaterialAreaRestrictions());
-        indexAfterPlugins++;
-        dataRow
-            .createCell(indexAfterPlugins)
-            .setCellValue(constructionSystemBaseMaterial
-                .getMaterial()
-                .getPotLife());
-        indexAfterPlugins++;
-        dataRow
-            .createCell(indexAfterPlugins)
-            .setCellValue(constructionSystemBaseMaterial
-                .getMaterial()
-                .getMinApplicableTemp());
-        indexAfterPlugins++;
-        dataRow
-            .createCell(indexAfterPlugins)
-            .setCellValue(cs.getMaterialAreaDescription());
-        indexAfterPlugins++;
-        dataRow
-            .createCell(indexAfterPlugins)
-            .setCellValue(cs.getBaseConditions());
-        indexAfterPlugins++;
-        dataRow
-            .createCell(indexAfterPlugins)
-            .setCellValue(cs.getSupportConditions());
-        dataRowIndex.getAndIncrement();
-      }
-
-      workbook.write(out);
-      return new ByteArrayInputStream(out.toByteArray());
-    } catch (IOException e) {
-      e.printStackTrace();
-    } finally {
-      workbook.close();
-      out.close();
+      int indexAfterPlugins = this.buildPlugins(cs, dataRow);
+      // Restrictions
+      dataRow
+          .createCell(indexAfterPlugins)
+          .setCellValue(cs.getMaterialAreaRestrictions());
+      indexAfterPlugins++;
+      dataRow
+          .createCell(indexAfterPlugins)
+          .setCellValue(constructionSystemBaseMaterial
+              .getMaterial()
+              .getPotLife());
+      indexAfterPlugins++;
+      dataRow
+          .createCell(indexAfterPlugins)
+          .setCellValue(constructionSystemBaseMaterial
+              .getMaterial()
+              .getMinApplicableTemp());
+      indexAfterPlugins++;
+      dataRow
+          .createCell(indexAfterPlugins)
+          .setCellValue(cs.getMaterialAreaDescription());
+      indexAfterPlugins++;
+      dataRow
+          .createCell(indexAfterPlugins)
+          .setCellValue(cs.getBaseConditions());
+      indexAfterPlugins++;
+      dataRow
+          .createCell(indexAfterPlugins)
+          .setCellValue(cs.getSupportConditions());
+      dataRowIndex.getAndIncrement();
     }
-    return null;
+
+    workbook.write(out);
+    return new ByteArrayInputStream(out.toByteArray());
   }
 
   private ConstructionSystemMaterialDTO buildBaseMaterial(ResponseConstructionSystemDTO cs, HSSFRow dataRow) {
