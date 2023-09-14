@@ -1,12 +1,12 @@
 package com.optimal.standard.service;
 
 import static com.optimal.standard.util.SheetUtils.createHeaders;
+import static com.optimal.standard.util.SheetUtils.decimalFormatter;
 import static com.optimal.standard.util.SheetUtils.fetchBaseMaterial;
 import static com.optimal.standard.util.SheetUtils.fetchPartialMesh;
 import static com.optimal.standard.util.SheetUtils.fetchTotalMesh;
 import static com.optimal.standard.util.SheetUtils.getFormulaMaterialsCost;
 import static com.optimal.standard.util.SheetUtils.getGridRow;
-import static com.optimal.standard.util.SheetUtils.truncateDecimals;
 import static org.apache.commons.collections4.ListUtils.emptyIfNull;
 
 import com.optimal.standard.dto.ConstructionSystemMaterialDTO;
@@ -130,9 +130,9 @@ public class ReportService {
               .getType());
       dataRow
           .createCell(5)
-          .setCellValue(truncateDecimals(constructionSystemBaseMaterial
+          .setCellValue(decimalFormatter(constructionSystemBaseMaterial
               .getMaterial()
-              .getUnitPrice(), 2));
+              .getUnitPrice()));
       dataRow
           .createCell(6)
           .setCellValue(constructionSystemBaseMaterial
@@ -152,9 +152,9 @@ public class ReportService {
               .getProduct());
       dataRow
           .createCell(12)
-          .setCellValue(truncateDecimals(constructionSystemTotalMesh
+          .setCellValue(decimalFormatter(constructionSystemTotalMesh
               .getMaterial()
-              .getUnitPrice(), 2));
+              .getUnitPrice()));
     }
   }
 
@@ -168,9 +168,9 @@ public class ReportService {
               .getProduct());
       dataRow
           .createCell(14)
-          .setCellValue(truncateDecimals(constructionSystemPartialMesh
+          .setCellValue(decimalFormatter(constructionSystemPartialMesh
               .getMaterial()
-              .getUnitPrice(), 2));
+              .getUnitPrice()));
       dataRow
           .createCell(15)
           .setCellValue(constructionSystemPartialMesh.getCoefficient());
@@ -194,9 +194,9 @@ public class ReportService {
         dataRowForPluginsIndex.getAndIncrement();
         dataRow
             .createCell(dataRowForPluginsIndex.get())
-            .setCellValue(truncateDecimals(csm
+            .setCellValue(decimalFormatter(csm
                 .getMaterial()
-                .getUnitPrice(), 2));
+                .getUnitPrice()));
         dataRowForPluginsIndex.getAndIncrement();
         dataRow
             .createCell(dataRowForPluginsIndex.get())

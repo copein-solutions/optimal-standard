@@ -4,6 +4,8 @@ import static org.apache.commons.collections4.ListUtils.emptyIfNull;
 
 import com.optimal.standard.dto.ConstructionSystemMaterialDTO;
 import com.optimal.standard.persistence.model.TypeOfUse;
+import java.text.DecimalFormat;
+import java.text.ParseException;
 import java.util.List;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
@@ -14,6 +16,8 @@ import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.HorizontalAlignment;
 
 public interface SheetUtils {
+
+  DecimalFormat decimalFormat = new DecimalFormat("#.00");
 
   String[] HEADERS =
       {"Id", "Campo de aplicación", "Precio sist.", "Material", "Tipo", "Precio unitario", "Composición", "Consumo total", "Manos",
@@ -45,8 +49,8 @@ public interface SheetUtils {
   }
 
   static String getFormulaMaterialsCost(int row) {
-    return "(F" + row + " * H" + row + ") + M" + row + " + (O" + row + " * P" + row + ") + (S" + row + " * T" + row + ") + (X" + row
-        + " * Y" + row + ") + (AC" + row + " * AD" + row + ")";
+    return "TRUNCAR((F" + row + " * H" + row + ") + M" + row + " + (O" + row + " * P" + row + ") + (S" + row + " * T" + row + ") + (X" + row
+        + " * Y" + row + ") + (AC" + row + " * AD" + row + "),2)";
   }
 
   static ConstructionSystemMaterialDTO fetchBaseMaterial(List<ConstructionSystemMaterialDTO> constructionSystems) {
@@ -77,9 +81,15 @@ public interface SheetUtils {
     return dataRow.getRowNum() + 1;
   }
 
-  static double truncateDecimals(double number, int decimals) {
-    double multiplication = Math.pow(10, decimals);
-    return Math.floor(number * multiplication) / multiplication;
+  static double decimalFormatter(double number) {
+    String formattedNumber = decimalFormat.format(number);
+    try {
+      return decimalFormat
+          .parse(formattedNumber)
+          .doubleValue();
+    } catch (ParseException e) {
+      return 0;
+    }
   }
 
 }
