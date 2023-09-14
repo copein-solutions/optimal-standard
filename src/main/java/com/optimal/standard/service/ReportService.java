@@ -34,6 +34,38 @@ public class ReportService {
 
   private final ConstructionSystemService constructionSystemService;
 
+  private void createPluginsCells(ResponseConstructionSystemDTO cs, HSSFRow dataRow) {
+    AtomicInteger dataRowForPluginsIndex = new AtomicInteger(16);
+    emptyIfNull(cs.getMaterials()).forEach(csm -> {
+      if (TypeOfUse.PLUGIN_MATERIAL.equals(csm.getTypeOfUse())) {
+        dataRow
+            .createCell(dataRowForPluginsIndex.get())
+            .setCellValue(csm
+                .getMaterial()
+                .getProduct());
+        dataRowForPluginsIndex.getAndIncrement();
+        dataRow
+            .createCell(dataRowForPluginsIndex.get())
+            .setCellValue(csm.getMaterialDescription());
+        dataRowForPluginsIndex.getAndIncrement();
+        dataRow
+            .createCell(dataRowForPluginsIndex.get())
+            .setCellValue(decimalFormatter(csm
+                .getMaterial()
+                .getUnitPrice()));
+        dataRowForPluginsIndex.getAndIncrement();
+        dataRow
+            .createCell(dataRowForPluginsIndex.get())
+            .setCellValue(csm.getCoefficient());
+        dataRowForPluginsIndex.getAndIncrement();
+        dataRow
+            .createCell(dataRowForPluginsIndex.get())
+            .setCellValue(csm.getCoefficientDescription());
+        dataRowForPluginsIndex.getAndIncrement();
+      }
+    });
+  }
+
   public ByteArrayInputStream generateXlsx() throws IOException {
     List<ResponseConstructionSystemDTO> constructionSystems = this.constructionSystemService.findAll();
     HSSFWorkbook workbook = new HSSFWorkbook();
@@ -78,8 +110,8 @@ public class ReportService {
 
       this.createTotalMeshCells(cs, dataRow);
       this.createPartialMeshCells(cs, dataRow);
-
-      int indexAfterPlugins = this.createPluginsCells(cs, dataRow);
+      this.createPluginsCells(cs, dataRow);
+      int indexAfterPlugins = 30;
       // Restrictions
       dataRow
           .createCell(indexAfterPlugins)
@@ -176,39 +208,6 @@ public class ReportService {
           .setCellValue(constructionSystemPartialMesh.getCoefficient());
 
     }
-  }
-
-  private int createPluginsCells(ResponseConstructionSystemDTO cs, HSSFRow dataRow) {
-    AtomicInteger dataRowForPluginsIndex = new AtomicInteger(16);
-    emptyIfNull(cs.getMaterials()).forEach(csm -> {
-      if (TypeOfUse.PLUGIN_MATERIAL.equals(csm.getTypeOfUse())) {
-        dataRow
-            .createCell(dataRowForPluginsIndex.get())
-            .setCellValue(csm
-                .getMaterial()
-                .getProduct());
-        dataRowForPluginsIndex.getAndIncrement();
-        dataRow
-            .createCell(dataRowForPluginsIndex.get())
-            .setCellValue(csm.getMaterialDescription());
-        dataRowForPluginsIndex.getAndIncrement();
-        dataRow
-            .createCell(dataRowForPluginsIndex.get())
-            .setCellValue(decimalFormatter(csm
-                .getMaterial()
-                .getUnitPrice()));
-        dataRowForPluginsIndex.getAndIncrement();
-        dataRow
-            .createCell(dataRowForPluginsIndex.get())
-            .setCellValue(csm.getCoefficient());
-        dataRowForPluginsIndex.getAndIncrement();
-        dataRow
-            .createCell(dataRowForPluginsIndex.get())
-            .setCellValue(csm.getCoefficientDescription());
-        dataRowForPluginsIndex.getAndIncrement();
-      }
-    });
-    return (dataRowForPluginsIndex.get() == 16) ? 30 : dataRowForPluginsIndex.get();
   }
 
 
