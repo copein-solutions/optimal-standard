@@ -20,7 +20,7 @@ public interface SheetUtils {
   DecimalFormat decimalFormat = new DecimalFormat("#.00");
 
   String[] HEADERS =
-      {"Id", "Campo de aplicación", "Precio sist.", "Material", "Tipo", "Precio unitario", "Composición", "Consumo total", "Manos",
+      {"Id", "Campo de aplicación", "Costo materiales", "Material", "Tipo", "Precio unitario", "Composición", "Consumo total", "Manos",
           "Modo de aplicación", "Curado", "Malla 100%", "Precio unitario", "Malla parcial", "Precio unitario", "Coef. por m2",
           "Complemento del sistema 1", "Descripción", "Precio unitario", "Coef. por m2", "Descripción coef.", "Complemento del sistema 2",
           "Descripción", "Precio unitario", "Coef. por m2", "Descripción coef.", "Complemento del sistema 3", "Descripción",
