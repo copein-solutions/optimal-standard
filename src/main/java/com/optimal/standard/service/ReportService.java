@@ -19,11 +19,11 @@ import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicInteger;
 import lombok.AllArgsConstructor;
-import org.apache.poi.hssf.usermodel.HSSFCell;
-import org.apache.poi.hssf.usermodel.HSSFRow;
-import org.apache.poi.hssf.usermodel.HSSFSheet;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.HorizontalAlignment;
+import org.apache.poi.xssf.usermodel.XSSFCell;
+import org.apache.poi.xssf.usermodel.XSSFRow;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -34,7 +34,7 @@ public class ReportService {
 
   private final ConstructionSystemService constructionSystemService;
 
-  private void createPluginsCells(ResponseConstructionSystemDTO cs, HSSFRow dataRow) {
+  private void createPluginsCells(ResponseConstructionSystemDTO cs, XSSFRow dataRow) {
     AtomicInteger dataRowForPluginsIndex = new AtomicInteger(16);
     emptyIfNull(cs.getMaterials()).forEach(csm -> {
       if (TypeOfUse.PLUGIN_MATERIAL.equals(csm.getTypeOfUse())) {
@@ -68,17 +68,17 @@ public class ReportService {
 
   public ByteArrayInputStream generateXlsx() throws IOException {
     List<ResponseConstructionSystemDTO> constructionSystems = this.constructionSystemService.findAll();
-    HSSFWorkbook workbook = new HSSFWorkbook();
+    XSSFWorkbook workbook = new XSSFWorkbook();
     ByteArrayOutputStream out = new ByteArrayOutputStream();
 
-    HSSFSheet sheet = workbook.createSheet(SHEET_NAME);
+    XSSFSheet sheet = workbook.createSheet(SHEET_NAME);
     createHeaders(sheet, workbook);
 
     AtomicInteger dataRowIndex = new AtomicInteger(1);
     for (ResponseConstructionSystemDTO cs : constructionSystems) {
-      HSSFRow dataRow = sheet.createRow(dataRowIndex.get());
+      XSSFRow dataRow = sheet.createRow(dataRowIndex.get());
 
-      HSSFCell cellForColumn0 = dataRow.createCell(0);
+      XSSFCell cellForColumn0 = dataRow.createCell(0);
       cellForColumn0.setCellValue(cs.getId());
       cellForColumn0
           .getCellStyle()
@@ -89,7 +89,7 @@ public class ReportService {
               .getApplicationArea()
               .getName());
 
-      HSSFCell cellForColumn2 = dataRow.createCell(2);
+      XSSFCell cellForColumn2 = dataRow.createCell(2);
       String formulaMaterialsCost = getFormulaMaterialsCost(getGridRow(dataRow));
       cellForColumn2.setCellFormula(formulaMaterialsCost);
 
@@ -147,7 +147,7 @@ public class ReportService {
     return new ByteArrayInputStream(out.toByteArray());
   }
 
-  private ConstructionSystemMaterialDTO createBaseMaterialCells(ResponseConstructionSystemDTO cs, HSSFRow dataRow) {
+  private ConstructionSystemMaterialDTO createBaseMaterialCells(ResponseConstructionSystemDTO cs, XSSFRow dataRow) {
     ConstructionSystemMaterialDTO constructionSystemBaseMaterial = fetchBaseMaterial(cs.getMaterials());
     if (Objects.nonNull(constructionSystemBaseMaterial)) {
       dataRow
@@ -174,7 +174,7 @@ public class ReportService {
     return constructionSystemBaseMaterial;
   }
 
-  private void createTotalMeshCells(ResponseConstructionSystemDTO cs, HSSFRow dataRow) {
+  private void createTotalMeshCells(ResponseConstructionSystemDTO cs, XSSFRow dataRow) {
     ConstructionSystemMaterialDTO constructionSystemTotalMesh = fetchTotalMesh(cs.getMaterials());
     if (Objects.nonNull(constructionSystemTotalMesh)) {
       dataRow
@@ -190,7 +190,7 @@ public class ReportService {
     }
   }
 
-  private void createPartialMeshCells(ResponseConstructionSystemDTO cs, HSSFRow dataRow) {
+  private void createPartialMeshCells(ResponseConstructionSystemDTO cs, XSSFRow dataRow) {
     ConstructionSystemMaterialDTO constructionSystemPartialMesh = fetchPartialMesh(cs.getMaterials());
     if (Objects.nonNull(constructionSystemPartialMesh)) {
       dataRow

@@ -7,13 +7,13 @@ import com.optimal.standard.persistence.model.TypeOfUse;
 import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.util.List;
-import org.apache.poi.hssf.usermodel.HSSFCell;
-import org.apache.poi.hssf.usermodel.HSSFCellStyle;
-import org.apache.poi.hssf.usermodel.HSSFRow;
-import org.apache.poi.hssf.usermodel.HSSFSheet;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.HorizontalAlignment;
+import org.apache.poi.xssf.usermodel.XSSFCell;
+import org.apache.poi.xssf.usermodel.XSSFCellStyle;
+import org.apache.poi.xssf.usermodel.XSSFRow;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 public interface SheetUtils {
 
@@ -27,18 +27,18 @@ public interface SheetUtils {
           "Precio unitario", "Coef. por m2", "Descripción coef.", "Por área m2", "Vida útil (hrs)", "Temp. mínima de aplicación (°C)",
           "Otras", "Condiciones de base", "Condiciones de soporte"};
 
-  static void createHeaders(HSSFSheet sheet, HSSFWorkbook workbook) {
+  static void createHeaders(XSSFSheet sheet, XSSFWorkbook workbook) {
     Font font = workbook.createFont();
-    HSSFCellStyle style = workbook.createCellStyle();
+    XSSFCellStyle style = workbook.createCellStyle();
     font.setBold(true);
     font.setFontHeightInPoints((short) 12);
     style.setFont(font);
-    HSSFRow row = sheet.createRow(0);
+    XSSFRow row = sheet.createRow(0);
     row.setRowStyle(style);
 
     for (int i = 0; i < HEADERS.length; i++) {
       sheet.setColumnWidth(i, (HEADERS[i].length() + 4) * 256);
-      HSSFCell cell = row.createCell(i);
+      XSSFCell cell = row.createCell(i);
       cell.setCellStyle(style);
       cell.setCellValue(HEADERS[i]);
     }
@@ -77,7 +77,7 @@ public interface SheetUtils {
         .orElse(null);
   }
 
-  static int getGridRow(HSSFRow dataRow) {
+  static int getGridRow(XSSFRow dataRow) {
     return dataRow.getRowNum() + 1;
   }
 
