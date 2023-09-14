@@ -61,7 +61,6 @@ public class ReportService {
         dataRow
             .createCell(dataRowForPluginsIndex.get())
             .setCellValue(csm.getCoefficientDescription());
-        dataRowForPluginsIndex.getAndIncrement();
       }
     });
   }
@@ -111,7 +110,7 @@ public class ReportService {
       this.createTotalMeshCells(cs, dataRow);
       this.createPartialMeshCells(cs, dataRow);
       this.createPluginsCells(cs, dataRow);
-      int indexAfterPlugins = 30;
+      int indexAfterPlugins = 31;
       // Restrictions
       dataRow
           .createCell(indexAfterPlugins)
