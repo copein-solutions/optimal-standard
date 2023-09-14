@@ -61,6 +61,7 @@ public class ReportService {
         dataRow
             .createCell(dataRowForPluginsIndex.get())
             .setCellValue(csm.getCoefficientDescription());
+        dataRowForPluginsIndex.getAndIncrement();
       }
     });
   }
