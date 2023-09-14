@@ -50,7 +50,7 @@ public interface SheetUtils {
 
   static String getFormulaMaterialsCost(int row) {
     return "TRUNCAR((F" + row + " * H" + row + ") + M" + row + " + (O" + row + " * P" + row + ") + (S" + row + " * T" + row + ") + (X" + row
-        + " * Y" + row + ") + (AC" + row + " * AD" + row + "),2)";
+        + " * Y" + row + ") + (AC" + row + " * AD" + row + "); 2)";
   }
 
   static ConstructionSystemMaterialDTO fetchBaseMaterial(List<ConstructionSystemMaterialDTO> constructionSystems) {
