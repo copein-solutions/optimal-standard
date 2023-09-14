@@ -4,6 +4,9 @@ import static com.optimal.standard.util.SheetUtils.createHeaders;
 import static com.optimal.standard.util.SheetUtils.fetchBaseMaterial;
 import static com.optimal.standard.util.SheetUtils.fetchPartialMesh;
 import static com.optimal.standard.util.SheetUtils.fetchTotalMesh;
+import static com.optimal.standard.util.SheetUtils.getFormulaMaterialsCost;
+import static com.optimal.standard.util.SheetUtils.getGridRow;
+import static com.optimal.standard.util.SheetUtils.truncateDecimals;
 import static org.apache.commons.collections4.ListUtils.emptyIfNull;
 
 import com.optimal.standard.dto.ConstructionSystemMaterialDTO;
@@ -43,9 +46,9 @@ public class ReportService {
     for (ResponseConstructionSystemDTO cs : constructionSystems) {
       HSSFRow dataRow = sheet.createRow(dataRowIndex.get());
 
-      HSSFCell cell0 = dataRow.createCell(0);
-      cell0.setCellValue(cs.getId());
-      cell0
+      HSSFCell cellForColumn0 = dataRow.createCell(0);
+      cellForColumn0.setCellValue(cs.getId());
+      cellForColumn0
           .getCellStyle()
           .setAlignment(HorizontalAlignment.LEFT);
       dataRow
@@ -53,11 +56,12 @@ public class ReportService {
           .setCellValue(cs
               .getApplicationArea()
               .getName());
-      dataRow
-          .createCell(2)
-          .setCellValue(cs.getTotalPrice());
 
-      ConstructionSystemMaterialDTO constructionSystemBaseMaterial = this.buildBaseMaterial(cs, dataRow);
+      HSSFCell cellForColumn2 = dataRow.createCell(2);
+      String formulaMaterialsCost = getFormulaMaterialsCost(getGridRow(dataRow));
+      cellForColumn2.setCellFormula(formulaMaterialsCost);
+
+      ConstructionSystemMaterialDTO constructionSystemBaseMaterial = this.createBaseMaterialCells(cs, dataRow);
 
       dataRow
           .createCell(7)
@@ -72,10 +76,10 @@ public class ReportService {
           .createCell(10)
           .setCellValue(cs.isCured() ? "SI" : "NO");
 
-      this.buildTotalMesh(cs, dataRow);
-      this.buildPartialMesh(cs, dataRow);
+      this.createTotalMeshCells(cs, dataRow);
+      this.createPartialMeshCells(cs, dataRow);
 
-      int indexAfterPlugins = this.buildPlugins(cs, dataRow);
+      int indexAfterPlugins = this.createPluginsCells(cs, dataRow);
       // Restrictions
       dataRow
           .createCell(indexAfterPlugins)
@@ -111,7 +115,7 @@ public class ReportService {
     return new ByteArrayInputStream(out.toByteArray());
   }
 
-  private ConstructionSystemMaterialDTO buildBaseMaterial(ResponseConstructionSystemDTO cs, HSSFRow dataRow) {
+  private ConstructionSystemMaterialDTO createBaseMaterialCells(ResponseConstructionSystemDTO cs, HSSFRow dataRow) {
     ConstructionSystemMaterialDTO constructionSystemBaseMaterial = fetchBaseMaterial(cs.getMaterials());
     if (Objects.nonNull(constructionSystemBaseMaterial)) {
       dataRow
@@ -126,9 +130,9 @@ public class ReportService {
               .getType());
       dataRow
           .createCell(5)
-          .setCellValue(constructionSystemBaseMaterial
+          .setCellValue(truncateDecimals(constructionSystemBaseMaterial
               .getMaterial()
-              .getUnitPrice());
+              .getUnitPrice(), 2));
       dataRow
           .createCell(6)
           .setCellValue(constructionSystemBaseMaterial
@@ -138,7 +142,7 @@ public class ReportService {
     return constructionSystemBaseMaterial;
   }
 
-  private void buildTotalMesh(ResponseConstructionSystemDTO cs, HSSFRow dataRow) {
+  private void createTotalMeshCells(ResponseConstructionSystemDTO cs, HSSFRow dataRow) {
     ConstructionSystemMaterialDTO constructionSystemTotalMesh = fetchTotalMesh(cs.getMaterials());
     if (Objects.nonNull(constructionSystemTotalMesh)) {
       dataRow
@@ -148,13 +152,13 @@ public class ReportService {
               .getProduct());
       dataRow
           .createCell(12)
-          .setCellValue(constructionSystemTotalMesh
+          .setCellValue(truncateDecimals(constructionSystemTotalMesh
               .getMaterial()
-              .getUnitPrice());
+              .getUnitPrice(), 2));
     }
   }
 
-  private void buildPartialMesh(ResponseConstructionSystemDTO cs, HSSFRow dataRow) {
+  private void createPartialMeshCells(ResponseConstructionSystemDTO cs, HSSFRow dataRow) {
     ConstructionSystemMaterialDTO constructionSystemPartialMesh = fetchPartialMesh(cs.getMaterials());
     if (Objects.nonNull(constructionSystemPartialMesh)) {
       dataRow
@@ -164,9 +168,9 @@ public class ReportService {
               .getProduct());
       dataRow
           .createCell(14)
-          .setCellValue(constructionSystemPartialMesh
+          .setCellValue(truncateDecimals(constructionSystemPartialMesh
               .getMaterial()
-              .getUnitPrice());
+              .getUnitPrice(), 2));
       dataRow
           .createCell(15)
           .setCellValue(constructionSystemPartialMesh.getCoefficient());
@@ -174,7 +178,7 @@ public class ReportService {
     }
   }
 
-  private int buildPlugins(ResponseConstructionSystemDTO cs, HSSFRow dataRow) {
+  private int createPluginsCells(ResponseConstructionSystemDTO cs, HSSFRow dataRow) {
     AtomicInteger dataRowForPluginsIndex = new AtomicInteger(16);
     emptyIfNull(cs.getMaterials()).forEach(csm -> {
       if (TypeOfUse.PLUGIN_MATERIAL.equals(csm.getTypeOfUse())) {
@@ -190,9 +194,9 @@ public class ReportService {
         dataRowForPluginsIndex.getAndIncrement();
         dataRow
             .createCell(dataRowForPluginsIndex.get())
-            .setCellValue(csm
+            .setCellValue(truncateDecimals(csm
                 .getMaterial()
-                .getUnitPrice());
+                .getUnitPrice(), 2));
         dataRowForPluginsIndex.getAndIncrement();
         dataRow
             .createCell(dataRowForPluginsIndex.get())

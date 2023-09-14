@@ -44,6 +44,11 @@ public interface SheetUtils {
         .setAlignment(HorizontalAlignment.LEFT);
   }
 
+  static String getFormulaMaterialsCost(int row) {
+    return "(F" + row + " * H" + row + ") + M" + row + " + (O" + row + " * P" + row + ") + (S" + row + " * T" + row + ") + (X" + row
+        + " * Y" + row + ") + (AC" + row + " * AD" + row + ")";
+  }
+
   static ConstructionSystemMaterialDTO fetchBaseMaterial(List<ConstructionSystemMaterialDTO> constructionSystems) {
     return emptyIfNull(constructionSystems)
         .stream()
@@ -66,6 +71,15 @@ public interface SheetUtils {
         .filter(constructionSystem -> TypeOfUse.PARTIAL_MESH.equals(constructionSystem.getTypeOfUse()))
         .findFirst()
         .orElse(null);
+  }
+
+  static int getGridRow(HSSFRow dataRow) {
+    return dataRow.getRowNum() + 1;
+  }
+
+  static double truncateDecimals(double number, int decimals) {
+    double multiplication = Math.pow(10, decimals);
+    return Math.floor(number * multiplication) / multiplication;
   }
 
 }
