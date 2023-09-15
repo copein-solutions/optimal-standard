@@ -4,12 +4,16 @@ import com.optimal.standard.dto.FilesDTO;
 import com.optimal.standard.persistence.model.MaterialFiles;
 import com.optimal.standard.service.MaterialFileService;
 import com.optimal.standard.service.MaterialService;
+import com.optimal.standard.service.ReportService;
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import lombok.AllArgsConstructor;
 import org.springframework.core.io.ByteArrayResource;
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -27,9 +31,25 @@ import org.springframework.web.multipart.MultipartFile;
 @RequestMapping("/optimal_standard")
 public class FileController {
 
-  private MaterialFileService materialFileService;
+  private final MaterialFileService materialFileService;
 
-  private MaterialService materialService;
+  private final MaterialService materialService;
+
+  private final ReportService reportService;
+
+  @GetMapping("/public/generate_report")
+  public ResponseEntity<Resource> generateXlsx() throws IOException {
+    String filename = "report.xlsx";
+
+    ByteArrayInputStream data = this.reportService.generateXlsx();
+    InputStreamResource file = new InputStreamResource(data);
+    return ResponseEntity
+        .ok()
+        .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + filename)
+        .contentType(MediaType.parseMediaType("application/vnd.ms-excel"))
+        .body(file);
+  }
+
 
   @GetMapping(value = "/public/file/load")
   public ResponseEntity<ByteArrayResource> getFile(@RequestParam("file_id") Long fileId) throws IOException {

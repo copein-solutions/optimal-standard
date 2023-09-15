@@ -98,7 +98,11 @@ public class ConstructionSystemCommentService {
     }
   }
 
-  public void deleteConstructionSystemComment(Long id) {
+  public void deleteConstructionSystemCommentsById(Long id) {
+    this.constructionSystemCommentRepository.deleteByConstructionSystemId(id);
+  }
+
+  private void deleteConstructionSystemComment(Long id) {
     ConstructionSystemComment constructionSystemComment = this.constructionSystemCommentRepository
         .findById(id)
         .orElseThrow(() -> new EntityNotFoundException(CONSTRUCTION_SYSTEM_COMMENT_NOT_FOUND_MESSAGE + id));
@@ -110,45 +114,5 @@ public class ConstructionSystemCommentService {
     this.constructionSystemRepository.save(constructionSystem);
   }
 
-//  private List<ResponseConstructionSystemCommentDTO> toConstructionSystemComments(
-//      List<ConstructionSystemComment> constructionSystemComments) {
-//    return constructionSystemComments
-//        .stream()
-//        .filter(cs -> cs
-//            .getStatus()
-//            .equals(CommentStatus.VALIDATED.name()))
-//        .sorted(Comparator.comparing(ConstructionSystemComment::getCreatedDate, Comparator.reverseOrder()))
-//        .limit(5)
-//        .map(this::toConstructionSystemComment)
-//        .collect(Collectors.toList());
-//  }
-//
-//  private ResponseConstructionSystemCommentDTO toConstructionSystemComment(ConstructionSystemComment constructionSystemComment) {
-//    return ResponseConstructionSystemCommentDTO
-//        .builder()
-//        .id(constructionSystemComment.getId())
-//        .comment(constructionSystemComment.getComment())
-//        .date(constructionSystemComment.getCreatedDate())
-//        .constructionSystemId(constructionSystemComment
-//            .getConstructionSystem()
-//            .getId())
-//        .userName(constructionSystemComment
-//            .getRegisteredUser()
-//            .getUsername())
-//        .userCompleteName(constructionSystemComment
-//            .getRegisteredUser()
-//            .getName())
-//        .status(constructionSystemComment.getStatus())
-//        .build();
-//  }
-//
-//  private List<ResponseConstructionSystemCommentDTO> toConstructionSystemAllComments(
-//      List<ConstructionSystemComment> constructionSystemComments) {
-//    return constructionSystemComments
-//        .stream()
-//        .sorted(Comparator.comparing(ConstructionSystemComment::getCreatedDate, Comparator.reverseOrder()))
-//        .map(this::toConstructionSystemComment)
-//        .collect(Collectors.toList());
-//  }
 
 }

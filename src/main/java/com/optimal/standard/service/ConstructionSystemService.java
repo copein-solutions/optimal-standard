@@ -20,7 +20,6 @@ import com.optimal.standard.persistence.model.ConstructionSystem;
 import com.optimal.standard.persistence.model.ConstructionSystemMaterial;
 import com.optimal.standard.persistence.model.Material;
 import com.optimal.standard.persistence.model.TypeOfUse;
-import com.optimal.standard.persistence.repository.ConstructionSystemCommentRepository;
 import com.optimal.standard.persistence.repository.ConstructionSystemRepository;
 import jakarta.persistence.EntityNotFoundException;
 import java.util.HashSet;
@@ -47,7 +46,7 @@ public class ConstructionSystemService {
 
   private final GlobalVariableService globalVariableService;
 
-  private final ConstructionSystemCommentRepository constructionSystemCommentRepository;
+  private final ConstructionSystemCommentService constructionSystemCommentService;
 
   public void saveConstructionSystem(ConstructionSystemDTO request) {
     Long applicationAreaId = request.getApplicationAreaId();
@@ -187,9 +186,7 @@ public class ConstructionSystemService {
     this.constructionSystemRepository
         .findByIdAndDeletedFalse(id)
         .orElseThrow(() -> new EntityNotFoundException(CONSTRUCTION_SYSTEM_NOT_FOUND_MESSAGE + id));
-
-    this.constructionSystemCommentRepository.deleteByConstructionSystemId(id);
-
+    this.constructionSystemCommentService.deleteConstructionSystemCommentsById(id);
     this.constructionSystemRepository.markAsDeleted(id);
   }
 
