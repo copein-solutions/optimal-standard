@@ -39,9 +39,7 @@ public class MaterialFileService {
   }
 
   public MaterialFiles getFile(Long fileId) {
-    return this.materialFileRepository
-        .findById(fileId)
-        .orElse(null);
+    return this.findMaterialFilesById(fileId);
   }
 
   public String getLocalFilePath(MaterialFiles materialFiles) {
