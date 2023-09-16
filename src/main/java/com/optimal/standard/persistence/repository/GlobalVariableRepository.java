@@ -1,13 +1,13 @@
 package com.optimal.standard.persistence.repository;
 
-import com.optimal.standard.persistence.model.RegisteredUser;
+import com.optimal.standard.persistence.model.GlobalVariable;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface UserRepository extends JpaRepository<RegisteredUser, Long> {
+public interface GlobalVariableRepository extends JpaRepository<GlobalVariable, Long> {
 
-  Optional<RegisteredUser> findByUsername(String username);
+  Optional<GlobalVariable> findByName(String laborCost);
 
 }

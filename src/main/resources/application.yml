@@ -1,6 +1,12 @@
 spring:
   profiles:
-    active: local
+    active: ${SCOPE}
+  servlet:
+    multipart:
+      max-file-size: 50MB
+      max-request-size: 50MB
+    file:
+      upload-dir: ./uploads
   jpa:
     generate-ddl: false
     show-sql: false
