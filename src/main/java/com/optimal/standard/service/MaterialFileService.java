@@ -71,13 +71,12 @@ public class MaterialFileService {
     return toDTO(this.materialFileRepository.save(materialFiles));
   }
 
-  public void delete(FilesDTO file, String fileName) {
-    this.localFilesService.deleteFile(fileName);
+  public void delete(FilesDTO file, String fileName, boolean isTemp) {
+    this.localFilesService.deleteFile(fileName, isTemp);
     this.materialFileRepository.deleteById(file.getId());
   }
 
-  public void processMaterialFiles(Material material, List<FilesDTO> files) {
-    //TODO: cuando entro a editar un material y elimino un file
+  public List<MaterialFiles> processMaterialFiles(Material material, List<FilesDTO> files) {
     if (isNotEmpty(files)) {
       List<Long> fileIds = collectMaterialIds(files);
 
@@ -91,12 +90,18 @@ public class MaterialFileService {
       if (isNotEmpty(fileIdsForDelete)) {
         this.materialFileRepository.deleteAllByIdIn(fileIdsForDelete);
       }
-
+      return materialFiles;
     } else {
-      material
+      Long materialId = material.getId();
+      this.materialFileRepository.deleteAllByMaterialId(materialId);
+      return material
           .getMaterialFiles()
-          .forEach(file -> this.localFilesService.deleteFile(file.getName()));
-      this.materialFileRepository.deleteAllByMaterialId(material.getId());
+          .stream()
+          .peek(file -> this.localFilesService.deleteFile(file.getName(), file.isTemp()))
+          .filter(file -> !materialId.equals(file
+              .getMaterial()
+              .getId()))
+          .collect(Collectors.toList());
     }
   }
 
@@ -115,7 +120,7 @@ public class MaterialFileService {
         .findAllByMaterialId(material.getId())
         .stream()
         .filter(materialFile -> !requestFileIds.contains(materialFile.getId()))
-        .peek(file -> this.localFilesService.deleteFile(file.getName()))
+        .peek(file -> this.localFilesService.deleteFile(file.getName(), file.isTemp()))
         .map(MaterialFiles::getId)
         .collect(Collectors.toList());
   }
@@ -140,7 +145,7 @@ public class MaterialFileService {
   public void deleteFiles(FilesDTO file) {
     if (nonNull(file)) {
       MaterialFiles materialFiles = this.findMaterialFilesById(file.getId());
-      this.delete(file, materialFiles.getName());
+      this.delete(file, materialFiles.getName(), materialFiles.isTemp());
     }
   }
 
