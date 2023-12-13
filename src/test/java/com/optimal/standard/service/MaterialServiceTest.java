@@ -28,11 +28,14 @@ class MaterialServiceTest {
   @Mock
   private MaterialFileService materialFileService;
 
+  @Mock
+  private GlobalVariableService globalVariableService;
+
   private MaterialService materialService;
 
   @BeforeEach
   void init() {
-    this.materialService = new MaterialService(this.materialRepository, this.materialFileService);
+    this.materialService = new MaterialService(this.materialRepository, this.materialFileService, this.globalVariableService);
   }
 
   @Test

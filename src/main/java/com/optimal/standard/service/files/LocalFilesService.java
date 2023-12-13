@@ -112,9 +112,14 @@ public class LocalFilesService {
     }
   }
 
-  public String deleteFile(String fileName) {
+  public String deleteFile(String fileName, boolean isTemp) {
     try {
-      Path filePath = Paths.get(new File(DIRECTORY_UPLOADS + DIRECTORY_SEPARATOR + fileName).getAbsolutePath());
+      String fileNameWithAbsolutePath = DIRECTORY_UPLOADS + DIRECTORY_SEPARATOR + fileName;
+      Path filePath = Paths.get(new File(fileNameWithAbsolutePath).getAbsolutePath());
+      if (isTemp) {
+        fileNameWithAbsolutePath = DIRECTORY_TEMP + DIRECTORY_SEPARATOR + fileName;
+        filePath = Paths.get(new File(fileNameWithAbsolutePath).getAbsolutePath());
+      }
       Files.delete(filePath);
       return filePath.toString();
     } catch (IOException e) {

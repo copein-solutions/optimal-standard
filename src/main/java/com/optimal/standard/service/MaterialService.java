@@ -10,6 +10,7 @@ import static org.apache.commons.collections4.ListUtils.emptyIfNull;
 import com.optimal.standard.dto.MaterialDTO;
 import com.optimal.standard.exception.BadRequestException;
 import com.optimal.standard.persistence.model.Material;
+import com.optimal.standard.persistence.model.MaterialFiles;
 import com.optimal.standard.persistence.repository.MaterialRepository;
 import jakarta.persistence.EntityNotFoundException;
 import java.util.List;
@@ -60,11 +61,11 @@ public class MaterialService {
         .findById(id)
         .ifPresentOrElse(materialDatabase -> {
           Long materialId = materialDatabase.getId();
-          this.materialFileService.processMaterialFiles(materialDatabase, request.getFiles());
+          List<MaterialFiles> processedFiles = this.materialFileService.processMaterialFiles(materialDatabase, request.getFiles());
           Material material = toMaterial(request);
           material.setId(materialId);
           material.setConstructionSystems(materialDatabase.getConstructionSystems());
-          material.setMaterialFiles(materialDatabase.getMaterialFiles());
+          material.setMaterialFiles(processedFiles);
           this.materialRepository.save(material);
         }, () -> {
           throw new EntityNotFoundException(MATERIAL_NOT_FOUND_MESSAGE + id);
