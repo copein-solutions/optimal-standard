@@ -37,7 +37,7 @@ public class FileController {
 
   private final ReportService reportService;
 
-  @GetMapping("/public/generate_report")
+  @GetMapping("/admin/generate_report")
   public ResponseEntity<Resource> generateXlsx() throws IOException {
     String filename = "report.xlsx";
 
@@ -51,7 +51,7 @@ public class FileController {
   }
 
 
-  @GetMapping(value = "/public/file/load")
+  @GetMapping("/admin/file/load")
   public ResponseEntity<ByteArrayResource> getFile(@RequestParam("file_id") Long fileId) throws IOException {
     MaterialFiles materialFiles = this.materialFileService.getFile(fileId);
     String localFilePath = this.materialFileService.getLocalFilePath(materialFiles);
@@ -69,13 +69,13 @@ public class FileController {
         .body(new ByteArrayResource(Files.readAllBytes(Path.of(localFilePath))));
   }
 
-  @PostMapping("/file/upload")
+  @PostMapping("/admin/file/upload")
   public FilesDTO uploadFile(@RequestParam(value = "material_id", required = false) Long materialId,
       @RequestParam("files") MultipartFile files) {
     return this.materialFileService.saveFiles(this.materialService.findMaterialByIdWithoutException(materialId), files);
   }
 
-  @DeleteMapping("/file/delete")
+  @DeleteMapping("/admin/file/delete")
   public void deleteFile(@RequestBody FilesDTO files) {
     this.materialFileService.deleteFiles(files);
   }
